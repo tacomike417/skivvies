@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Skivvies">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Poppins:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Poppins:wght@700&family=Anton&display=swap" rel="stylesheet">
 <style>
 :root{--ink:#102520;--coral:#f35d40;--cream:#fff6f0;--muted:#52635c}
 *{box-sizing:border-box}
@@ -110,13 +110,57 @@ textarea{min-height:90px}
 .nowrap{white-space:nowrap}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:13px 18px;border-radius:12px;font-weight:700;font-size:14px;max-width:340px;width:calc(100% - 40px);text-align:center;opacity:0;pointer-events:none;transition:.25s;z-index:9}
 .toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* the butt count: retro flip scoreboard on home. Art pieces live in img/counter/.
+   counts individual PEOPLE who actually received new underwear (not packs, not donations) */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.bc{position:relative;container-type:inline-size;margin:-6px -20px 10px;padding:4px 0 6px;overflow:hidden;isolation:isolate}
+.bc-rays{position:absolute;top:0;width:24cqw;height:auto;z-index:0;pointer-events:none}
+.bc-rays.l{left:-1cqw}.bc-rays.r{right:-1cqw}
+.bc-plate{position:relative;z-index:1;width:78cqw;margin:4cqw auto 0;aspect-ratio:900/399;background:url(img/counter/plate.webp) center/100% 100% no-repeat}
+.bc-plaque{position:absolute;left:14%;right:14%;top:4%;height:31%;margin:0;display:flex;align-items:center;justify-content:center;color:#fff3df;font:400 6.4cqw/1 Anton,Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;text-shadow:0 2px 0 #0008;white-space:nowrap}
+.bc-tiles{position:absolute;left:50%;top:36%;transform:translateX(-50%);display:flex;gap:.6cqw;z-index:3}
+.tile{position:relative;width:20cqw;aspect-ratio:200/283;overflow:hidden;filter:drop-shadow(0 1.2cqw 0 #10252066)}
+.bc-tiles.n4 .tile{width:16.5cqw}.bc-tiles.n5 .tile{width:13.5cqw}.bc-tiles.n6 .tile{width:11.4cqw}
+.reel{position:absolute;inset:0;display:flex;flex-direction:column;transform:translateY(calc(var(--d,0) * -100%));transition:transform var(--t,1.4s) cubic-bezier(.2,.9,.25,1.02)}
+.reel img{flex:none;width:100%;height:100%;display:block}
+.tile.q{background:url(img/counter/tile_blank.webp) center/100% 100% no-repeat}
+.tile.q b{position:absolute;inset:0;display:grid;place-items:center;padding-bottom:2%;color:#f8bc54;font:900 15cqw/1 Inter,sans-serif;text-shadow:0 .6cqw 0 #000a}
+.bc-pile{position:absolute;z-index:2;width:25cqw;height:auto;top:36cqw;filter:drop-shadow(0 1cqw 0 #10252040)}
+.bc-pile.l{left:-1cqw}.bc-pile.r{right:-1cqw}
+.bc-ribbon{position:relative;z-index:4;width:76cqw;margin:5.5cqw auto 0;aspect-ratio:760/220;background:url(img/counter/ribbon.webp) center/100% 100% no-repeat;display:flex;align-items:center;justify-content:center;padding:0 7cqw 4.5cqw;color:#fff3df;font:italic 400 10cqw/1 Anton,Inter,sans-serif;letter-spacing:.02em;text-transform:uppercase;text-shadow:.5cqw .5cqw 0 #102520;white-space:nowrap}
+.bc-ribbon span{display:inline-block;transform:skewX(-8deg)}
+.bc-ribbon.long{font-size:7cqw}
+.bc-strip{position:relative;z-index:3;margin:-3.5cqw 3cqw 0;padding:6cqw 6cqw 5.5cqw;background:url(img/counter/strip.webp) center/100% 100% no-repeat;color:#fff3df;text-align:center}
+.bc-line1{margin:0;font:italic 400 6.2cqw/1.1 Anton,Inter,sans-serif;letter-spacing:.03em;text-transform:uppercase}
+.bc-line1 em{font-style:inherit;color:#f8bc54}
+.bc-line2{margin:1.6cqw 0 0;font-size:3cqw;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:#f3e3d4}
+@media(prefers-reduced-motion:reduce){.reel{transition:none}}
+.about-art{display:flex;justify-content:center;gap:4px;margin:-6px 0 4px}.about-art img{width:34%;height:auto}
+.about h1{line-height:1.02}
+.about p{line-height:1.55}
+.about-big{font-weight:900;font-size:19px;line-height:1.25!important;color:var(--ink)}
+.about-quote{margin:20px -4px;padding:18px 18px 16px;background:var(--ink);color:var(--cream);border-radius:16px;box-shadow:4px 5px 0 var(--coral);font:400 25px/1.12 Anton,Inter,sans-serif;letter-spacing:.04em;transform:rotate(-1deg);text-transform:uppercase}
+.about-sign{text-align:center;margin:26px 0 20px}.about-sign strong{display:block;font-weight:900;font-size:22px;line-height:1.1;letter-spacing:-.03em}.about-sign span{display:block;margin-top:6px;font-family:Poppins,Inter,sans-serif;font-weight:700;color:var(--coral);font-size:18px}
+
+/* hero touch-ups to match the approved concept (wordmark and art unchanged) */
+.brand{position:relative}
+.brand::after{content:"";position:absolute;left:-2px;right:-14px;bottom:-9px;height:8px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 14' preserveAspectRatio='none'%3E%3Cpath d='M3 10C70 3 170 1 297 5c-90 1-190 3-292 8z' fill='%23f35d40'/%3E%3C/svg%3E") center/100% 100% no-repeat;transform:rotate(-2deg)}
+.hero{padding-top:2px}
+.pair img{width:40%}
+.tag1{font-size:clamp(20px,7.3vw,29px);letter-spacing:-.05em;line-height:1.02;margin:2px 0 0;white-space:nowrap}
+.tag1 span{display:block}
+.hero-swoosh{display:block;width:80%;height:9px;margin:6px auto 4px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 14' preserveAspectRatio='none'%3E%3Cpath d='M3 10C70 3 170 1 297 5c-90 1-190 3-292 8z' fill='%23f35d40'/%3E%3C/svg%3E") center/100% 100% no-repeat}
+.hero .tag2{margin:0 0 4px;font-size:clamp(21px,6.6vw,26px);color:var(--ink)}
+.hero .cta{border:3px solid var(--ink);box-shadow:0 5px 0 var(--ink);padding:16px 18px;margin-top:4px}
+.hero .cta strong{font-size:clamp(18px,5.6vw,22px)}.hero .cta small{font-size:clamp(12.5px,3.6vw,14px)}.hero .cta .right{font-size:30px}
 </style>
 </head>
 <body>
 <div class="shell">
 <header class="header">
   <button class="brand" data-go="home" aria-label="Skivvies home">skivvies</button>
-  <div class="headright"><span class="pill">v0.7</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.8</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <button data-go="home">Home</button>
     <button data-go="kit">Cover Someone's Butt</button>
@@ -134,6 +178,42 @@ textarea{min-height:90px}
 <script>
 let toastTimer;function toast(m){const t=document.querySelector('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2800)}
 function copyText(x){if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(x);return new Promise((ok,no)=>{const a=document.createElement('textarea');a.value=x;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();const done=document.execCommand('copy');a.remove();done?ok():no()})}
+
+// THE BUTT COUNT. The number lives in count.json, which only gets changed by a push to this repo
+// (git history is the audit trail). "people" = individual people who actually RECEIVED new underwear
+// that reporting year, each person counted once. Under 2, or not set yet, the board shows the honest "coming soon" state.
+let COUNT=null;fetch('count.json',{cache:'no-store'}).then(r=>r.ok?r.json():null).then(c=>{COUNT=c;if(page()==='home')fillCount()}).catch(()=>{});
+function buttCount(){return `<section class="bc" aria-labelledby="bc-h">
+  <img class="bc-rays l" src="img/counter/rays-left.webp" alt="" aria-hidden="true"><img class="bc-rays r" src="img/counter/rays-right.webp" alt="" aria-hidden="true">
+  <div class="bc-plate">
+    <h2 class="bc-plaque" id="bc-h"><span>The <span id="bc-year"></span>Butt Count</span></h2>
+    <div class="bc-tiles" id="bc-tiles" aria-hidden="true"></div>
+  </div>
+  <img class="bc-pile l" src="img/counter/pile-left.webp" alt="" aria-hidden="true"><img class="bc-pile r" src="img/counter/pile-right.webp" alt="" aria-hidden="true">
+  <div class="bc-ribbon" id="bc-ribbon" aria-hidden="true"></div>
+  <div class="bc-strip" aria-hidden="true"><p class="bc-line1" id="bc-line1"></p><p class="bc-line2" id="bc-line2"></p></div>
+  <p class="sr" id="bc-sr"></p>
+</section>`}
+function fillCount(){const box=document.querySelector('#bc-tiles');if(!box)return;
+ const n=COUNT&&Number.isInteger(COUNT.people)&&COUNT.people>=2?COUNT.people:null;
+ const yr=COUNT&&COUNT.year?COUNT.year:'';
+ document.querySelector('#bc-year').textContent=yr?yr+' ':'';
+ const reel=()=>`<span class="reel">${[0,1,2,3,4,5,6,7,8,9].map(x=>`<img src="img/counter/digit_${x}.webp" alt="">`).join('')}</span>`;
+ if(n===null){box.className='bc-tiles';box.innerHTML=Array(3).fill(`<span class="tile q"><b>?</b></span>`).join('');
+  const rb=document.querySelector('#bc-ribbon');rb.innerHTML='<span>Counting starts soon!</span>';rb.classList.add('long');
+  document.querySelector('#bc-line1').innerHTML='First pairs go out <em>soon.</em> Every butt gets counted.';
+  document.querySelector('#bc-line2').textContent='Honest numbers only. No padding.';
+  document.querySelector('#bc-sr').textContent=`The ${yr?yr+' ':''}Butt Count: counting starts soon, once the first pairs are handed out.`;return}
+ const ds=String(n).padStart(3,'0').split('');
+ box.className='bc-tiles n'+Math.min(ds.length,6);box.innerHTML=ds.map(()=>`<span class="tile">${reel()}</span>`).join('');
+ const rb=document.querySelector('#bc-ribbon');rb.classList.remove('long');rb.innerHTML=`<span>People covered!</span>`;
+ document.querySelector('#bc-line1').innerHTML=`<em>${n.toLocaleString()}</em> fresh starts. <em>${n.toLocaleString()}</em> clean drawers.`;
+ document.querySelector('#bc-line2').textContent="And we're just getting warmed up.";
+ document.querySelector('#bc-sr').textContent=`The ${yr?yr+' ':''}Butt Count: ${n.toLocaleString()} people covered.`;
+ const roll=()=>box.querySelectorAll('.reel').forEach((r,i)=>{r.style.setProperty('--t',(1.1+i*.35)+'s');r.style.setProperty('--d',ds[i])});
+ // roll once when the board scrolls into view
+ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){roll();return}
+ const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();requestAnimationFrame(()=>requestAnimationFrame(roll))}},{threshold:.5});io.observe(box)}
 const STRIP=["03", "04", "05", "06", "07", "09", "12", "13", "14", "16", "01", "02"];
 const SLOGANS=["Because rock bottom shouldn't be bare bottom.", "One pair at a time.", "New underwear and socks for people starting recovery. Stark County, Ohio.", "Help us briefly change lives.", "No ifs, ands, or bare butts.", "Nobody donates underwear. We do.", "Everybody deserves a fresh start. Especially their underwear.", "New life. New undies. No exceptions.", "Day one. Clean socks. It matters more than you'd think.", "Save a pair. Change a life.", "Give a pair. Show you care.", "Skivvies: that's the whole program. New underwear for people on day one of recovery.", "We've got recovery covered. Now let's cover their butts.", "Don't leave recovery hanging.", "Rock bottom is a place. Bare bottom is a choice. Ours.", "Shelters can't take used underwear. Think about that for a second.", "Fresh pair. Fresh start. Same day.", "Yes, we're a charity about underwear. No, we won't stop making the jokes.", "Step one: admit you need new drawers.", "Most people arrive with the clothes on their back. Sometimes not even all of those.", "Support comes in many forms. Ours has an elastic waistband.", "Boxers or briefs? Yes.", "The peach is a metaphor. The underwear is not.", "New. Tags on. Yours.", "Sobriety is hard. Underwear shouldn't be.", "Cheeky by name. Serious by nature.", "Socks are the most requested item at every shelter in America. Still true in Stark County.", "Keep coming back. Keep your pants on.", "Clean living starts with clean underwear.", "This is what dignity looks like at 6 a.m. on your first morning.", "One day at a time. One pair at a time.", "If you've been to the bottom, you know. If you haven't, we'll keep it brief.", "Underwear is the most needed and least donated piece of clothing. We're fixing the second half.", "Rock bottom has a dress code now.", "Not all heroes wear capes. Some just wear new underwear for the first time in months.", "Men and women. Stark County. Day one. That's who this is for.", "We can't fix everything. We can fix this.", "Thong story short: people starting over deserve the basics.", "Because rock bottom shouldn't be bare bottom.", "Skivvies. New basics for people starting recovery. Follow along.", "Bottoms up! Wait, wrong meeting.", "Higher power, lower coverage.", "Keep coming back. We've got your backside.", "Rock bottom is rough enough without going commando.", "The only thing we're enabling is better underwear.", "Brief encounters. Lasting recovery.", "Surrender your old ways. And those old boxers.", "Good things come to those who change their panties.", "Your sponsor can't fix everything. We can fix your drawers.", "Step one: get your briefs together.", "Less baggage. More cheekage.", "One day at a time. Two cheeks at a time.", "We believe in second chances and fresh underpants.", "Rock bottom looks better with fresh panties."];
 let sloganIdx=0;let deferredPrompt=null;
@@ -148,7 +228,9 @@ function home(){return `
 <section class="hero">
   <div class="pair"><img src="img/thong.png" alt="A thong with a sunrise behind it"><img src="img/boxers.png" alt="Boxer briefs with a sunrise behind it"></div>
   <h1 class="tag1">Because rock bottom <span>shouldn't be bare bottom.</span></h1>
+  <span class="hero-swoosh" aria-hidden="true"></span>
   <p class="tag2">One pair at a time.</p>
+  ${buttCount()}
   <button class="cta" data-go="kit"><span class="copy"><strong>Cover Someone's Butt</strong><small>$15 covers new underwear and socks for somebody's first day.</small></span><span class="right">→</span></button>
   <p class="scrollhint">Wait, what is this? ↓</p>
 </section>
@@ -225,12 +307,24 @@ return `<section class="page"><h1>Host an <span>Undie Sunday.</span></h1>
 <button class="action" type="submit">Sign us up →</button>
 </form></section>`}
 
-function about(){return `<section class="page"><h1>Who's <span>behind this?</span></h1>
-<p>People in recovery, mostly. We work in treatment, we've sat in those chairs, and we got tired of watching folks start over with nothing in the drawer.</p>
-<p>Skivvies gives new underwear, socks and basics to men and women entering local treatment programs in Stark County, Ohio. New only. No exceptions.</p>
-<div class="card"><h3>Say hi</h3><p><strong>hello@skivvies.org</strong></p><p>Instagram @skivviesproject · facebook.com/skivvies.org</p></div>
+function about(){return `<section class="page about">
+<div class="about-art"><img src="img/thong.png" alt=""><img src="img/boxers.png" alt=""></div>
+<h1>Happy. Joyous. Free. <span>Not freeballing.</span></h1>
+<p>I've worked in addiction treatment, and I've seen a lot of things. But one thing genuinely shocked me.</p>
+<p class="about-big">People were showing up to treatment without underwear.</p>
+<p>Not just without <em>clean</em> underwear. Without <em>any</em> underwear.</p>
+<p>And I got to thinking…</p>
+<blockquote class="about-quote">We're supposed to be happy, joyous, and free. Not happy, joyous, and freeballing.</blockquote>
+<p>That's where Skivvies comes in.</p>
+<p>We're a little project with a pretty simple mission: getting brand-new underwear and socks to men and women entering addiction treatment in Stark County, Ohio.</p>
+<p>Some people arrive with suitcases. Others arrive with everything they own in a plastic bag. Some arrive with nothing at all.</p>
+<p>We can't fix everything they're going through. But we can make sure they've got a clean pair of drawers when they start putting their lives back together.</p>
+<p class="about-big">We take recovery seriously. Ourselves? Not so much.</p>
+<p>Because dignity matters. Fresh starts matter. And sometimes making somebody's day a little better starts with covering their butt.</p>
+<div class="about-sign"><strong>Because rock bottom shouldn't be bare bottom.</strong><span>One pair at a time.</span></div>
 <button class="action" data-go="kit">Cover Someone's Butt →</button>
 <button class="linkbutton" data-go="drive">Host an Undie Sunday →</button>
+<div class="card"><h3>Say hi</h3><p><strong>hello@skivvies.org</strong></p><p>Instagram @skivviesproject · facebook.com/skivvies.org</p></div>
 </section>`}
 
 function share(){return `<section class="page"><h1>Spread the <span>word.</span></h1>
@@ -262,7 +356,7 @@ function navOpen(){return nav.classList.contains('open')}
 // opening the menu adds one history step, so the phone's back button (or iPhone edge swipe) closes it
 function openNav(){if(navOpen())return;setNav(true);history.pushState({page:page(),menu:true},'')}
 function closeNav(){if(!navOpen())return;setNav(false);if(history.state&&history.state.menu)history.back()}
-function render(){let p=page();app.innerHTML=({home,kit,drive,about,share,install}[p]||home)();shown=p;setNav(false);window.scrollTo(0,0)}
+function render(){let p=page();app.innerHTML=({home,kit,drive,about,share,install}[p]||home)();if(document.querySelector('#bc-tiles'))fillCount();shown=p;setNav(false);window.scrollTo(0,0)}
 function go(p){const url=p==='home'?location.pathname:'#'+p;if(history.state&&history.state.menu)history.replaceState({page:p},'',url);else if(p!==page())history.pushState({page:p},'',url);render()}
 history.replaceState({page:location.hash.slice(1)||'home'},'');
 window.addEventListener('popstate',()=>{const was=navOpen();if(history.state&&history.state.menu){setNav(true);return}setNav(false);if(page()!==shown)render();else if(!was)window.scrollTo(0,0)});
