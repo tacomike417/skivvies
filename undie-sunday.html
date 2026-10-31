@@ -174,10 +174,11 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a>
-  <div class="headright"><span class="pill">v0.9</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.10</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
+    <a href="/request-underwear" data-go="request">Request Underwear</a>
     <a href="/undie-sunday" data-go="drive">Host an Undie Sunday</a>
     <a href="/about" data-go="about">About</a>
     <a href="/share" data-go="share">Share Skivvies</a>
@@ -254,6 +255,7 @@ function home(){return `
   <p class="tag2">One pair at a time.</p>
   ${buttCount()}
   <button class="cta" data-go="kit"><span class="copy"><strong>Cover Someone's Butt</strong><small>$15 covers new underwear and socks for somebody's first day.</small></span><span class="right">→</span></button>
+  <button class="cta light" data-go="request"><span class="copy"><strong>Need underwear for your people?</strong><small>Sober house, treatment program or shelter in Stark County? Let us know.</small></span><span class="right">→</span></button>
   <p class="scrollhint">Wait, what is this? ↓</p>
 </section>
 
@@ -329,6 +331,23 @@ return `<section class="page"><h1>Host an <span>Undie Sunday.</span></h1>
 <button class="action" type="submit">Sign us up →</button>
 </form></section>`}
 
+function request(){if(state.reqSent)return `<section class="page"><div class="success"><div class="check">✓</div><h1>Got it.</h1><p>Thanks for looking out for your people. We'll reach out soon to see what we can do.</p></div><div class="actions"><button class="action" data-go="home">Back home</button></div></section>`;
+return `<section class="page"><h1>Need <span>underwear?</span></h1>
+<p>Run a sober house, treatment program or shelter in Stark County? Tell us about your people and we'll reach out to see what we can do. New underwear and socks only.</p>
+<form id="reqform" novalidate>
+<label class="field" for="r_place">Name of the place</label><input id="r_place" required minlength="2" maxlength="120" autocomplete="organization">
+<label class="field" for="r_type">What kind of place?</label><select id="r_type"><option>Sober house</option><option>Treatment program</option><option>Shelter</option><option>Other</option></select>
+<label class="field" for="r_name">Your name</label><input id="r_name" required minlength="2" maxlength="80" autocomplete="name">
+<label class="field" for="r_contact">Best phone or email</label><input id="r_contact" required minlength="5" maxlength="120" autocomplete="email" inputmode="email">
+<label class="field" for="r_per">About how many new people a month?</label><input id="r_per" type="number" inputmode="numeric" min="1" max="5000" placeholder="Rough guess is fine">
+<label class="field" for="r_who">For</label><select id="r_who"><option>Both</option><option>Men</option><option>Women</option></select>
+<label class="field" for="r_notes">Anything else</label><textarea id="r_notes" maxlength="1000" placeholder="Sizes you run short on, best time to reach you..."></textarea>
+<input id="r_web" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;opacity:0" name="website">
+<p class="hint">Please don't put anyone's name or health info in here. Just the place and how to reach you.</p>
+<p class="hint" id="r_err" role="alert" style="color:#c03a22;font-weight:800"></p>
+<button class="action" type="submit" id="r_send">Send it →</button>
+</form></section>`}
+
 function about(){return `<section class="page about">
 <div class="about-art"><img src="/img/thong.png" alt=""><img src="/img/boxers.png" alt=""></div>
 <h1>Happy. Joyous. Free. <span>Not freeballing.</span></h1>
@@ -372,9 +391,10 @@ ${deferredPrompt?`<button class="action" id="doinstall">Install Skivvies</button
 <li><b>3</b><span>Tap <strong>Install</strong>. Done.</span></li></ol>`}
 </section>`}
 // real page addresses (better for Google); old #about style links still work
-const PATHS={home:'/',kit:'/cover-someones-butt',drive:'/undie-sunday',about:'/about',share:'/share',install:'/install'};
+const PATHS={home:'/',kit:'/cover-someones-butt',request:'/request-underwear',drive:'/undie-sunday',about:'/about',share:'/share',install:'/install'};
 const META={home:["Skivvies — Because rock bottom shouldn't be bare bottom.","New underwear and socks for men and women on day one of recovery in Stark County, Ohio. Because rock bottom shouldn't be bare bottom."],
  kit:["Cover Someone's Butt — Skivvies","$15 covers new underwear and socks for somebody's first day of recovery in Stark County, Ohio."],
+ request:["Request Underwear — Skivvies","Run a sober house, treatment program or shelter in Stark County, Ohio? Tell us your people need new underwear and socks and we'll be in touch."],
  drive:["Host an Undie Sunday — Skivvies","Pick a Sunday, put out a box, collect new underwear and socks for people starting recovery in Stark County, Ohio. We'll come grab it."],
  about:["About — Happy. Joyous. Free. Not freeballing. — Skivvies","Why Skivvies exists: people were showing up to addiction treatment without underwear. We fix that part, one pair at a time, in Stark County, Ohio."],
  share:["Share Skivvies — Spread the word","Text it, post it, stick it on the church bulletin board. Share skivvies.org and the QR code."],
@@ -391,8 +411,8 @@ function navOpen(){return nav.classList.contains('open')}
 // opening the menu adds one history step, so the phone's back button (or iPhone edge swipe) closes it
 function openNav(){if(navOpen())return;setNav(true);history.pushState({page:page(),menu:true},'')}
 function closeNav(){if(!navOpen())return;setNav(false);if(history.state&&history.state.menu)history.back()}
-function render(){let p=page();setMeta(p);app.innerHTML=({home,kit,drive,about,share,install}[p]||home)();if(document.querySelector('#bc-tiles'))fillCount();shown=p;setNav(false);window.scrollTo(0,0)}
-function go(p){const url=PATHS[p]||'/';if(history.state&&history.state.menu)history.replaceState({page:p},'',url);else if(p!==page())history.pushState({page:p},'',url);render()}
+function render(){let p=page();setMeta(p);app.innerHTML=({home,kit,request,drive,about,share,install}[p]||home)();if(document.querySelector('#bc-tiles'))fillCount();shown=p;setNav(false);window.scrollTo(0,0)}
+function go(p){if(p==='request')state.reqSent=false;const url=PATHS[p]||'/';if(history.state&&history.state.menu)history.replaceState({page:p},'',url);else if(p!==page())history.pushState({page:p},'',url);render()}
 (()=>{const h=location.hash.slice(1);const p=PATHS[h]?h:pathPage();history.replaceState({page:p},'',PATHS[h]?PATHS[h]:location.pathname)})();
 window.addEventListener('popstate',()=>{const was=navOpen();if(history.state&&history.state.menu){setNav(true);return}setNav(false);if(page()!==shown)render();else if(!was)window.scrollTo(0,0)});
 menu.onclick=()=>{navOpen()?closeNav():openNav()};
@@ -412,7 +432,20 @@ if(e.target.id==='flyer'){toast('Flyer is coming soon.');return}
 if(e.target.id==='copy'){copyText(bulletin).then(()=>toast('Bulletin blurb copied.')).catch(()=>toast('Could not copy. Press and hold to copy it instead.'));return}});
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-kit]')){e.preventDefault();state.kit=e.target.dataset.kit;render()}});
 document.addEventListener('change',e=>{if(e.target.id==='monthly')state.monthly=e.target.checked;if(e.target.id==='qty'){state.qty=Math.max(1,Math.min(10000,parseInt(e.target.value,10)||1));render()}});
-document.addEventListener('submit',e=>{if(e.target.id==='driveform'){e.preventDefault();state.thanks=true;go('drive')}});
+document.addEventListener('submit',async e=>{if(e.target.id==='reqform'){e.preventDefault();const v=id=>document.getElementById(id).value.trim();const err=document.getElementById('r_err');
+ if(v('r_web')){state.reqSent=true;render();return}
+ const body={place_name:v('r_place'),place_type:v('r_type'),contact_name:v('r_name'),contact:v('r_contact'),people_per_month:parseInt(v('r_per'),10)||null,who:v('r_who'),notes:v('r_notes')||null};
+ if(body.place_name.length<2){err.textContent='Add the name of the place.';return}
+ if(body.contact_name.length<2){err.textContent='Add your name.';return}
+ if(body.contact.length<5){err.textContent='Add a phone number or email so we can reach you.';return}
+ const btn=document.getElementById('r_send');btn.disabled=true;btn.textContent='Sending…';err.textContent='';
+ try{const r=await fetch(SB_URL+'/rest/v1/skivvies_requests',{method:'POST',headers:{apikey:SB_KEY,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(body)});
+  if(!r.ok)throw 0;
+  fetch('https://rlytvfehbglsjfvprtbp.supabase.co/functions/v1/skivvies-ping',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}).catch(()=>{});
+  state.reqSent=true;render()}
+ catch(_){btn.disabled=false;btn.textContent='Send it →';err.textContent="That didn't go through. Try again, or email hello@skivvies.org."}
+ return}
+if(e.target.id==='driveform'){e.preventDefault();state.thanks=true;go('drive')}});
 // drag-to-scroll for the post strip (mouse on desktop; touch already scrolls)
 document.addEventListener('mousedown',e=>{const st=e.target.closest('.strip');if(!st)return;e.preventDefault();let x=e.pageX,sl=st.scrollLeft,moved=false;st.classList.add('dragging');
 const mv=ev=>{const dx=ev.pageX-x;if(Math.abs(dx)>3)moved=true;st.scrollLeft=sl-dx};

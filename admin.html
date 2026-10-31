@@ -35,6 +35,15 @@ input,select{width:100%;border:1px solid #bdcbc2;border-radius:12px;padding:13px
 .hist li:first-child{border-top:0}
 .hist b{font-weight:900}
 .hidden{display:none}
+.badge{display:inline-block;background:var(--coral);color:#fff;border-radius:20px;padding:2px 9px;font-size:12px;margin-left:6px;vertical-align:1px}
+.reqs{list-style:none;margin:0;padding:0}
+.reqs li{padding:14px 0;border-top:1px solid #f0e4dc}.reqs li:first-child{border-top:0}
+.reqs .top{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.reqs .place{font-weight:900;font-size:16px}.reqs .when{font-size:12px;color:var(--muted);white-space:nowrap}
+.reqs .meta{font-size:14px;color:var(--muted);margin:3px 0}.reqs .notes{font-size:14px;margin:6px 0;white-space:pre-wrap}
+.reqs a{color:var(--ink);font-weight:800}
+.reqs .done{opacity:.55}
+.mini{border:1px solid var(--ink);background:#fff;color:var(--ink);border-radius:10px;padding:7px 12px;font-weight:800;font-size:13px;cursor:pointer;margin-top:6px}
 .foot{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);margin-top:8px}
 .foot a{color:inherit;font-weight:700}
 </style>
@@ -73,8 +82,12 @@ input,select{width:100%;border:1px solid #bdcbc2;border-radius:12px;padding:13px
     <p class="msg" id="savemsg"></p>
     <p class="rule"><b>Count people, not packs.</b> Only people who actually got new underwear, each person once per year. A 3-pack split between 3 people = 3. Three pairs to one person = 1. Donations don't count until they're handed out.<br>The homepage shows question marks until this is 2 or more.</p>
   </form>
+  <div class="card" id="reqcard">
+    <label>Underwear requests <span class="badge hidden" id="reqbadge"></span></label>
+    <ul class="reqs" id="reqs"><li>Loading…</li></ul>
+  </div>
   <div class="card">
-    <label>Recent changes</label>
+    <label>Recent count changes</label>
     <ul class="hist" id="hist"><li>Loading…</li></ul>
   </div>
   <div class="foot"><a href="/">← Back to skivvies.org</a><button class="link" id="out2">Sign out</button></div>
@@ -106,7 +119,7 @@ async function boot(){
  if(!session){show('signin');return}
  const {data:isAdmin}=await sb.rpc('is_skivvies_admin');
  if(!isAdmin){$('#whoami').textContent=session.user.email;show('notadmin');return}
- show('panel');load()}
+ show('panel');load();loadRequests()}
 
 async function load(){
  const {data,error}=await sb.from('skivvies_butt_count').select('year,people,updated_at').order('year',{ascending:false});
@@ -121,6 +134,21 @@ async function loadHistory(){
  const {data}=await sb.from('skivvies_butt_count_log').select('year,old_people,new_people,changed_at').order('id',{ascending:false}).limit(12);
  const fmt=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
  $('#hist').innerHTML=(data&&data.length)?data.map(h=>`<li><span>${fmt(h.changed_at)} · ${h.year}</span><span>${h.old_people??'—'} → <b>${h.new_people}</b></span></li>`).join(''):'<li>No changes yet.</li>'}
+
+const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function loadRequests(){
+ const {data,error}=await sb.from('skivvies_requests').select('*').order('status',{ascending:false}).order('created_at',{ascending:false}).limit(50);
+ const ul=$('#reqs');if(error){ul.innerHTML=`<li>${esc(error.message)}</li>`;return}
+ const fresh=(data||[]).filter(r=>r.status==='new').length;const bd=$('#reqbadge');bd.textContent=fresh+' new';bd.classList.toggle('hidden',!fresh);
+ if(!data||!data.length){ul.innerHTML='<li>No requests yet.</li>';return}
+ const link=c=>/@/.test(c)?`<a href="mailto:${esc(c)}">${esc(c)}</a>`:`<a href="tel:${esc(c.replace(/[^\d+]/g,''))}">${esc(c)}</a>`;
+ const fmt=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+ ul.innerHTML=data.map(r=>`<li class="${r.status==='handled'?'done':''}"><div class="top"><span class="place">${esc(r.place_name)}</span><span class="when">${fmt(r.created_at)}</span></div>
+  <div class="meta">${esc(r.place_type)}${r.who?' · '+esc(r.who):''}${r.people_per_month?' · about '+r.people_per_month+'/month':''}</div>
+  <div class="meta">${esc(r.contact_name)} · ${link(r.contact)}</div>${r.notes?`<div class="notes">${esc(r.notes)}</div>`:''}
+  <button class="mini" data-req="${r.id}" data-to="${r.status==='new'?'handled':'new'}">${r.status==='new'?'Mark handled':'Move back to new'}</button></li>`).join('')}
+$('#reqs').onclick=async e=>{const b=e.target.closest('[data-req]');if(!b)return;b.disabled=true;
+ const to=b.dataset.to;await sb.from('skivvies_requests').update({status:to,handled_at:to==='handled'?new Date().toISOString():null}).eq('id',+b.dataset.req);loadRequests()};
 
 $('#countform').onsubmit=async e=>{e.preventDefault();const m=$('#savemsg');const n=parseInt($('#people').value,10),year=+$('#year').value;
  if(!(n>=0)){m.className='msg err';m.textContent='Type a whole number.';return}

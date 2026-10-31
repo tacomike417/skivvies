@@ -25,6 +25,7 @@ One to-do list for the whole project. New to-dos go here.
 - [x] Point skivvies.org DNS at GitHub Pages (repo: tacomike417/skivvies)
 - [x] SEO: real page addresses (/about, /undie-sunday, ...), titles, descriptions, share previews, sitemap.xml, robots.txt (v0.9). After editing index.html, run `python3 build.py` before pushing
 - [ ] Add skivvies.org to Google Search Console and submit sitemap.xml
+- [x] "Need underwear?" request form (/request-underwear): saved in Supabase, listed on /admin, emails hello@skivvies.org (v0.10)
 - [x] Admin page (skivvies.org/admin) to update the Butt Count — Supabase (Miscellaneous project), Mike only
 - [ ] Undie Sunday form: actually send/save submissions
 - [ ] Flyer PDF + bulletin blurb download
