@@ -1,0 +1,556 @@
+[
+ {
+  "n": 1,
+  "lane": "W",
+  "kind": "icon",
+  "line": "Because rock bottom shouldn't be bare bottom.",
+  "prompt": null,
+  "icon": "W1-thong-sunrise",
+  "bg": "cream",
+  "image": null
+ },
+ {
+  "n": 2,
+  "lane": "M",
+  "kind": "icon",
+  "line": "One pair at a time.",
+  "prompt": null,
+  "icon": "M1-boxerbriefs-sunrise",
+  "bg": "coral",
+  "image": null
+ },
+ {
+  "n": 3,
+  "lane": "P",
+  "kind": "product",
+  "line": "New underwear and socks for people starting recovery. Stark County, Ohio.",
+  "prompt": "a neat stack of brand-new men's boxer briefs with retail tags still on, sitting on a bare dorm-style bunk bed with a thin mattress, soft morning light",
+  "icon": null,
+  "bg": "ink",
+  "image": "images/03.png"
+ },
+ {
+  "n": 4,
+  "lane": "W",
+  "kind": "scene",
+  "line": "Help us briefly change lives.",
+  "prompt": "the coral cheeky panties with a white bow hanging by two wooden clothespins from a clothesline, sunrise rays behind",
+  "icon": null,
+  "bg": "cream",
+  "image": "images/04.png"
+ },
+ {
+  "n": 5,
+  "lane": "M",
+  "kind": "scene",
+  "line": "No ifs, ands, or bare butts.",
+  "prompt": "the coral boxer briefs sitting upright on a simple wooden bus-stop bench at sunrise, small suitcase beside them",
+  "icon": null,
+  "bg": "cream",
+  "image": "images/05.png"
+ },
+ {
+  "n": 6,
+  "lane": "P",
+  "kind": "product",
+  "line": "Nobody donates underwear. We do.",
+  "prompt": "a brown paper grocery bag on a plain table with sealed 3-packs of new underwear and white socks sticking out of the top",
+  "icon": null,
+  "bg": "ink",
+  "image": "images/06.png"
+ },
+ {
+  "n": 7,
+  "lane": "W",
+  "kind": "scene",
+  "line": "Everybody deserves a fresh start. Especially their underwear.",
+  "prompt": "the coral thong with a white bow next to a round bronze 24-hour recovery medallion, sunrise rays behind",
+  "icon": null,
+  "bg": "cream",
+  "image": "images/07.png"
+ },
+ {
+  "n": 8,
+  "lane": "M",
+  "kind": "icon",
+  "line": "New life. New undies. No exceptions.",
+  "prompt": null,
+  "icon": "M4-briefs-sunrise",
+  "bg": "coral",
+  "image": null
+ },
+ {
+  "n": 9,
+  "lane": "P",
+  "kind": "product",
+  "line": "Day one. Clean socks. It matters more than you'd think.",
+  "prompt": "a pair of new white crew socks with red and orange stripes folded neatly on a wooden church pew",
+  "icon": null,
+  "bg": "ink",
+  "image": "images/09.png"
+ },
+ {
+  "n": 10,
+  "lane": "W",
+  "kind": "icon",
+  "line": "Save a pair. Change a life.",
+  "prompt": null,
+  "icon": "W2-panties-sunrise",
+  "bg": "cream",
+  "image": null
+ },
+ {
+  "n": 11,
+  "lane": "M",
+  "kind": "icon",
+  "line": "Give a pair. Show you care.",
+  "prompt": null,
+  "icon": "M3-boxers-heart",
+  "bg": "coral",
+  "image": null
+ },
+ {
+  "n": 12,
+  "lane": "P",
+  "kind": "product",
+  "line": "Skivvies: that's the whole program. New underwear for people on day one of recovery.",
+  "prompt": "two hands holding out a sealed 3-pack of new men's boxer briefs, plain background, no face visible, cropped at the wrists",
+  "icon": null,
+  "bg": "ink",
+  "image": "images/12.png"
+ },
+ {
+  "n": 13,
+  "lane": "W",
+  "kind": "scene",
+  "line": "We've got recovery covered. Now let's cover their butts.",
+  "prompt": "the coral cheeky panties peeking out of an open white gift box with tissue paper",
+  "icon": null,
+  "bg": "cream",
+  "image": "images/13.png"
+ },
+ {
+  "n": 14,
+  "lane": "M",
+  "kind": "scene",
+  "line": "Don't leave recovery hanging.",
+  "prompt": "the coral boxers with a small white heart hanging from a single wall coat hook",
+  "icon": null,
+  "bg": "cream",
+  "image": "images/14.png"
+ },
+ {
+  "n": 15,
+  "lane": "W",
+  "kind": "icon",
+  "line": "Rock bottom is a place. Bare bottom is a choice. Ours.",
+  "prompt": null,
+  "icon": "W1-thong-sunrise",
+  "bg": "ink",
+  "image": null
+ },
+ {
+  "n": 16,
+  "lane": "P",
+  "kind": "product",
+  "line": "Shelters can't take used underwear. Think about that for a second.",
+  "prompt": "a cardboard donation box filled only with sealed new packs of underwear and socks, tags visible",
+  "icon": null,
+  "bg": "cream",
+  "image": "images/16.png"
+ },
+ {
+  "n": 17,
+  "lane": "M",
+  "kind": "icon",
+  "line": "Fresh pair. Fresh start. Same day.",
+  "prompt": null,
+  "icon": "M2-boxerbriefs-socks",
+  "bg": "coral",
+  "image": null
+ },
+ {
+  "n": 18,
+  "lane": "W",
+  "kind": "scene",
+  "line": "Yes, we're a charity about underwear. No, we won't stop making the jokes.",
+  "prompt": "the coral thong resting on a wooden church pew next to a closed hymnal",
+  "icon": "W1-thong-sunrise",
+  "bg": "ink",
+  "image": null,
+  "fallback": true
+ },
+ {
+  "n": 19,
+  "lane": "M",
+  "kind": "scene",
+  "line": "Step one: admit you need new drawers.",
+  "prompt": "the coral boxer briefs standing behind a small wooden podium with a microphone, like speaking at a meeting",
+  "icon": "M1-boxerbriefs-sunrise",
+  "bg": "cream",
+  "image": null,
+  "fallback": true
+ },
+ {
+  "n": 20,
+  "lane": "P",
+  "kind": "product",
+  "line": "Most people arrive with the clothes on their back. Sometimes not even all of those.",
+  "prompt": "a small, nearly empty duffel bag unzipped on a bare bed, one folded t-shirt inside",
+  "icon": "M2-boxerbriefs-socks",
+  "bg": "coral",
+  "image": null,
+  "fallback": true
+ },
+ {
+  "n": 21,
+  "lane": "W",
+  "kind": "icon",
+  "line": "Support comes in many forms. Ours has an elastic waistband.",
+  "prompt": null,
+  "icon": "W4-boxerbrief-socks",
+  "bg": "ink",
+  "image": null
+ },
+ {
+  "n": 22,
+  "lane": "M",
+  "kind": "scene",
+  "line": "Boxers or briefs? Yes.",
+  "prompt": "coral boxers and coral briefs standing side by side like two friends, sunrise behind",
+  "icon": "M2-boxerbriefs-socks",
+  "bg": "cream",
+  "image": null,
+  "fallback": true
+ },
+ {
+  "n": 23,
+  "lane": "W",
+  "kind": "scene",
+  "line": "The peach is a metaphor. The underwear is not.",
+  "prompt": "a coral peach with a leaf on the left, an arrow, and the coral thong on the right",
+  "icon": "W2-panties-sunrise",
+  "bg": "coral",
+  "image": null,
+  "fallback": true
+ },
+ {
+  "n": 24,
+  "lane": "P",
+  "kind": "product",
+  "line": "New. Tags on. Yours.",
+  "prompt": "a single pair of new boxer briefs with the retail tag still attached, laid on a folded white towel",
+  "icon": "W3-panties-socks",
+  "bg": "ink",
+  "image": null,
+  "fallback": true
+ },
+ {
+  "n": 25,
+  "lane": "M",
+  "kind": "icon",
+  "line": "Sobriety is hard. Underwear shouldn't be.",
+  "prompt": null,
+  "icon": "M1-boxerbriefs-sunrise",
+  "bg": "cream",
+  "image": null
+ },
+ {
+  "n": 26,
+  "lane": "W",
+  "kind": "icon",
+  "line": "Cheeky by name. Serious by nature.",
+  "prompt": null,
+  "icon": "W2-panties-sunrise",
+  "bg": "coral",
+  "image": null
+ },
+ {
+  "n": 27,
+  "lane": "P",
+  "kind": "product",
+  "line": "Socks are the most requested item at every shelter in America. Still true in Stark County.",
+  "prompt": "a big pile of new white crew socks on a plain table",
+  "icon": "W4-boxerbrief-socks",
+  "bg": "ink",
+  "image": null,
+  "fallback": true
+ },
+ {
+  "n": 28,
+  "lane": "M",
+  "kind": "scene",
+  "line": "Keep coming back. Keep your pants on.",
+  "prompt": "the coral boxer briefs holding a steaming paper coffee cup, folding chairs in the background",
+  "icon": "M3-boxers-heart",
+  "bg": "cream",
+  "image": null,
+  "fallback": true
+ },
+ {
+  "n": 29,
+  "lane": "W",
+  "kind": "icon",
+  "line": "Clean living starts with clean underwear.",
+  "prompt": null,
+  "icon": "W3-panties-socks",
+  "bg": "coral",
+  "image": null
+ },
+ {
+  "n": 30,
+  "lane": "P",
+  "kind": "product",
+  "line": "This is what dignity looks like at 6 a.m. on your first morning.",
+  "prompt": "new underwear and white socks laid out neatly on a wooden chair beside a made single bed, morning light",
+  "icon": "M1-boxerbriefs-sunrise",
+  "bg": "ink",
+  "image": null,
+  "fallback": true
+ },
+ {
+  "n": 31,
+  "lane": "M",
+  "kind": "icon",
+  "line": "One day at a time. One pair at a time.",
+  "prompt": null,
+  "icon": "M4-briefs-sunrise",
+  "bg": "cream",
+  "image": null
+ },
+ {
+  "n": 32,
+  "lane": "W",
+  "kind": "icon",
+  "line": "If you've been to the bottom, you know. If you haven't, we'll keep it brief.",
+  "prompt": null,
+  "icon": "W1-thong-sunrise",
+  "bg": "coral",
+  "image": null
+ },
+ {
+  "n": 33,
+  "lane": "P",
+  "kind": "product",
+  "line": "Underwear is the most needed and least donated piece of clothing. We're fixing the second half.",
+  "prompt": "an empty cardboard donation box next to a full one overflowing with new packaged underwear",
+  "icon": "M2-boxerbriefs-socks",
+  "bg": "ink",
+  "image": null,
+  "fallback": true
+ },
+ {
+  "n": 34,
+  "lane": "M",
+  "kind": "scene",
+  "line": "Rock bottom has a dress code now.",
+  "prompt": "the coral boxer briefs wearing a tiny black bow tie, sunrise behind",
+  "icon": "M4-briefs-sunrise",
+  "bg": "cream",
+  "image": null,
+  "fallback": true
+ },
+ {
+  "n": 35,
+  "lane": "W",
+  "kind": "icon",
+  "line": "Not all heroes wear capes. Some just wear new underwear for the first time in months.",
+  "prompt": null,
+  "icon": "W2-panties-sunrise",
+  "bg": "coral",
+  "image": null
+ },
+ {
+  "n": 36,
+  "lane": "P",
+  "kind": "product",
+  "line": "Men and women. Stark County. Day one. That's who this is for.",
+  "prompt": "a men's 3-pack and a women's 3-pack of new underwear side by side on a plain table",
+  "icon": "W3-panties-socks",
+  "bg": "ink",
+  "image": null,
+  "fallback": true
+ },
+ {
+  "n": 37,
+  "lane": "M",
+  "kind": "icon",
+  "line": "We can't fix everything. We can fix this.",
+  "prompt": null,
+  "icon": "M3-boxers-heart",
+  "bg": "cream",
+  "image": null
+ },
+ {
+  "n": 38,
+  "lane": "W",
+  "kind": "scene",
+  "line": "Thong story short: people starting over deserve the basics.",
+  "prompt": "the coral thong propped up reading an open book, small reading lamp",
+  "icon": "W3-panties-socks",
+  "bg": "coral",
+  "image": null,
+  "fallback": true
+ },
+ {
+  "n": 39,
+  "lane": "P",
+  "kind": "product",
+  "line": "Because rock bottom shouldn't be bare bottom.",
+  "prompt": "a tall stack of new folded underwear in cream light on a plain surface, tags visible",
+  "icon": "W4-boxerbrief-socks",
+  "bg": "ink",
+  "image": null,
+  "fallback": true
+ },
+ {
+  "n": 40,
+  "lane": "B",
+  "kind": "icon",
+  "line": "Skivvies. New basics for people starting recovery. Follow along.",
+  "prompt": null,
+  "icon": "W1-thong-sunrise",
+  "bg": "cream",
+  "image": null
+ },
+ {
+  "n": 41,
+  "lane": "W",
+  "kind": "icon",
+  "line": "Bottoms up! Wait, wrong meeting.",
+  "prompt": null,
+  "icon": "W1-thong-sunrise",
+  "bg": "coral",
+  "image": null
+ },
+ {
+  "n": 42,
+  "lane": "W",
+  "kind": "icon",
+  "line": "Higher power, lower coverage.",
+  "prompt": null,
+  "icon": "W2-panties-sunrise",
+  "bg": "ink",
+  "image": null
+ },
+ {
+  "n": 43,
+  "lane": "W",
+  "kind": "icon",
+  "line": "Keep coming back. We've got your backside.",
+  "prompt": null,
+  "icon": "W3-panties-socks",
+  "bg": "cream",
+  "image": null
+ },
+ {
+  "n": 44,
+  "lane": "M",
+  "kind": "icon",
+  "line": "Rock bottom is rough enough without going commando.",
+  "prompt": null,
+  "icon": "M2-boxerbriefs-socks",
+  "bg": "coral",
+  "image": null
+ },
+ {
+  "n": 45,
+  "lane": "M",
+  "kind": "icon",
+  "line": "The only thing we're enabling is better underwear.",
+  "prompt": null,
+  "icon": "M1-boxerbriefs-sunrise",
+  "bg": "ink",
+  "image": null
+ },
+ {
+  "n": 46,
+  "lane": "M",
+  "kind": "icon",
+  "line": "Brief encounters. Lasting recovery.",
+  "prompt": null,
+  "icon": "M4-briefs-sunrise",
+  "bg": "cream",
+  "image": null
+ },
+ {
+  "n": 47,
+  "lane": "M",
+  "kind": "icon",
+  "line": "Surrender your old ways. And those old boxers.",
+  "prompt": null,
+  "icon": "M3-boxers-heart",
+  "bg": "coral",
+  "image": null
+ },
+ {
+  "n": 48,
+  "lane": "W",
+  "kind": "icon",
+  "line": "Good things come to those who change their panties.",
+  "prompt": null,
+  "icon": "W2-panties-sunrise",
+  "bg": "ink",
+  "image": null
+ },
+ {
+  "n": 49,
+  "lane": "M",
+  "kind": "icon",
+  "line": "Your sponsor can't fix everything. We can fix your drawers.",
+  "prompt": null,
+  "icon": "M1-boxerbriefs-sunrise",
+  "bg": "cream",
+  "image": null
+ },
+ {
+  "n": 50,
+  "lane": "M",
+  "kind": "icon",
+  "line": "Step one: get your briefs together.",
+  "prompt": null,
+  "icon": "M4-briefs-sunrise",
+  "bg": "coral",
+  "image": null
+ },
+ {
+  "n": 51,
+  "lane": "W",
+  "kind": "icon",
+  "line": "Less baggage. More cheekage.",
+  "prompt": null,
+  "icon": "W4-boxerbrief-socks",
+  "bg": "ink",
+  "image": null
+ },
+ {
+  "n": 52,
+  "lane": "W",
+  "kind": "icon",
+  "line": "One day at a time. Two cheeks at a time.",
+  "prompt": null,
+  "icon": "W1-thong-sunrise",
+  "bg": "cream",
+  "image": null
+ },
+ {
+  "n": 53,
+  "lane": "M",
+  "kind": "icon",
+  "line": "We believe in second chances and fresh underpants.",
+  "prompt": null,
+  "icon": "M2-boxerbriefs-socks",
+  "bg": "coral",
+  "image": null
+ },
+ {
+  "n": 54,
+  "lane": "W",
+  "kind": "icon",
+  "line": "Rock bottom looks better with fresh panties.",
+  "prompt": null,
+  "icon": "W2-panties-sunrise",
+  "bg": "ink",
+  "image": null
+ }
+]
