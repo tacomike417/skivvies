@@ -49,6 +49,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 /* strip + slogan */
 .strip{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 20px 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .strip::-webkit-scrollbar{display:none}
+.strip{cursor:grab;user-select:none}.strip.dragging{cursor:grabbing;scroll-snap-type:none}.strip img{-webkit-user-drag:none;pointer-events:none}
 .strip img{flex:0 0 260px;width:260px;height:260px;border-radius:18px;scroll-snap-align:center;box-shadow:0 6px 20px #10252014;background:#fff}
 .slogan{background:#fff;border:2px solid var(--ink);border-radius:20px;padding:22px 20px;text-align:center;margin-top:6px}
 .slogan .q{transition:opacity .12s;font-weight:900;font-size:26px;line-height:1.08;letter-spacing:-.035em;min-height:3.3em;display:flex;align-items:center;justify-content:center}
@@ -110,7 +111,7 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <button class="brand" data-go="home" aria-label="Skivvies home">skivvies</button>
-  <div class="headright"><span class="pill">v0.5</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.6</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
 </header>
 <nav class="nav" id="nav" aria-label="Main navigation">
   <button data-go="home">Home</button>
@@ -268,6 +269,11 @@ if(e.target.id==='copy'){copyText(bulletin).then(()=>toast('Bulletin blurb copie
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-kit]')){e.preventDefault();state.kit=e.target.dataset.kit;render()}});
 document.addEventListener('change',e=>{if(e.target.id==='monthly')state.monthly=e.target.checked;if(e.target.id==='qty'){state.qty=Math.max(1,Math.min(10000,parseInt(e.target.value,10)||1));render()}});
 document.addEventListener('submit',e=>{if(e.target.id==='driveform'){e.preventDefault();state.thanks=true;go('drive')}});
+// drag-to-scroll for the post strip (mouse on desktop; touch already scrolls)
+document.addEventListener('mousedown',e=>{const st=e.target.closest('.strip');if(!st)return;e.preventDefault();let x=e.pageX,sl=st.scrollLeft,moved=false;st.classList.add('dragging');
+const mv=ev=>{const dx=ev.pageX-x;if(Math.abs(dx)>3)moved=true;st.scrollLeft=sl-dx};
+const up=()=>{st.classList.remove('dragging');document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up)};
+document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up)});
 render();
 </script>
 </body>
