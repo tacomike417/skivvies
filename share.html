@@ -131,7 +131,7 @@ textarea{min-height:90px}
 .bc-rays.l{left:-1cqw}.bc-rays.r{right:-1cqw}
 .bc-plate{position:relative;z-index:1;width:78cqw;margin:4cqw auto 0;aspect-ratio:900/399;background:url(/img/counter/plate.webp) center/100% 100% no-repeat}
 .bc-plaque{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
-.bc-plaque text{font:400 66px Anton,Inter,sans-serif;letter-spacing:3px;fill:#fff3df;paint-order:stroke;stroke:#0008;stroke-width:0}
+.bc-plaque text{font:400 56px Anton,Inter,sans-serif;letter-spacing:1.5px;fill:#fff3df;paint-order:stroke;stroke:#0008;stroke-width:0}
 .bc-plaque textPath{dominant-baseline:auto}
 .bc-tiles{position:absolute;left:50%;top:36%;transform:translateX(-50%);display:flex;gap:.6cqw;z-index:3}
 .tile{position:relative;width:20cqw;aspect-ratio:200/283;overflow:hidden;filter:drop-shadow(0 1.2cqw 0 #10252066)}
@@ -194,7 +194,7 @@ textarea{min-height:90px}
 let toastTimer;function toast(m){const t=document.querySelector('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2800)}
 function copyText(x){if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(x);return new Promise((ok,no)=>{const a=document.createElement('textarea');a.value=x;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();const done=document.execCommand('copy');a.remove();done?ok():no()})}
 
-// THE BUTT COUNT. The number lives in count.json, which only gets changed by a push to this repo
+// THE SKIVVIES COUNT. The number lives in count.json, which only gets changed by a push to this repo
 // (git history is the audit trail). "people" = individual people who actually RECEIVED new underwear
 // that reporting year, each person counted once. Under 2, or not set yet, the board shows the honest "coming soon" state.
 // the live number comes from Supabase (set at skivvies.org/admin); count.json is only a backup if that can't be reached
@@ -207,8 +207,8 @@ fetch(SB_URL+'/rest/v1/skivvies_butt_count?select=year,people&order=year.desc&li
 function buttCount(){return `<section class="bc" aria-labelledby="bc-h">
   <img class="bc-rays l" src="/img/counter/rays-left.webp" alt="" aria-hidden="true"><img class="bc-rays r" src="/img/counter/rays-right.webp" alt="" aria-hidden="true">
   <div class="bc-plate">
-    <h2 class="sr" id="bc-h">The <span data-bc-year></span>Butt Count</h2>
-    <svg class="bc-plaque" viewBox="0 0 900 399" aria-hidden="true"><path id="bc-arc" d="M120 126 Q450 52 780 126" fill="none"/><text><textPath href="#bc-arc" startOffset="50%" text-anchor="middle">THE <tspan data-bc-year></tspan>BUTT COUNT</textPath></text></svg>
+    <h2 class="sr" id="bc-h">The <span data-bc-year></span>Skivvies Count</h2>
+    <svg class="bc-plaque" viewBox="0 0 900 399" aria-hidden="true"><path id="bc-arc" d="M80 128 Q450 50 820 128" fill="none"/><text><textPath href="#bc-arc" startOffset="50%" text-anchor="middle">THE <tspan data-bc-year></tspan>SKIVVIES COUNT</textPath></text></svg>
     <div class="bc-tiles" id="bc-tiles" aria-hidden="true"></div>
   </div>
   <img class="bc-pile l" src="/img/counter/pile-left.webp" alt="" aria-hidden="true"><img class="bc-pile r" src="/img/counter/pile-right.webp" alt="" aria-hidden="true">
@@ -225,13 +225,13 @@ function fillCount(){const box=document.querySelector('#bc-tiles');if(!box)retur
   const rb=document.querySelector('#bc-ribbon');rb.innerHTML='<span>Counting starts soon!</span>';rb.classList.add('long');
   document.querySelector('#bc-line1').innerHTML='First pairs go out <em>soon.</em> Every butt gets counted.';
   document.querySelector('#bc-line2').textContent='Honest numbers only. No padding.';
-  document.querySelector('#bc-sr').textContent=`The ${yr?yr+' ':''}Butt Count: counting starts soon, once the first pairs are handed out.`;return}
+  document.querySelector('#bc-sr').textContent=`The ${yr?yr+' ':''}Skivvies Count: counting starts soon, once the first pairs are handed out.`;return}
  const ds=String(n).padStart(3,'0').split('');
  box.className='bc-tiles n'+Math.min(ds.length,6);box.innerHTML=ds.map(()=>`<span class="tile">${reel()}</span>`).join('');
  const rb=document.querySelector('#bc-ribbon');rb.classList.remove('long');rb.innerHTML=`<span>Butts covered!</span>`;
  document.querySelector('#bc-line1').innerHTML=`<em>${n.toLocaleString()}</em> fresh starts. <em>${n.toLocaleString()}</em> clean drawers.`;
  document.querySelector('#bc-line2').textContent="And we're just getting warmed up.";
- document.querySelector('#bc-sr').textContent=`The ${yr?yr+' ':''}Butt Count: ${n.toLocaleString()} butts covered.`;
+ document.querySelector('#bc-sr').textContent=`The ${yr?yr+' ':''}Skivvies Count: ${n.toLocaleString()} butts covered.`;
  const roll=()=>box.querySelectorAll('.reel').forEach((r,i)=>{r.style.setProperty('--t',(1.1+i*.35)+'s');r.style.setProperty('--d',ds[i])});
  // roll once when the board scrolls into view
  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){roll();return}
