@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#fff6f0">
+<title>Skivvies admin</title>
+<link rel="icon" href="/img/profile.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Anton&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#102520;--coral:#f35d40;--cream:#fff6f0;--muted:#52635c;--gold:#f8bc54}
+*{box-sizing:border-box}
+body{margin:0;background:#f2f3f0;color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit}
+.shell{max-width:430px;margin:0 auto;min-height:100dvh;background:var(--cream);padding:0 20px 40px}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 10px}
+.brand{font-size:28px;font-weight:900;letter-spacing:-.05em;color:var(--ink);text-decoration:none}
+.tag{background:var(--ink);color:#fff;border-radius:30px;padding:5px 11px;font-size:12px;font-weight:800}
+h1{font:400 34px/1 Anton,Inter,sans-serif;text-transform:uppercase;letter-spacing:.02em;margin:14px 0 6px}
+.lead{color:var(--muted);margin:0 0 18px;line-height:1.45}
+.card{background:#fff;border:1px solid #e6d9d0;border-radius:18px;padding:18px;margin:0 0 16px}
+label{display:block;font-weight:800;font-size:14px;margin:0 0 6px}
+input,select{width:100%;border:1px solid #bdcbc2;border-radius:12px;padding:13px;background:#fff;color:var(--ink);font-size:16px}
+.big{font:900 56px/1 Inter,sans-serif;text-align:center;letter-spacing:-.03em;padding:14px 10px}
+.row{display:grid;grid-template-columns:1fr;gap:12px}
+.btn{width:100%;border:0;border-radius:14px;background:var(--coral);color:#fff;padding:16px;font-weight:900;font-size:17px;cursor:pointer}
+.btn:disabled{background:#c1c9c3}
+.link{background:none;border:0;color:#d94b32;font-weight:800;text-decoration:underline;text-underline-offset:4px;padding:8px 0;cursor:pointer}
+.rule{font-size:13px;color:var(--muted);line-height:1.45;margin:10px 0 0}
+.msg{min-height:22px;font-weight:800;font-size:14px;margin:10px 0 0}
+.msg.ok{color:#2f7d55}.msg.err{color:#c03a22}
+.hist{list-style:none;margin:0;padding:0}
+.hist li{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid #f0e4dc;font-size:14px}
+.hist li:first-child{border-top:0}
+.hist b{font-weight:900}
+.hidden{display:none}
+.foot{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);margin-top:8px}
+.foot a{color:inherit;font-weight:700}
+</style>
+</head>
+<body>
+<div class="shell">
+<header><a class="brand" href="/">skivvies</a><span class="tag">Admin</span></header>
+
+<!-- signed out -->
+<section id="signin" class="hidden">
+  <h1>Butt Count admin</h1>
+  <p class="lead">Sign in to update the number on the homepage.</p>
+  <form class="card row" id="signform">
+    <div><label for="email">Email</label><input id="email" type="email" autocomplete="email" required></div>
+    <div><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password" minlength="8" required></div>
+    <button class="btn" id="signbtn">Sign in</button>
+    <p class="msg" id="signmsg"></p>
+    <button type="button" class="link" id="togglemode">First time here? Create your login</button>
+  </form>
+</section>
+
+<!-- signed in, not an admin -->
+<section id="notadmin" class="hidden">
+  <h1>Almost there</h1>
+  <p class="lead">You're signed in as <b id="whoami"></b>, but this login isn't set up as the Skivvies admin yet.</p>
+  <button class="link" id="out1">Sign out</button>
+</section>
+
+<!-- the admin -->
+<section id="panel" class="hidden">
+  <h1>The Butt Count</h1>
+  <p class="lead">This is the number on the homepage scoreboard.</p>
+  <form class="card row" id="countform">
+    <div><label for="year">Year</label><select id="year"></select></div>
+    <div><label for="people">People covered</label><input id="people" class="big" type="number" inputmode="numeric" min="0" max="999999" step="1" required></div>
+    <button class="btn" id="savebtn">Save</button>
+    <p class="msg" id="savemsg"></p>
+    <p class="rule"><b>Count people, not packs.</b> Only people who actually got new underwear, each person once per year. A 3-pack split between 3 people = 3. Three pairs to one person = 1. Donations don't count until they're handed out.<br>The homepage shows question marks until this is 2 or more.</p>
+  </form>
+  <div class="card">
+    <label>Recent changes</label>
+    <ul class="hist" id="hist"><li>Loading…</li></ul>
+  </div>
+  <div class="foot"><a href="/">← Back to skivvies.org</a><button class="link" id="out2">Sign out</button></div>
+</section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SB_URL='https://gxkvfkrtisfamrkugezx.supabase.co';
+const SB_KEY='sb_publishable_F4tfLsMOP45OISv_InmMnQ_jRKu3zTy'; // public key; the database rules decide who can change things
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const $=s=>document.querySelector(s);
+const show=id=>['signin','notadmin','panel'].forEach(x=>$('#'+x).classList.toggle('hidden',x!==id));
+let creating=false,rows=[];
+
+function setMode(c){creating=c;$('#signbtn').textContent=c?'Create my login':'Sign in';$('#togglemode').textContent=c?'Already have a login? Sign in':'First time here? Create your login';$('#pw').autocomplete=c?'new-password':'current-password'}
+$('#togglemode').onclick=()=>{setMode(!creating);$('#signmsg').textContent=''};
+$('#signform').onsubmit=async e=>{e.preventDefault();const m=$('#signmsg');m.className='msg';m.textContent='One sec…';$('#signbtn').disabled=true;
+ const email=$('#email').value.trim(),password=$('#pw').value;
+ const r=creating?await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin+'/admin'}}):await sb.auth.signInWithPassword({email,password});
+ $('#signbtn').disabled=false;
+ if(r.error){m.className='msg err';m.textContent=r.error.message;return}
+ if(creating&&!r.data.session){setMode(false);m.className='msg ok';m.textContent='Check your email for a confirm link, then come back here and sign in.';return}
+ boot()};
+[$('#out1'),$('#out2')].forEach(b=>b.onclick=async()=>{await sb.auth.signOut();boot()});
+
+async function boot(){
+ const {data:{session}}=await sb.auth.getSession();
+ if(!session){show('signin');return}
+ const {data:isAdmin}=await sb.rpc('is_skivvies_admin');
+ if(!isAdmin){$('#whoami').textContent=session.user.email;show('notadmin');return}
+ show('panel');load()}
+
+async function load(){
+ const {data,error}=await sb.from('skivvies_butt_count').select('year,people,updated_at').order('year',{ascending:false});
+ if(error){$('#savemsg').className='msg err';$('#savemsg').textContent=error.message;return}
+ rows=data||[];const now=new Date().getFullYear();const years=new Set(rows.map(r=>r.year));years.add(now);
+ const sel=$('#year');const cur=sel.value;sel.innerHTML=[...years].sort((a,b)=>b-a).map(y=>`<option value="${y}">${y}</option>`).join('');
+ sel.value=cur&&years.has(+cur)?cur:String(rows[0]?.year||now);fillPeople();loadHistory()}
+function fillPeople(){const r=rows.find(r=>r.year===+$('#year').value);$('#people').value=r?r.people:0}
+$('#year').onchange=fillPeople;
+
+async function loadHistory(){
+ const {data}=await sb.from('skivvies_butt_count_log').select('year,old_people,new_people,changed_at').order('id',{ascending:false}).limit(12);
+ const fmt=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+ $('#hist').innerHTML=(data&&data.length)?data.map(h=>`<li><span>${fmt(h.changed_at)} · ${h.year}</span><span>${h.old_people??'—'} → <b>${h.new_people}</b></span></li>`).join(''):'<li>No changes yet.</li>'}
+
+$('#countform').onsubmit=async e=>{e.preventDefault();const m=$('#savemsg');const n=parseInt($('#people').value,10),year=+$('#year').value;
+ if(!(n>=0)){m.className='msg err';m.textContent='Type a whole number.';return}
+ const old=rows.find(r=>r.year===year);
+ if(old&&n<old.people&&!confirm(`Lower the ${year} count from ${old.people} to ${n}?`))return;
+ $('#savebtn').disabled=true;m.className='msg';m.textContent='Saving…';
+ const {error}=await sb.from('skivvies_butt_count').upsert({year,people:n},{onConflict:'year'});
+ $('#savebtn').disabled=false;
+ if(error){m.className='msg err';m.textContent=error.message;return}
+ m.className='msg ok';m.textContent=n>=2?`Saved. The homepage now shows ${n.toLocaleString()}.`:'Saved. The homepage keeps the question marks until this hits 2.';load()};
+
+sb.auth.onAuthStateChange((ev)=>{if(ev==='SIGNED_IN'||ev==='SIGNED_OUT')boot()});
+boot();
+</script>
+</body>
+</html>

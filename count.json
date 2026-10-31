@@ -1,5 +1,5 @@
 {
   "year": 2026,
   "people": null,
-  "note": "people = individual people who actually received new underwear this year, each counted once. Leave null until the first pairs go out."
+  "note": "Backup only. The live number is set at skivvies.org/admin (Supabase). people = individual people who actually received new underwear this year, each counted once."
 }
