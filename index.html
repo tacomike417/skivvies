@@ -118,7 +118,9 @@ textarea{min-height:90px}
 .bc-rays{position:absolute;top:0;width:24cqw;height:auto;z-index:0;pointer-events:none}
 .bc-rays.l{left:-1cqw}.bc-rays.r{right:-1cqw}
 .bc-plate{position:relative;z-index:1;width:78cqw;margin:4cqw auto 0;aspect-ratio:900/399;background:url(img/counter/plate.webp) center/100% 100% no-repeat}
-.bc-plaque{position:absolute;left:14%;right:14%;top:4%;height:31%;margin:0;display:flex;align-items:center;justify-content:center;color:#fff3df;font:400 6.4cqw/1 Anton,Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;text-shadow:0 2px 0 #0008;white-space:nowrap}
+.bc-plaque{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.bc-plaque text{font:400 66px Anton,Inter,sans-serif;letter-spacing:3px;fill:#fff3df;paint-order:stroke;stroke:#0008;stroke-width:0}
+.bc-plaque textPath{dominant-baseline:auto}
 .bc-tiles{position:absolute;left:50%;top:36%;transform:translateX(-50%);display:flex;gap:.6cqw;z-index:3}
 .tile{position:relative;width:20cqw;aspect-ratio:200/283;overflow:hidden;filter:drop-shadow(0 1.2cqw 0 #10252066)}
 .bc-tiles.n4 .tile{width:16.5cqw}.bc-tiles.n5 .tile{width:13.5cqw}.bc-tiles.n6 .tile{width:11.4cqw}
@@ -186,7 +188,8 @@ let COUNT=null;fetch('count.json',{cache:'no-store'}).then(r=>r.ok?r.json():null
 function buttCount(){return `<section class="bc" aria-labelledby="bc-h">
   <img class="bc-rays l" src="img/counter/rays-left.webp" alt="" aria-hidden="true"><img class="bc-rays r" src="img/counter/rays-right.webp" alt="" aria-hidden="true">
   <div class="bc-plate">
-    <h2 class="bc-plaque" id="bc-h"><span>The <span id="bc-year"></span>Butt Count</span></h2>
+    <h2 class="sr" id="bc-h">The <span data-bc-year></span>Butt Count</h2>
+    <svg class="bc-plaque" viewBox="0 0 900 399" aria-hidden="true"><path id="bc-arc" d="M120 126 Q450 52 780 126" fill="none"/><text><textPath href="#bc-arc" startOffset="50%" text-anchor="middle">THE <tspan data-bc-year></tspan>BUTT COUNT</textPath></text></svg>
     <div class="bc-tiles" id="bc-tiles" aria-hidden="true"></div>
   </div>
   <img class="bc-pile l" src="img/counter/pile-left.webp" alt="" aria-hidden="true"><img class="bc-pile r" src="img/counter/pile-right.webp" alt="" aria-hidden="true">
@@ -197,7 +200,7 @@ function buttCount(){return `<section class="bc" aria-labelledby="bc-h">
 function fillCount(){const box=document.querySelector('#bc-tiles');if(!box)return;
  const n=COUNT&&Number.isInteger(COUNT.people)&&COUNT.people>=2?COUNT.people:null;
  const yr=COUNT&&COUNT.year?COUNT.year:'';
- document.querySelector('#bc-year').textContent=yr?yr+' ':'';
+ document.querySelectorAll('[data-bc-year]').forEach(e=>e.textContent=yr?yr+' ':'');
  const reel=()=>`<span class="reel">${[0,1,2,3,4,5,6,7,8,9].map(x=>`<img src="img/counter/digit_${x}.webp" alt="">`).join('')}</span>`;
  if(n===null){box.className='bc-tiles';box.innerHTML=Array(3).fill(`<span class="tile q"><b>?</b></span>`).join('');
   const rb=document.querySelector('#bc-ribbon');rb.innerHTML='<span>Counting starts soon!</span>';rb.classList.add('long');
