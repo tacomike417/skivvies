@@ -448,7 +448,7 @@ function closeNav(){if(!navOpen())return;setNav(false);if(history.state&&history
 let lastCounted=null;
 function countVisit(p){const path=PATHS[p]||'/';if(path===lastCounted)return;lastCounted=path;
  const go=()=>{try{window.goatcounter.count({path,title:document.title})}catch(_){}};
- if(window.goatcounter&&window.goatcounter.count)go();else setTimeout(()=>{if(window.goatcounter&&window.goatcounter.count&&lastCounted===path)go()},2500)}
+ let tries=0;const wait=()=>{if(lastCounted!==path)return;if(window.goatcounter&&window.goatcounter.count)return go();if(++tries<40)setTimeout(wait,250)};wait()}
 function render(){let p=page();setMeta(p);app.innerHTML=({home,kit,request,drive,about,privacy,share,install}[p]||home)();if(document.querySelector('#bc-tiles'))fillCount();turnstile();countVisit(p);shown=p;setNav(false);window.scrollTo(0,0)}
 function go(p){if(p==='request')state.reqSent=false;if(p==='drive')state.thanks=false;const url=PATHS[p]||'/';if(history.state&&history.state.menu)history.replaceState({page:p},'',url);else if(p!==page())history.pushState({page:p},'',url);render()}
 (()=>{const h=location.hash.slice(1);const p=PATHS[h]?h:pathPage();history.replaceState({page:p},'',PATHS[h]?PATHS[h]:location.pathname)})();
