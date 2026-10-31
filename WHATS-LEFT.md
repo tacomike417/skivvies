@@ -25,9 +25,16 @@ One to-do list for the whole project. New to-dos go here.
 - [x] Point skivvies.org DNS at GitHub Pages (repo: tacomike417/skivvies)
 - [x] SEO: real page addresses (/about, /undie-sunday, ...), titles, descriptions, share previews, sitemap.xml, robots.txt (v0.9). After editing index.html, run `python3 build.py` before pushing
 - [ ] Add skivvies.org to Google Search Console and submit sitemap.xml
+- [x] Privacy page (/privacy) — have Theodore look it over with the Cornerstones paperwork
+- [x] Skivvies Count shows the LIFETIME total (all years added); admin still enters one number per year
+- [ ] GoatCounter: make the free account with code "skivvies" (counting code is already on the site)
+- [ ] Turnstile spam check: get a Cloudflare Turnstile site key + secret; paste site key in index.html, secret into Supabase (Miscellaneous) as TURNSTILE_SECRET
+- [ ] Optional: put RESEND_API_KEY in the Miscellaneous project too, so Skivvies email stops borrowing the Recovery Misfits one
+- [ ] Gmail "Send mail as" hello@skivvies.org
+- [ ] Amazon wish list + "Buy a pack" button (needs a P.O. box or other ship-to address)
 - [x] "Need underwear?" request form (/request-underwear): saved in Supabase, listed on /admin, emails hello@skivvies.org (v0.10)
 - [x] Admin page (skivvies.org/admin) to update the Butt Count — Supabase (Miscellaneous project), Mike only
-- [ ] Undie Sunday form: actually send/save submissions
+- [x] Undie Sunday form: saved in Supabase, listed on /admin, emailed (v0.11)
 - [ ] Flyer PDF + bulletin blurb download
 - [ ] EIN and public contact email on About
 

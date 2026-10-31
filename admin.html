@@ -34,7 +34,7 @@ input,select{width:100%;border:1px solid #bdcbc2;border-radius:12px;padding:13px
 .hist li{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid #f0e4dc;font-size:14px}
 .hist li:first-child{border-top:0}
 .hist b{font-weight:900}
-.hidden{display:none}
+.hidden,.badge.hidden{display:none}
 .badge{display:inline-block;background:var(--coral);color:#fff;border-radius:20px;padding:2px 9px;font-size:12px;margin-left:6px;vertical-align:1px}
 .reqs{list-style:none;margin:0;padding:0}
 .reqs li{padding:14px 0;border-top:1px solid #f0e4dc}.reqs li:first-child{border-top:0}
@@ -74,14 +74,18 @@ input,select{width:100%;border:1px solid #bdcbc2;border-radius:12px;padding:13px
 <!-- the admin -->
 <section id="panel" class="hidden">
   <h1>The Skivvies Count</h1>
-  <p class="lead">This is the number on the homepage scoreboard.</p>
+  <p class="lead">The homepage shows the <b>lifetime total</b>: every year added together. Right now that's <b id="lifetime">…</b>.</p>
   <form class="card row" id="countform">
     <div><label for="year">Year</label><select id="year"></select></div>
-    <div><label for="people">Butts covered</label><input id="people" class="big" type="number" inputmode="numeric" min="0" max="999999" step="1" required></div>
+    <div><label for="people">Butts covered that year</label><input id="people" class="big" type="number" inputmode="numeric" min="0" max="999999" step="1" required></div>
     <button class="btn" id="savebtn">Save</button>
     <p class="msg" id="savemsg"></p>
-    <p class="rule"><b>Count people, not packs.</b> Only people who actually got new underwear, each person once per year. A 3-pack split between 3 people = 3. Three pairs to one person = 1. Donations don't count until they're handed out.<br>The homepage shows question marks until this is 2 or more.</p>
+    <p class="rule">Type the total for the year you pick. The homepage adds all the years together.<br><b>Count people, not packs.</b> Only people who actually got new underwear, each person once per year. A 3-pack split between 3 people = 3. Three pairs to one person = 1. Donations don't count until they're handed out.<br>The homepage shows question marks until the lifetime total is 2 or more.</p>
   </form>
+  <div class="card" id="drvcard">
+    <label>Undie Sunday sign-ups <span class="badge hidden" id="drvbadge"></span></label>
+    <ul class="reqs" id="drives"><li>Loading…</li></ul>
+  </div>
   <div class="card" id="reqcard">
     <label>Underwear requests <span class="badge hidden" id="reqbadge"></span></label>
     <ul class="reqs" id="reqs"><li>Loading…</li></ul>
@@ -119,12 +123,12 @@ async function boot(){
  if(!session){show('signin');return}
  const {data:isAdmin}=await sb.rpc('is_skivvies_admin');
  if(!isAdmin){$('#whoami').textContent=session.user.email;show('notadmin');return}
- show('panel');load();loadRequests()}
+ show('panel');load();loadRequests();loadDrives()}
 
 async function load(){
  const {data,error}=await sb.from('skivvies_butt_count').select('year,people,updated_at').order('year',{ascending:false});
  if(error){$('#savemsg').className='msg err';$('#savemsg').textContent=error.message;return}
- rows=data||[];const now=new Date().getFullYear();const years=new Set(rows.map(r=>r.year));years.add(now);
+ rows=data||[];const life=rows.reduce((t,r)=>t+(r.people||0),0);$('#lifetime').textContent=life.toLocaleString()+(life<2?' (homepage shows ? ? ? until 2)':'');const now=new Date().getFullYear();const years=new Set(rows.map(r=>r.year));years.add(now);
  const sel=$('#year');const cur=sel.value;sel.innerHTML=[...years].sort((a,b)=>b-a).map(y=>`<option value="${y}">${y}</option>`).join('');
  sel.value=cur&&years.has(+cur)?cur:String(rows[0]?.year||now);fillPeople();loadHistory()}
 function fillPeople(){const r=rows.find(r=>r.year===+$('#year').value);$('#people').value=r?r.people:0}
@@ -150,6 +154,20 @@ async function loadRequests(){
 $('#reqs').onclick=async e=>{const b=e.target.closest('[data-req]');if(!b)return;b.disabled=true;
  const to=b.dataset.to;await sb.from('skivvies_requests').update({status:to,handled_at:to==='handled'?new Date().toISOString():null}).eq('id',+b.dataset.req);loadRequests()};
 
+async function loadDrives(){
+ const {data,error}=await sb.from('skivvies_drives').select('*').order('status',{ascending:false}).order('created_at',{ascending:false}).limit(50);
+ const ul=$('#drives');if(error){ul.innerHTML=`<li>${esc(error.message)}</li>`;return}
+ const fresh=(data||[]).filter(r=>r.status==='new').length;const bd=$('#drvbadge');bd.textContent=fresh+' new';bd.classList.toggle('hidden',!fresh);
+ if(!data||!data.length){ul.innerHTML='<li>No sign-ups yet.</li>';return}
+ const fmt=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+ const day=d=>d?new Date(d+'T12:00:00').toLocaleDateString([], {month:'short',day:'numeric'}):'';
+ ul.innerHTML=data.map(r=>`<li class="${r.status==='handled'?'done':''}"><div class="top"><span class="place">${esc(r.organization)}</span><span class="when">${fmt(r.created_at)}</span></div>
+  <div class="meta">${r.drive_date?'Sunday '+esc(day(r.drive_date)):'No date yet'}${r.collecting_for?' · '+esc(r.collecting_for):''}${r.headcount?' · about '+r.headcount+' people':''}</div>
+  <div class="meta">${esc(r.contact_name)} · <a href="tel:${esc(String(r.phone).replace(/[^\d+]/g,''))}">${esc(r.phone)}</a> · <a href="mailto:${esc(r.email)}">${esc(r.email)}</a></div>${r.notes?`<div class="notes">${esc(r.notes)}</div>`:''}
+  <button class="mini" data-drv="${r.id}" data-to="${r.status==='new'?'handled':'new'}">${r.status==='new'?'Mark handled':'Move back to new'}</button></li>`).join('')}
+$('#drives').onclick=async e=>{const b=e.target.closest('[data-drv]');if(!b)return;b.disabled=true;
+ const to=b.dataset.to;await sb.from('skivvies_drives').update({status:to,handled_at:to==='handled'?new Date().toISOString():null}).eq('id',+b.dataset.drv);loadDrives()};
+
 $('#countform').onsubmit=async e=>{e.preventDefault();const m=$('#savemsg');const n=parseInt($('#people').value,10),year=+$('#year').value;
  if(!(n>=0)){m.className='msg err';m.textContent='Type a whole number.';return}
  const old=rows.find(r=>r.year===year);
@@ -158,7 +176,7 @@ $('#countform').onsubmit=async e=>{e.preventDefault();const m=$('#savemsg');cons
  const {error}=await sb.from('skivvies_butt_count').upsert({year,people:n},{onConflict:'year'});
  $('#savebtn').disabled=false;
  if(error){m.className='msg err';m.textContent=error.message;return}
- m.className='msg ok';m.textContent=n>=2?`Saved. The homepage now shows ${n.toLocaleString()}.`:'Saved. The homepage keeps the question marks until this hits 2.';load()};
+ m.className='msg ok';m.textContent=`Saved ${year}.`;load()};
 
 sb.auth.onAuthStateChange((ev)=>{if(ev==='SIGNED_IN'||ev==='SIGNED_OUT')boot()});
 boot();
