@@ -41,6 +41,13 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .cta .right{font-size:24px}
 .scrollhint{font-size:13px;color:var(--muted);margin:14px 0 0}
 
+/* strip + slogan */
+.strip{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 20px 14px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.strip img{flex:0 0 260px;width:260px;height:260px;border-radius:18px;scroll-snap-align:center;box-shadow:0 6px 20px #10252014;background:#fff}
+.slogan{background:#fff;border:2px solid var(--ink);border-radius:20px;padding:22px 20px;text-align:center;margin-top:6px}
+.slogan .q{transition:opacity .12s;font-weight:900;font-size:26px;line-height:1.08;letter-spacing:-.035em;min-height:3.3em;display:flex;align-items:center;justify-content:center}
+.slogan button{margin-top:14px;border:0;background:var(--coral);color:#fff;border-radius:12px;padding:13px 18px;font-weight:850;font-size:15px}
 /* sections */
 .section{padding:30px 22px}
 .section.coral{background:var(--coral);color:#fff}
@@ -93,7 +100,7 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <button class="brand" data-go="home" aria-label="Skivvies home">skivvies</button>
-  <div class="headright"><span class="pill">v0.3</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.4</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
 </header>
 <nav class="nav" id="nav" aria-label="Main navigation">
   <button data-go="home">Home</button>
@@ -108,6 +115,9 @@ textarea{min-height:90px}
 <script>
 let toastTimer;function toast(m){const t=document.querySelector('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2800)}
 function copyText(x){if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(x);return new Promise((ok,no)=>{const a=document.createElement('textarea');a.value=x;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();const done=document.execCommand('copy');a.remove();done?ok():no()})}
+const STRIP=["03", "04", "05", "06", "07", "09", "12", "13", "14", "16", "01", "02"];
+const SLOGANS=["Because rock bottom shouldn't be bare bottom.", "One pair at a time.", "New underwear and socks for people starting recovery. Stark County, Ohio.", "Help us briefly change lives.", "No ifs, ands, or bare butts.", "Nobody donates underwear. We do.", "Everybody deserves a fresh start. Especially their underwear.", "New life. New undies. No exceptions.", "Day one. Clean socks. It matters more than you'd think.", "Save a pair. Change a life.", "Give a pair. Show you care.", "Skivvies: that's the whole program. New underwear for people on day one of recovery.", "We've got recovery covered. Now let's cover their butts.", "Don't leave recovery hanging.", "Rock bottom is a place. Bare bottom is a choice. Ours.", "Shelters can't take used underwear. Think about that for a second.", "Fresh pair. Fresh start. Same day.", "Yes, we're a charity about underwear. No, we won't stop making the jokes.", "Step one: admit you need new drawers.", "Most people arrive with the clothes on their back. Sometimes not even all of those.", "Support comes in many forms. Ours has an elastic waistband.", "Boxers or briefs? Yes.", "The peach is a metaphor. The underwear is not.", "New. Tags on. Yours.", "Sobriety is hard. Underwear shouldn't be.", "Cheeky by name. Serious by nature.", "Socks are the most requested item at every shelter in America. Still true in Stark County.", "Keep coming back. Keep your pants on.", "Clean living starts with clean underwear.", "This is what dignity looks like at 6 a.m. on your first morning.", "One day at a time. One pair at a time.", "If you've been to the bottom, you know. If you haven't, we'll keep it brief.", "Underwear is the most needed and least donated piece of clothing. We're fixing the second half.", "Rock bottom has a dress code now.", "Not all heroes wear capes. Some just wear new underwear for the first time in months.", "Men and women. Stark County. Day one. That's who this is for.", "We can't fix everything. We can fix this.", "Thong story short: people starting over deserve the basics.", "Because rock bottom shouldn't be bare bottom.", "Skivvies. New basics for people starting recovery. Follow along.", "Bottoms up! Wait, wrong meeting.", "Higher power, lower coverage.", "Keep coming back. We've got your backside.", "Rock bottom is rough enough without going commando.", "The only thing we're enabling is better underwear.", "Brief encounters. Lasting recovery.", "Surrender your old ways. And those old boxers.", "Good things come to those who change their panties.", "Your sponsor can't fix everything. We can fix your drawers.", "Step one: get your briefs together.", "Less baggage. More cheekage.", "One day at a time. Two cheeks at a time.", "We believe in second chances and fresh underpants.", "Rock bottom looks better with fresh panties."];
+let sloganIdx=0;
 const app=document.querySelector('#app'),nav=document.querySelector('#nav'),menu=document.querySelector('#menu');
 let state={kit:'men',qty:1,monthly:false,thanks:false};
 const bulletin='Join our Undie Sunday for Skivvies! Bring NEW underwear and socks to help men and women starting recovery in Stark County, Ohio. Because rock bottom shouldn\'t be bare bottom. skivvies.org';
@@ -117,7 +127,7 @@ function home(){return `
   <div class="pair"><img src="img/thong.png" alt="A thong with a sunrise behind it"><img src="img/boxers.png" alt="Boxer briefs with a sunrise behind it"></div>
   <h1 class="tag1">Because rock bottom <span>shouldn't be bare bottom.</span></h1>
   <p class="tag2">One pair at a time.</p>
-  <button class="cta" data-go="kit"><span class="copy"><strong>Cover Someone's Butt</strong><small>$15 puts new underwear, socks and a tee on somebody's first day.</small></span><span class="right">→</span></button>
+  <button class="cta" data-go="kit"><span class="copy"><strong>Cover Someone's Butt</strong><small>$15 covers new underwear and socks for somebody's first day.</small></span><span class="right">→</span></button>
   <p class="scrollhint">Wait, what is this? ↓</p>
 </section>
 
@@ -125,6 +135,11 @@ function home(){return `
   <h2>So what is this?</h2>
   <p class="big">We hand new underwear and socks to men and women on day one of recovery in Stark County, Ohio.</p>
   <p>That's it. That's the whole thing. People show up to treatment with a bag, or no bag, and almost never with clean drawers. We fix that part.</p>
+</section>
+
+<section class="section" style="padding-left:0;padding-right:0">
+  <h2 style="padding:0 22px">Fresh off the feed.</h2>
+  <div class="strip">${STRIP.map(n=>`<img src="posts/web/${n}.jpg" alt="Skivvies post" loading="lazy">`).join('')}</div>
 </section>
 
 <section class="section coral">
@@ -143,6 +158,11 @@ function home(){return `
   <button class="cta light" data-go="drive"><span class="copy"><strong>Host an Undie Sunday</strong><small>Takes two minutes to sign up.</small></span><span class="right">→</span></button>
 </section>
 
+<section class="section">
+  <h2>We have a lot of these.</h2>
+  <div class="slogan"><div class="q" id="slogan">${SLOGANS[0]}</div><button id="nextslogan">Hit me with another one</button></div>
+</section>
+
 <section class="section ink">
   <h2>Follow along.</h2>
   <p>New posts most days. Some of them are even about underwear.</p>
@@ -155,9 +175,9 @@ function home(){return `
 
 function kit(){let isMen=state.kit==='men',total=isMen?15*state.qty:null;return `<section class="page">
 <h1>Cover <span>Someone's Butt.</span></h1>
-<p>Fifteen bucks puts new underwear, socks and a tee in somebody's hands on their first day.</p>
-<div class="card ${isMen?'selected':''}" role="button" tabindex="0" data-kit="men"><h3>For a guy <span class="price">$15</span></h3><p>3 pairs boxer briefs · 3 pairs socks · 1 white tee · soap, toothbrush, the basics</p></div>
-<div class="card ${!isMen?'selected':''}" role="button" tabindex="0" data-kit="women"><h3>For a woman <span class="price">$__</span></h3><p>Underwear · socks · bra or sports bra · period products · the basics</p><p class="hint">Pricing this one out now.</p></div>
+<p>Fifteen bucks covers new underwear and socks for somebody's first day. If there's anything left over, it goes to a tee and the basics.</p>
+<div class="card ${isMen?'selected':''}" role="button" tabindex="0" data-kit="men"><h3>For a guy <span class="price">$15</span></h3><p>3 pairs boxer briefs · 3 pairs socks · and whatever else $15 stretches to</p></div>
+<div class="card ${!isMen?'selected':''}" role="button" tabindex="0" data-kit="women"><h3>For a woman <span class="price">$__</span></h3><p>Underwear · socks · and we're working out the rest</p><p class="hint">Pricing this one out now.</p></div>
 <h3>How many?</h3>
 <div class="options">${[1,5,10].map(n=>`<button class="option ${state.qty===n?'active':''}" data-qty="${n}">${n}</button>`).join('')}<button class="option ${![1,5,10].includes(state.qty)?'active':''}" data-customqty="1">Custom</button></div>
 ${![1,5,10].includes(state.qty)?`<label class="field" for="qty">How many</label><input id="qty" type="number" min="1" max="10000" value="${state.qty}">`:''}
@@ -202,6 +222,7 @@ b=e.target.closest('[data-kit]');if(b){state.kit=b.dataset.kit;render();return}
 b=e.target.closest('[data-qty]');if(b){state.qty=+b.dataset.qty;render();return}
 b=e.target.closest('[data-customqty]');if(b){state.qty=2;render();return}
 b=e.target.closest('[data-checkout]');if(b){toast('Giving opens soon. Nothing was charged.');return}
+if(e.target.id==='nextslogan'){sloganIdx=(sloganIdx+1+Math.floor(Math.random()*(SLOGANS.length-1)))%SLOGANS.length;const q=document.querySelector('#slogan');q.style.opacity=0;setTimeout(()=>{q.textContent=SLOGANS[sloganIdx];q.style.opacity=1},120);return}
 if(e.target.id==='flyer'){toast('Flyer is coming soon.');return}
 if(e.target.id==='copy'){copyText(bulletin).then(()=>toast('Bulletin blurb copied.')).catch(()=>toast('Could not copy. Press and hold to copy it instead.'));return}});
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-kit]')){e.preventDefault();state.kit=e.target.dataset.kit;render()}});
