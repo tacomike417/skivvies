@@ -229,10 +229,10 @@ function fillCount(){const box=document.querySelector('#bc-tiles');if(!box)retur
   document.querySelector('#bc-sr').textContent=`The ${yr?yr+' ':''}Butt Count: counting starts soon, once the first pairs are handed out.`;return}
  const ds=String(n).padStart(3,'0').split('');
  box.className='bc-tiles n'+Math.min(ds.length,6);box.innerHTML=ds.map(()=>`<span class="tile">${reel()}</span>`).join('');
- const rb=document.querySelector('#bc-ribbon');rb.classList.remove('long');rb.innerHTML=`<span>People covered!</span>`;
+ const rb=document.querySelector('#bc-ribbon');rb.classList.remove('long');rb.innerHTML=`<span>Butts covered!</span>`;
  document.querySelector('#bc-line1').innerHTML=`<em>${n.toLocaleString()}</em> fresh starts. <em>${n.toLocaleString()}</em> clean drawers.`;
  document.querySelector('#bc-line2').textContent="And we're just getting warmed up.";
- document.querySelector('#bc-sr').textContent=`The ${yr?yr+' ':''}Butt Count: ${n.toLocaleString()} people covered.`;
+ document.querySelector('#bc-sr').textContent=`The ${yr?yr+' ':''}Butt Count: ${n.toLocaleString()} butts covered.`;
  const roll=()=>box.querySelectorAll('.reel').forEach((r,i)=>{r.style.setProperty('--t',(1.1+i*.35)+'s');r.style.setProperty('--d',ds[i])});
  // roll once when the board scrolls into view
  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){roll();return}

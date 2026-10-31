@@ -52,7 +52,6 @@ input,select{width:100%;border:1px solid #bdcbc2;border-radius:12px;padding:13px
     <div><label for="pw">Password</label><input id="pw" type="password" autocomplete="current-password" minlength="8" required></div>
     <button class="btn" id="signbtn">Sign in</button>
     <p class="msg" id="signmsg"></p>
-    <button type="button" class="link" id="togglemode">First time here? Create your login</button>
   </form>
 </section>
 
@@ -69,7 +68,7 @@ input,select{width:100%;border:1px solid #bdcbc2;border-radius:12px;padding:13px
   <p class="lead">This is the number on the homepage scoreboard.</p>
   <form class="card row" id="countform">
     <div><label for="year">Year</label><select id="year"></select></div>
-    <div><label for="people">People covered</label><input id="people" class="big" type="number" inputmode="numeric" min="0" max="999999" step="1" required></div>
+    <div><label for="people">Butts covered</label><input id="people" class="big" type="number" inputmode="numeric" min="0" max="999999" step="1" required></div>
     <button class="btn" id="savebtn">Save</button>
     <p class="msg" id="savemsg"></p>
     <p class="rule"><b>Count people, not packs.</b> Only people who actually got new underwear, each person once per year. A 3-pack split between 3 people = 3. Three pairs to one person = 1. Donations don't count until they're handed out.<br>The homepage shows question marks until this is 2 or more.</p>
@@ -91,8 +90,8 @@ const $=s=>document.querySelector(s);
 const show=id=>['signin','notadmin','panel'].forEach(x=>$('#'+x).classList.toggle('hidden',x!==id));
 let creating=false,rows=[];
 
-function setMode(c){creating=c;$('#signbtn').textContent=c?'Create my login':'Sign in';$('#togglemode').textContent=c?'Already have a login? Sign in':'First time here? Create your login';$('#pw').autocomplete=c?'new-password':'current-password'}
-$('#togglemode').onclick=()=>{setMode(!creating);$('#signmsg').textContent=''};
+function setMode(c){creating=c;$('#signbtn').textContent=c?'Create my login':'Sign in';$('#pw').autocomplete=c?'new-password':'current-password'}
+
 $('#signform').onsubmit=async e=>{e.preventDefault();const m=$('#signmsg');m.className='msg';m.textContent='One sec…';$('#signbtn').disabled=true;
  const email=$('#email').value.trim(),password=$('#pw').value;
  const r=creating?await sb.auth.signUp({email,password,options:{emailRedirectTo:location.origin+'/admin'}}):await sb.auth.signInWithPassword({email,password});
