@@ -17,20 +17,25 @@
 <style>
 :root{--ink:#102520;--coral:#f35d40;--cream:#fff6f0;--muted:#52635c}
 *{box-sizing:border-box}
+html{overflow-y:scroll;scrollbar-gutter:stable}
 body{margin:0;background:#f2f3f0;color:var(--ink);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 button,input,textarea,select{font:inherit}button{cursor:pointer}
 button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #1665a3;outline-offset:3px}
 .shell{max-width:390px;margin:0 auto;min-height:100dvh;background:var(--cream);box-shadow:0 5px 32px #00000012;position:relative}
-@media(min-width:700px){body{padding:35px 0}.shell{border-radius:30px;overflow:hidden;min-height:760px}}
+@media(min-width:700px){body{padding:35px 0}.shell{border-radius:30px;overflow:clip;min-height:760px}}
 
 /* header */
 .header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 10px;gap:10px}
 .brand{border:0;background:none;text-align:left;padding:0;font-size:30px;font-weight:900;letter-spacing:-.05em;color:var(--ink);line-height:1}
 .headright{display:flex;align-items:center;gap:8px}
 .pill{background:#fff;border:1px solid #d9dedb;color:#111;border-radius:30px;padding:6px 12px;font-weight:800;font-size:12px}
-.menu{border:0;background:transparent;font-size:26px;color:var(--ink);padding:2px 5px;line-height:1}
-.nav{display:none;padding:8px 18px 18px;border-bottom:1px solid #efd9cf}
-.nav.open{display:grid;gap:6px}
+.menu{border:0;background:transparent;font-size:26px;color:var(--ink);width:40px;height:40px;padding:0;line-height:1;display:grid;place-items:center;border-radius:10px;-webkit-tap-highlight-color:transparent}
+.menu[aria-expanded=true]{background:#fff}
+.header{position:sticky;top:0;z-index:6;background:var(--cream)}
+.nav{position:absolute;left:0;right:0;top:100%;z-index:6;display:grid;gap:6px;padding:8px 18px 18px;background:var(--cream);border-bottom:1px solid #efd9cf;box-shadow:0 14px 24px #00000014;opacity:0;transform:translateY(-8px);pointer-events:none;visibility:hidden;transition:opacity .16s,transform .16s,visibility 0s .16s}
+.nav.open{opacity:1;transform:none;pointer-events:auto;visibility:visible;transition:opacity .16s,transform .16s}
+.scrim{position:fixed;inset:0;z-index:5;background:#10252033;opacity:0;pointer-events:none;transition:opacity .16s}
+.scrim.open{opacity:1;pointer-events:auto}
 .nav button{border:0;background:#fff;text-align:left;padding:12px 14px;border-radius:12px;font-weight:700;color:var(--ink)}
 
 /* hero */
@@ -111,16 +116,17 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <button class="brand" data-go="home" aria-label="Skivvies home">skivvies</button>
-  <div class="headright"><span class="pill">v0.6</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.7</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <nav class="nav" id="nav" aria-label="Main navigation">
+    <button data-go="home">Home</button>
+    <button data-go="kit">Cover Someone's Butt</button>
+    <button data-go="drive">Host an Undie Sunday</button>
+    <button data-go="about">About</button>
+    <button data-go="share">Share Skivvies</button>
+    <button id="installbtn" data-go="install">Install the app</button>
+  </nav>
 </header>
-<nav class="nav" id="nav" aria-label="Main navigation">
-  <button data-go="home">Home</button>
-  <button data-go="kit">Cover Someone's Butt</button>
-  <button data-go="drive">Host an Undie Sunday</button>
-  <button data-go="about">About</button>
-  <button data-go="share">Share Skivvies</button>
-  <button id="installbtn" data-go="install">Install the app</button>
-</nav>
+<div class="scrim" id="scrim"></div>
 <main id="app"></main>
 <footer class="footer"><span><button class="linkbutton" style="margin:0;padding:0;font-size:12px" data-go="share">Share</button> · hello@skivvies.org</span><a href="https://apps.thunkbox.com" target="_blank" rel="noopener">Apps by ThunkBox ↗</a></footer>
 </div>
@@ -250,11 +256,20 @@ ${deferredPrompt?`<button class="action" id="doinstall">Install Skivvies</button
 <li><b>3</b><span>Tap <strong>Install</strong>. Done.</span></li></ol>`}
 </section>`}
 function page(){return (history.state&&history.state.page)||location.hash.slice(1)||'home'}
-function render(){let p=page();app.innerHTML=({home,kit,drive,about,share,install}[p]||home)();nav.classList.remove('open');menu.setAttribute('aria-expanded','false');window.scrollTo(0,0)}
-function go(p){history.pushState({page:p},'',p==='home'?location.pathname:'#'+p);render()}
+const scrim=document.querySelector('#scrim');let shown=null;
+function setNav(open){nav.classList.toggle('open',open);scrim.classList.toggle('open',open);menu.setAttribute('aria-expanded',String(open));menu.setAttribute('aria-label',open?'Close menu':'Open menu');menu.textContent=open?'✕':'☰'}
+function navOpen(){return nav.classList.contains('open')}
+// opening the menu adds one history step, so the phone's back button (or iPhone edge swipe) closes it
+function openNav(){if(navOpen())return;setNav(true);history.pushState({page:page(),menu:true},'')}
+function closeNav(){if(!navOpen())return;setNav(false);if(history.state&&history.state.menu)history.back()}
+function render(){let p=page();app.innerHTML=({home,kit,drive,about,share,install}[p]||home)();shown=p;setNav(false);window.scrollTo(0,0)}
+function go(p){const url=p==='home'?location.pathname:'#'+p;if(history.state&&history.state.menu)history.replaceState({page:p},'',url);else if(p!==page())history.pushState({page:p},'',url);render()}
 history.replaceState({page:location.hash.slice(1)||'home'},'');
-window.addEventListener('popstate',render);
-menu.onclick=()=>{let open=nav.classList.toggle('open');menu.setAttribute('aria-expanded',String(open))};
+window.addEventListener('popstate',()=>{const was=navOpen();if(history.state&&history.state.menu){setNav(true);return}setNav(false);if(page()!==shown)render();else if(!was)window.scrollTo(0,0)});
+menu.onclick=()=>{navOpen()?closeNav():openNav()};
+// tapping anywhere outside the open menu closes it (the dimmed page, or the gray area around it on desktop)
+document.addEventListener('click',e=>{if(navOpen()&&!e.target.closest('#nav,#menu')){e.preventDefault();e.stopImmediatePropagation();closeNav()}},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&navOpen()){closeNav();menu.focus()}});
 document.addEventListener('click',e=>{let b=e.target.closest('[data-go]');if(b){go(b.dataset.go);return}
 b=e.target.closest('[data-kit]');if(b){state.kit=b.dataset.kit;render();return}
 b=e.target.closest('[data-qty]');if(b){state.qty=+b.dataset.qty;render();return}
