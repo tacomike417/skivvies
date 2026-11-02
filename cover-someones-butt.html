@@ -62,6 +62,24 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .cta .copy{flex:1}.cta strong{display:block;font-size:19px;letter-spacing:-.02em}.cta small{display:block;font-size:12.5px;line-height:1.35;margin-top:3px;opacity:.95}
 .cta .right{font-size:24px}
 a.cta{text-decoration:none;box-sizing:border-box}
+/* WRITE A NOTE, THE LIGHTBOX (2 Nov 2026, Mike): says what the note thing is, then one
+   "Continue with Recovery Misfits" button, the way "Continue with Google" works. */
+.nb{position:fixed;inset:0;z-index:20;display:flex;align-items:flex-end;justify-content:center;background:#10252066;opacity:0;transition:opacity .18s}
+.nb[hidden]{display:none}
+.nb.on{opacity:1}
+.nb .in{position:relative;width:100%;max-width:440px;background:#fff;border-radius:24px 24px 0 0;padding:26px 22px calc(20px + env(safe-area-inset-bottom));transform:translateY(24px);transition:transform .2s;max-height:92vh;overflow:auto}
+.nb.on .in{transform:none}
+@media (min-width:560px){.nb{align-items:center}.nb .in{border-radius:24px}}
+.nb .x{position:absolute;right:12px;top:12px;width:40px;height:40px;border:0;background:none;border-radius:50%;font-size:22px;color:var(--muted);cursor:pointer}
+.nb h2{margin:0 0 14px;font:400 30px/1.02 Anton,Inter,sans-serif;text-transform:uppercase;letter-spacing:.01em;padding-right:30px}
+.nb ol{list-style:none;margin:0 0 18px;padding:0}
+.nb li{display:flex;gap:12px;align-items:flex-start;padding:7px 0;font-size:15.5px;line-height:1.4}
+.nb li i{flex:none;width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;font:900 14px/28px Inter,sans-serif;text-align:center;font-style:normal}
+.nb .gbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:13px 16px;border:1px solid #c9d2cc;border-radius:999px;background:#fff;color:var(--ink);font-weight:800;font-size:16.5px;text-decoration:none;box-shadow:0 1px 2px #10252022}
+.nb .gbtn img{width:30px;height:30px;border-radius:7px}
+.nb .gbtn:active{background:#f4f4f2}
+.nb .fine{margin:12px 2px 0;font-size:13px;line-height:1.45;color:var(--muted);text-align:center}
+.nb .later{display:block;margin:6px auto 0;background:none;border:0;padding:10px;font-weight:800;font-size:15px;color:var(--muted);cursor:pointer}
 .scrollhint{font-size:13px;color:var(--muted);margin:14px 0 0}
 
 /* strip + slogan */
@@ -179,11 +197,11 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a>
-  <div class="headright"><span class="pill">v0.14</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.15</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
-    <a href="https://recoverymisfits.org/skivvies">Write a Note</a>
+    <a href="https://recoverymisfits.org/skivvies" data-note>Write a Note</a>
     <a href="/request-underwear" data-go="request">Request Underwear</a>
     <a href="/undie-sunday" data-go="drive">Host an Undie Sunday</a>
     <a href="/about" data-go="about">About</a>
@@ -275,7 +293,7 @@ function home(){return `
   <p class="tag2">One pair at a time.</p>
   ${buttCount()}
   <button class="cta" data-go="kit"><span class="copy"><strong>Cover Someone's Butt</strong><small>$15 covers new underwear and socks for somebody's first day.</small></span><span class="right">→</span></button>
-  <a class="cta light" href="https://recoverymisfits.org/skivvies"><span class="copy"><strong>Write a note for somebody's day one</strong><small>Free. It gets printed and goes in their pack.</small></span><span class="right">→</span></a>
+  <a class="cta light" href="https://recoverymisfits.org/skivvies" data-note><span class="copy"><strong>Write a note for somebody's day one</strong><small>Free. It gets printed and goes in their pack.</small></span><span class="right">→</span></a>
   <button class="cta light" data-go="request"><span class="copy"><strong>Need underwear for your people?</strong><small>Sober house, treatment program or shelter in Stark County? Let us know.</small></span><span class="right">→</span></button>
   <p class="scrollhint">Wait, what is this? ↓</p>
 </section>
@@ -303,7 +321,7 @@ function home(){return `
 <section class="section">
   <h2>No money? Write a note.</h2>
   <p>Every pack goes out with a note from somebody who's been there. Write one, we read it, print it and tuck it in with the underwear. You join the Skivvies crew on Recovery Misfits to do it. It's free.</p>
-  <a class="cta light" href="https://recoverymisfits.org/skivvies"><span class="copy"><strong>Write a note</strong><small>Takes a couple of minutes.</small></span><span class="right">→</span></a>
+  <a class="cta light" href="https://recoverymisfits.org/skivvies" data-note><span class="copy"><strong>Write a note</strong><small>Takes a couple of minutes.</small></span><span class="right">→</span></a>
 </section>
 
 <section class="section">
@@ -461,7 +479,7 @@ function countVisit(p){const path=PATHS[p]||'/';if(path===lastCounted)return;las
 function render(){let p=page();setMeta(p);app.innerHTML=({home,kit,request,drive,about,privacy,share,install}[p]||home)();if(document.querySelector('#bc-tiles'))fillCount();turnstile();countVisit(p);shown=p;setNav(false);window.scrollTo(0,0)}
 function go(p){if(p==='request')state.reqSent=false;if(p==='drive')state.thanks=false;const url=PATHS[p]||'/';if(history.state&&history.state.menu)history.replaceState({page:p},'',url);else if(p!==page())history.pushState({page:p},'',url);render()}
 (()=>{const h=location.hash.slice(1);const p=PATHS[h]?h:pathPage();history.replaceState({page:p},'',PATHS[h]?PATHS[h]:location.pathname)})();
-window.addEventListener('popstate',()=>{const was=navOpen();if(history.state&&history.state.menu){setNav(true);return}setNav(false);if(page()!==shown)render();else if(!was)window.scrollTo(0,0)});
+window.addEventListener('popstate',()=>{const was=navOpen();if(history.state&&history.state.menu){setNav(true);return}setNav(false);if(page()!==shown)render();else if(!was&&!document.querySelector('.nb.on'))window.scrollTo(0,0)});
 menu.onclick=()=>{navOpen()?closeNav():openNav()};
 // tapping anywhere outside the open menu closes it (the dimmed page, or the gray area around it on desktop)
 document.addEventListener('click',e=>{if(navOpen()&&!e.target.closest('#nav,#menu')){e.preventDefault();e.stopImmediatePropagation();closeNav()}},true);
@@ -499,6 +517,37 @@ const mv=ev=>{const dx=ev.pageX-x;if(Math.abs(dx)>3)moved=true;st.scrollLeft=sl-
 const up=()=>{st.classList.remove('dragging');document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up)};
 document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up)});
 render();
+</script>
+<div class="nb" id="nb" role="dialog" aria-modal="true" aria-labelledby="nb-h" hidden>
+  <div class="in">
+    <button class="x" id="nb-x" type="button" aria-label="Close">✕</button>
+    <h2 id="nb-h">Write a note for somebody's day one</h2>
+    <ol>
+      <li><i>1</i><span>You write a few words for somebody starting recovery.</span></li>
+      <li><i>2</i><span>We read every one.</span></li>
+      <li><i>3</i><span>We print it and it goes in their pack with their new underwear.</span></li>
+    </ol>
+    <a class="gbtn" href="https://recoverymisfits.org/skivvies"><img src="/img/rm-icon.png" alt="" width="30" height="30">Continue with Recovery Misfits</a>
+    <p class="fine">Skivvies notes are written on Recovery Misfits, a free recovery community. Have an account? You'll just be added to the Skivvies crew. New? It walks you through making one.</p>
+    <button class="later" id="nb-later" type="button">Not now</button>
+  </div>
+</div>
+<script>
+(()=>{const nb=document.getElementById('nb');let open=false;
+ const show=()=>{if(open)return;open=true;nb.hidden=false;requestAnimationFrame(()=>nb.classList.add('on'));
+  if(history.state&&history.state.menu){setNav(false);history.replaceState({page:page(),note:true},'')}else history.pushState({page:page(),note:true},'');
+  setTimeout(()=>{try{nb.querySelector('.gbtn').focus()}catch(_){}},60)};
+ const hide=()=>{if(!open)return;open=false;nb.classList.remove('on');setTimeout(()=>{if(!open)nb.hidden=true},200)};
+ const close=()=>{if(!open)return;if(history.state&&history.state.note)history.back();else hide()};
+ // the phone's back button closes it, and only it
+ window.addEventListener('popstate',e=>{if(open&&!(history.state&&history.state.note)){hide();e.stopImmediatePropagation()}},true);
+ document.addEventListener('click',e=>{const b=e.target.closest('[data-note]');if(!b||e.metaKey||e.ctrlKey||e.shiftKey)return;e.preventDefault();e.stopPropagation();show()},true);
+ nb.addEventListener('click',e=>{if(e.target===nb)close()});
+ document.getElementById('nb-x').onclick=close;document.getElementById('nb-later').onclick=close;
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open)close()});
+ // going on to Recovery Misfits: drop the lightbox from history first, so coming back lands on the page, not a closed box
+ nb.querySelector('.gbtn').addEventListener('click',e=>{e.preventDefault();const u=e.currentTarget.href;open=false;location.replace(u)});
+})();
 </script>
 </body>
 </html>

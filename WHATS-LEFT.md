@@ -101,5 +101,5 @@ One to-do list for the whole project. New to-dos go here.
 - Notes land in skivvies.org/admin ("Notes for the packs"). Approve = it goes up in the group from the skivvies account and the writer gets a DM from skivvies. Decline = just marked. "Show approved notes" is the print list.
 - Database: RM supabase/porch_76_skivvies_lane.sql; Miscellaneous supabase/skivvies_notes.sql + edge function skivvies-note. All applied.
 - [ ] Mike: test it with a throwaway account (phone)
-- [x] "Write a note" on skivvies.org (menu, hero, and a "No money? Write a note." section) → recoverymisfits.org/skivvies (v0.14)
+- [x] "Write a note" on skivvies.org (menu, hero, and a "No money? Write a note." section) → recoverymisfits.org/skivvies (v0.14). v0.15: tapping it opens a lightbox (what a note is + a Google-style "Continue with Recovery Misfits" button); the RM side is a "Sign in to continue to the Skivvies crew" screen: have an account or create one
 - [ ] Later: a print sheet button for approved notes (B&W laser, white or orange paper)
