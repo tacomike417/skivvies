@@ -61,6 +61,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .cta.light{background:#fff;color:var(--ink);border-color:var(--ink)}
 .cta .copy{flex:1}.cta strong{display:block;font-size:19px;letter-spacing:-.02em}.cta small{display:block;font-size:12.5px;line-height:1.35;margin-top:3px;opacity:.95}
 .cta .right{font-size:24px}
+a.cta{text-decoration:none;box-sizing:border-box}
 .scrollhint{font-size:13px;color:var(--muted);margin:14px 0 0}
 
 /* strip + slogan */
@@ -178,10 +179,11 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a>
-  <div class="headright"><span class="pill">v0.13</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.14</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
+    <a href="https://recoverymisfits.org/skivvies">Write a Note</a>
     <a href="/request-underwear" data-go="request">Request Underwear</a>
     <a href="/undie-sunday" data-go="drive">Host an Undie Sunday</a>
     <a href="/about" data-go="about">About</a>
@@ -273,6 +275,7 @@ function home(){return `
   <p class="tag2">One pair at a time.</p>
   ${buttCount()}
   <button class="cta" data-go="kit"><span class="copy"><strong>Cover Someone's Butt</strong><small>$15 covers new underwear and socks for somebody's first day.</small></span><span class="right">→</span></button>
+  <a class="cta light" href="https://recoverymisfits.org/skivvies"><span class="copy"><strong>Write a note for somebody's day one</strong><small>Free. It gets printed and goes in their pack.</small></span><span class="right">→</span></a>
   <button class="cta light" data-go="request"><span class="copy"><strong>Need underwear for your people?</strong><small>Sober house, treatment program or shelter in Stark County? Let us know.</small></span><span class="right">→</span></button>
   <p class="scrollhint">Wait, what is this? ↓</p>
 </section>
@@ -295,6 +298,12 @@ function home(){return `
     <div><strong>Shelters can't take it used.</strong><p>For obvious reasons. It has to be new, so somebody has to buy it.</p></div>
     <div><strong>Day one is rough enough.</strong><p>A fresh pair won't fix your life. It's a decent way to start the morning, though.</p></div>
   </div>
+</section>
+
+<section class="section">
+  <h2>No money? Write a note.</h2>
+  <p>Every pack goes out with a note from somebody who's been there. Write one, we read it, print it and tuck it in with the underwear. You join the Skivvies crew on Recovery Misfits to do it. It's free.</p>
+  <a class="cta light" href="https://recoverymisfits.org/skivvies"><span class="copy"><strong>Write a note</strong><small>Takes a couple of minutes.</small></span><span class="right">→</span></a>
 </section>
 
 <section class="section">
