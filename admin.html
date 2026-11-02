@@ -82,6 +82,14 @@ input,select{width:100%;border:1px solid #bdcbc2;border-radius:12px;padding:13px
     <p class="msg" id="savemsg"></p>
     <p class="rule">Type the total for the year you pick. The homepage adds all the years together.<br><b>Count people, not packs.</b> Only people who actually got new underwear, each person once per year. A 3-pack split between 3 people = 3. Three pairs to one person = 1. Donations don't count until they're handed out.<br>The homepage shows question marks until the lifetime total is 2 or more.</p>
   </form>
+  <!-- NOTES FROM THE CREW (2 Nov 2026, Mike). Written in the Skivvies group on Recovery Misfits.
+       Approve = it goes up in the group from the skivvies account and the writer gets a message.
+       Print the approved ones for the packs. -->
+  <div class="card" id="notecard">
+    <label>Notes for the packs <span class="badge hidden" id="notebadge"></span></label>
+    <ul class="reqs" id="notes"><li>Loading…</li></ul>
+    <button class="link" id="notemore" type="button">Show approved notes (for printing)</button>
+  </div>
   <div class="card" id="drvcard">
     <label>Undie Sunday sign-ups <span class="badge hidden" id="drvbadge"></span></label>
     <ul class="reqs" id="drives"><li>Loading…</li></ul>
@@ -123,7 +131,7 @@ async function boot(){
  if(!session){show('signin');return}
  const {data:isAdmin}=await sb.rpc('is_skivvies_admin');
  if(!isAdmin){$('#whoami').textContent=session.user.email;show('notadmin');return}
- show('panel');load();loadRequests();loadDrives()}
+ show('panel');load();loadNotes();loadRequests();loadDrives()}
 
 async function load(){
  const {data,error}=await sb.from('skivvies_butt_count').select('year,people,updated_at').order('year',{ascending:false});
@@ -177,6 +185,28 @@ $('#countform').onsubmit=async e=>{e.preventDefault();const m=$('#savemsg');cons
  $('#savebtn').disabled=false;
  if(error){m.className='msg err';m.textContent=error.message;return}
  m.className='msg ok';m.textContent=`Saved ${year}.`;load()};
+
+let showDone=false;
+async function loadNotes(){
+ let q=sb.from('skivvies_notes').select('id,created_at,rm_handle,body,sign_as,status,handled_at').order('created_at',{ascending:false}).limit(60);
+ q=showDone?q.eq('status','approved'):q.eq('status','pending');
+ const {data,error}=await q;const ul=$('#notes');
+ if(error){ul.innerHTML=`<li>${esc(error.message)}</li>`;return}
+ if(!showDone){const bd=$('#notebadge');bd.textContent=(data||[]).length+' waiting';bd.classList.toggle('hidden',!(data||[]).length)}
+ $('#notemore').textContent=showDone?'Back to notes waiting':'Show approved notes (for printing)';
+ if(!data||!data.length){ul.innerHTML=`<li>${showDone?'No approved notes yet.':'No notes waiting.'}</li>`;return}
+ const fmt=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+ ul.innerHTML=data.map(n=>`<li><div class="top"><span class="place">${esc(n.sign_as||'somebody in recovery')}</span><span class="when">${fmt(n.created_at)}</span></div>
+  <div class="notes">${esc(n.body)}</div><div class="meta">from ${esc(n.rm_handle)} on Recovery Misfits</div>
+  ${n.status==='pending'?`<button class="mini" data-note="${n.id}" data-act="approve">Approve</button> <button class="mini" data-note="${n.id}" data-act="decline">Decline</button>`:''}</li>`).join('')}
+$('#notemore').onclick=()=>{showDone=!showDone;loadNotes()};
+$('#notes').onclick=async e=>{const b=e.target.closest('[data-note]');if(!b)return;
+ if(b.dataset.act==='decline'&&!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again to decline';return}
+ b.parentNode.querySelectorAll('button').forEach(x=>x.disabled=true);
+ const {data:{session}}=await sb.auth.getSession();
+ const {data,error}=await sb.functions.invoke('skivvies-note',{body:{action:b.dataset.act,id:+b.dataset.note},headers:{Authorization:'Bearer '+(session&&session.access_token)}});
+ if(error||!data||!data.ok){let m=(data&&data.error)||'';try{if(!m&&error&&error.context)m=(await error.context.json()).error}catch(_){}alert(m||'That didn\'t go through. Try again.');}
+ loadNotes()};
 
 sb.auth.onAuthStateChange((ev)=>{if(ev==='SIGNED_IN'||ev==='SIGNED_OUT')boot()});
 boot();
