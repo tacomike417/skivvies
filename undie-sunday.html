@@ -81,6 +81,13 @@ a.cta{text-decoration:none;box-sizing:border-box}
 .nb .fine b{color:var(--ink)}
 .nb .gbtn:active{background:#f4f4f2}
 .nb .fine{margin:12px 2px 0;font-size:13px;line-height:1.45;color:var(--muted);text-align:center}
+.page .gbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;box-sizing:border-box;padding:13px 16px;margin:16px 0 8px;border:1px solid #c9d2cc;border-radius:999px;background:#fff;color:var(--ink);font-weight:800;text-decoration:none;box-shadow:0 1px 3px #0001}
+.page .gbtn img{width:34px;height:34px;border-radius:8px;flex:none}.page .gbtn span{text-align:left}.page .gbtn b{display:block;font-size:17px;font-weight:900}.page .gbtn small{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-top:2px}
+.page .count{text-align:right;margin-top:4px}
+.page .who{margin-top:18px;text-align:center}
+.linkbtn{background:none;border:0;padding:0;color:var(--ink);font-weight:800;text-decoration:underline;cursor:pointer}
+.action.ghost{background:#fff;color:var(--ink);border:2px solid var(--ink);margin-top:10px}
+.crew{display:block;text-align:center;margin:22px 0 4px;font-weight:800;color:var(--ink)}
 .nb .later{display:block;margin:6px auto 0;background:none;border:0;padding:10px;font-weight:800;font-size:15px;color:var(--muted);cursor:pointer}
 .scrollhint{font-size:13px;color:var(--muted);margin:14px 0 0}
 
@@ -199,11 +206,11 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a>
-  <div class="headright"><span class="pill">v0.17</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.18</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
-    <a href="https://recoverymisfits.org/skivvies" data-note>Write a Note</a>
+    <a href="https://recoverymisfits.org/skivvies?to=note" data-note>Write a Note</a>
     <a href="/request-underwear" data-go="request">Request Underwear</a>
     <a href="/undie-sunday" data-go="drive">Host an Undie Sunday</a>
     <a href="/about" data-go="about">About</a>
@@ -295,7 +302,7 @@ function home(){return `
   <p class="tag2">One pair at a time.</p>
   ${buttCount()}
   <button class="cta" data-go="kit"><span class="copy"><strong>Cover Someone's Butt</strong><small>$15 covers new underwear and socks for somebody's first day.</small></span><span class="right">→</span></button>
-  <a class="cta light" href="https://recoverymisfits.org/skivvies" data-note><span class="copy"><strong>Write a note for somebody's day one</strong><small>Free. It gets printed and goes in their pack.</small></span><span class="right">→</span></a>
+  <a class="cta light" href="https://recoverymisfits.org/skivvies?to=note" data-note><span class="copy"><strong>Write a note for somebody's day one</strong><small>Free. It gets printed and goes in their pack.</small></span><span class="right">→</span></a>
   <button class="cta light" data-go="request"><span class="copy"><strong>Need underwear for your people?</strong><small>Sober house, treatment program or shelter in Stark County? Let us know.</small></span><span class="right">→</span></button>
   <p class="scrollhint">Wait, what is this? ↓</p>
 </section>
@@ -323,7 +330,7 @@ function home(){return `
 <section class="section">
   <h2>No money? Write a note.</h2>
   <p>Every pack goes out with a note from somebody who's been there. Write one and we print it and tuck it in with the underwear. You do it with a free account on recoverymisfits.org, a recovery community site.</p>
-  <a class="cta light" href="https://recoverymisfits.org/skivvies" data-note><span class="copy"><strong>Write a note</strong><small>Takes a couple of minutes.</small></span><span class="right">→</span></a>
+  <a class="cta light" href="https://recoverymisfits.org/skivvies?to=note" data-note><span class="copy"><strong>Write a note</strong><small>Takes a couple of minutes.</small></span><span class="right">→</span></a>
 </section>
 
 <section class="section">
@@ -348,6 +355,29 @@ function home(){return `
   <button class="linkbutton" data-go="about">Who's behind this? →</button>
 </section>`}
 
+function note(){
+if(state.noteSent)return `<section class="page"><div class="success"><div class="check">✓</div><h1>Got it.</h1><p>Thank you. Once it's approved, it gets printed and goes in somebody's pack with their new underwear.</p></div>
+<div class="actions"><button class="action" id="n_again">Write another one</button><button class="action ghost" data-go="home">Back home</button></div>
+<a class="crew" href="https://recoverymisfits.org/feed/porch.html?g=skivvies">Come hang out with the Skivvies crew →</a></section>`;
+if(!rmTok())return `<section class="page"><h1>Write a <span>note.</span></h1>
+<p>A few words for somebody on day one. We print it and tuck it in their pack with their new underwear.</p>
+<a class="gbtn" href="${RM_IN}"><img src="/img/rm-icon.png" alt="" width="34" height="34"><span><b>I want to write a note</b><small>Log in or sign up with a free recoverymisfits.org account</small></span></a>
+<p class="hint">You sign in on recoverymisfits.org, a free recovery community site, then land right back here.</p></section>`;
+const d=noteDraft(),who=rmName();
+return `<section class="page"><h1>Write a <span>note.</span></h1>
+<p>For somebody on their first day. Keep it real, keep it kind. It goes in their pack exactly how you write it.</p>
+<form id="noteform" novalidate>
+<label class="field" for="n_body">Your note</label>
+<textarea id="n_body" maxlength="600" rows="6" placeholder="You made it here. That's the hardest part. One day at a time.">${esc(d)}</textarea>
+<p class="hint count" id="n_count">${d.length} / 600</p>
+<label class="field" for="n_sign">Sign it as <span style="font-weight:600;color:var(--muted)">(optional)</span></label>
+<input id="n_sign" maxlength="40" autocomplete="off" placeholder="Leave it blank to stay anonymous, or try “Mike, 4 years”">
+<p class="hint">No last names, phone numbers or anything that points to you, unless you want it to.</p>
+<p class="hint" id="n_err" role="alert" style="color:#c03a22;font-weight:800"></p>
+<button class="action" type="submit" id="n_send">Send my note →</button>
+</form>
+<p class="hint who">Signed in as <b>${esc(who||'you')}</b> on Recovery Misfits · <button type="button" class="linkbtn" id="n_out">Not you?</button></p></section>`}
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function kit(){let isMen=state.kit==='men',total=isMen?15*state.qty:null;return `<section class="page">
 <h1>Cover <span>Someone's Butt.</span></h1>
 <p>Fifteen bucks covers new underwear and socks for somebody's first day. If there's anything left over, it goes to a tee and the basics.</p>
@@ -453,8 +483,9 @@ ${deferredPrompt?`<button class="action" id="doinstall">Install Skivvies</button
 <li><b>3</b><span>Tap <strong>Install</strong>. Done.</span></li></ol>`}
 </section>`}
 // real page addresses (better for Google); old #about style links still work
-const PATHS={home:'/',kit:'/cover-someones-butt',request:'/request-underwear',drive:'/undie-sunday',about:'/about',privacy:'/privacy',share:'/share',install:'/install'};
+const PATHS={home:'/',note:'/write-a-note',kit:'/cover-someones-butt',request:'/request-underwear',drive:'/undie-sunday',about:'/about',privacy:'/privacy',share:'/share',install:'/install'};
 const META={home:["Skivvies — Because rock bottom shouldn't be bare bottom.","New underwear and socks for men and women on day one of recovery in Stark County, Ohio. Because rock bottom shouldn't be bare bottom."],
+ note:["Write a Note — Skivvies","Write a few words for somebody on day one of recovery. We print it and tuck it in their pack with their new underwear."],
  kit:["Cover Someone's Butt — Skivvies","$15 covers new underwear and socks for somebody's first day of recovery in Stark County, Ohio."],
  request:["Request Underwear — Skivvies","Run a sober house, treatment program or shelter in Stark County, Ohio? Tell us your people need new underwear and socks and we'll be in touch."],
  drive:["Host an Undie Sunday — Skivvies","Pick a Sunday, put out a box, collect new underwear and socks for people starting recovery in Stark County, Ohio. We'll come grab it."],
@@ -478,8 +509,20 @@ let lastCounted=null;
 function countVisit(p){const path=PATHS[p]||'/';if(path===lastCounted)return;lastCounted=path;
  const go=()=>{try{window.goatcounter.count({path,title:document.title})}catch(_){}};
  let tries=0;const wait=()=>{if(lastCounted!==path)return;if(window.goatcounter&&window.goatcounter.count)return go();if(++tries<40)setTimeout(wait,250)};wait()}
-function render(){let p=page();setMeta(p);app.innerHTML=({home,kit,request,drive,about,privacy,share,install}[p]||home)();if(document.querySelector('#bc-tiles'))fillCount();turnstile();countVisit(p);shown=p;setNav(false);window.scrollTo(0,0)}
+function render(){let p=page();setMeta(p);app.innerHTML=({home,note,kit,request,drive,about,privacy,share,install}[p]||home)();if(document.querySelector('#bc-tiles'))fillCount();turnstile();countVisit(p);shown=p;setNav(false);window.scrollTo(0,0)}
 function go(p){if(p==='request')state.reqSent=false;if(p==='drive')state.thanks=false;const url=PATHS[p]||'/';if(history.state&&history.state.menu)history.replaceState({page:p},'',url);else if(p!==page())history.pushState({page:p},'',url);render()}
+/* WRITE A NOTE, ON SKIVVIES (3 Nov 2026, Mike): skivvies.org -> sign in with Recovery Misfits -> back here to write it.
+   recoverymisfits.org/skivvies?to=note sends them back to /write-a-note#rm=<sign-in token>&u=<username>. The token is
+   kept for this tab only (sessionStorage) and wiped from the address right away. It lasts about an hour; after that
+   the next note just bounces through Recovery Misfits again (already signed in there, so it's instant). */
+const RM_IN='https://recoverymisfits.org/skivvies?to=note',NOTE_FN=SB_URL+'/functions/v1/skivvies-note';
+(()=>{const m=location.hash.match(/^#rm=([^&]+)(?:&u=([^&]*))?/);if(!m)return;
+ try{sessionStorage.setItem('skv_rm',decodeURIComponent(m[1]));sessionStorage.setItem('skv_rm_u',decodeURIComponent(m[2]||''))}catch(_){}
+ history.replaceState(null,'',location.pathname)})();
+function rmTok(){try{return sessionStorage.getItem('skv_rm')||''}catch(_){return''}}
+function rmName(){try{return sessionStorage.getItem('skv_rm_u')||''}catch(_){return''}}
+function rmOut(){try{sessionStorage.removeItem('skv_rm');sessionStorage.removeItem('skv_rm_u')}catch(_){}}
+function noteDraft(v){try{if(v===undefined)return sessionStorage.getItem('skv_draft')||'';if(v)sessionStorage.setItem('skv_draft',v);else sessionStorage.removeItem('skv_draft')}catch(_){return''}}
 (()=>{const h=location.hash.slice(1);const p=PATHS[h]?h:pathPage();history.replaceState({page:p},'',PATHS[h]?PATHS[h]:location.pathname)})();
 window.addEventListener('popstate',()=>{const was=navOpen();if(history.state&&history.state.menu){setNav(true);return}setNav(false);if(page()!==shown)render();else if(!was&&!document.querySelector('.nb.on'))window.scrollTo(0,0)});
 menu.onclick=()=>{navOpen()?closeNav():openNav()};
@@ -499,7 +542,21 @@ if(e.target.id==='flyer'){toast('Flyer is coming soon.');return}
 if(e.target.id==='copy'){copyText(bulletin).then(()=>toast('Bulletin blurb copied.')).catch(()=>toast('Could not copy. Press and hold to copy it instead.'));return}});
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-kit]')){e.preventDefault();state.kit=e.target.dataset.kit;render()}});
 document.addEventListener('change',e=>{if(e.target.id==='monthly')state.monthly=e.target.checked;if(e.target.id==='qty'){state.qty=Math.max(1,Math.min(10000,parseInt(e.target.value,10)||1));render()}});
-document.addEventListener('submit',async e=>{if(e.target.id==='reqform'){e.preventDefault();const v=id=>document.getElementById(id).value.trim();const err=document.getElementById('r_err');
+document.addEventListener('input',e=>{if(e.target.id==='n_body'){noteDraft(e.target.value);const c=document.getElementById('n_count');if(c)c.textContent=e.target.value.length+' / 600'}});
+document.addEventListener('click',e=>{if(e.target.id==='n_out'){rmOut();render();return}
+ if(e.target.id==='n_again'){state.noteSent=false;render();return}});
+document.addEventListener('submit',async e=>{if(e.target.id==='noteform'){e.preventDefault();const err=document.getElementById('n_err'),btn=document.getElementById('n_send');
+ const body=document.getElementById('n_body').value.trim(),sign=document.getElementById('n_sign').value.trim();
+ if(body.length<2){err.textContent='Write a little something first.';return}
+ btn.disabled=true;btn.textContent='Sending…';err.textContent='';
+ try{const r=await fetch(NOTE_FN,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+rmTok()},body:JSON.stringify({action:'submit',body,sign})});
+  const j=await r.json().catch(()=>({}));
+  if(r.status===401){rmOut();location.href=RM_IN;return}   // sign-in ran out: quick hop through Recovery Misfits, the draft is kept
+  if(!r.ok||!j.ok)throw new Error(j.error||"That didn't go through. Try again.");
+  noteDraft('');state.noteSent=true;render()}
+ catch(x){btn.disabled=false;btn.textContent='Send my note →';err.textContent=x.message||"No connection. Try again."}
+ return}
+if(e.target.id==='reqform'){e.preventDefault();const v=id=>document.getElementById(id).value.trim();const err=document.getElementById('r_err');
  const body={place_name:v('r_place'),place_type:v('r_type'),contact_name:v('r_name'),contact:v('r_contact'),people_per_month:parseInt(v('r_per'),10)||null,who:v('r_who'),notes:v('r_notes')||null};
  if(body.place_name.length<2){err.textContent='Add the name of the place.';return}
  if(body.contact_name.length<2){err.textContent='Add your name.';return}
@@ -529,8 +586,8 @@ render();
       <li><i>2</i><span>We print it out.</span></li>
       <li><i>3</i><span>It goes in their pack with their new underwear.</span></li>
     </ol>
-    <a class="gbtn" href="https://recoverymisfits.org/skivvies"><img src="/img/rm-icon.png" alt="" width="34" height="34"><span><b>I want to write a note</b><small>Log in or sign up with a free recoverymisfits.org account</small></span></a>
-    <p class="fine">Skivvies notes are written on <b>recoverymisfits.org</b>, a free recovery community site. Already have an account there? You'll just be added. New? It walks you through making one.</p>
+    <a class="gbtn" href="https://recoverymisfits.org/skivvies?to=note"><img src="/img/rm-icon.png" alt="" width="34" height="34"><span><b>I want to write a note</b><small>Log in or sign up with a free recoverymisfits.org account</small></span></a>
+    <p class="fine">You sign in with <b>recoverymisfits.org</b>, a free recovery community site, then come right back here to write it. Already have an account there? Just sign in. New? It walks you through making one.</p>
     <button class="later" id="nb-later" type="button">Not now</button>
   </div>
 </div>
@@ -543,7 +600,7 @@ render();
  const close=()=>{if(!open)return;if(history.state&&history.state.note)history.back();else hide()};
  // the phone's back button closes it, and only it
  window.addEventListener('popstate',e=>{if(open&&!(history.state&&history.state.note)){hide();e.stopImmediatePropagation()}},true);
- document.addEventListener('click',e=>{const b=e.target.closest('[data-note]');if(!b||e.metaKey||e.ctrlKey||e.shiftKey)return;e.preventDefault();e.stopPropagation();show()},true);
+ document.addEventListener('click',e=>{const b=e.target.closest('[data-note]');if(!b||e.metaKey||e.ctrlKey||e.shiftKey)return;e.preventDefault();e.stopPropagation();if(rmTok()){closeNav();go('note');return}show()},true);
  nb.addEventListener('click',e=>{if(e.target===nb)close()});
  document.getElementById('nb-x').onclick=close;document.getElementById('nb-later').onclick=close;
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open)close()});

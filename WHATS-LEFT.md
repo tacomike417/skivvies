@@ -103,3 +103,10 @@ One to-do list for the whole project. New to-dos go here.
 - [ ] Mike: test it with a throwaway account (phone)
 - [x] "Write a note" on skivvies.org (menu, hero, and a "No money? Write a note." section) → recoverymisfits.org/skivvies (v0.14). v0.15: tapping it opens a lightbox (what a note is + a Google-style "Continue with Recovery Misfits" button); the RM side is a "Sign in to continue to the Skivvies crew" screen: have an account or create one
 - [ ] Later: a print sheet button for approved notes (B&W laser, white or orange paper)
+
+## v0.18 (3 Nov 2026): the note gets written ON Skivvies — Mike's flow
+skivvies.org > "I want to write a note" > sign in (or sign up) with Recovery Misfits > BACK on skivvies.org/write-a-note to write and send it > "Got it" thank-you on Skivvies, with "Write another one", "Back home" and a small "Come hang out with the Skivvies crew" link to the Porch group.
+- recoverymisfits.org/skivvies?to=note sends them back after sign-in with the sign-in token in the #hash (never reaches a server). skivvies.org keeps it for that tab only and wipes it from the address. It lasts about an hour; after that the next note just hops through Recovery Misfits again (already signed in there, so it's instant). Draft is kept through the hop.
+- Opening recoverymisfits.org/skivvies without ?to=note (e.g. the group link) still goes to the Porch group like before.
+- Notes still go to the skivvies-note function and land in /admin as pending. Nothing changed there.
+- [ ] Mike: test on the phone with a throwaway account.
