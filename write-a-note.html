@@ -84,6 +84,12 @@ a.cta{text-decoration:none;box-sizing:border-box}
 .page .gbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;box-sizing:border-box;padding:13px 16px;margin:16px 0 8px;border:1px solid #c9d2cc;border-radius:999px;background:#fff;color:var(--ink);font-weight:800;text-decoration:none;box-shadow:0 1px 3px #0001}
 .page .gbtn img{width:34px;height:34px;border-radius:8px;flex:none}.page .gbtn span{text-align:left}.page .gbtn b{display:block;font-size:17px;font-weight:900}.page .gbtn small{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-top:2px}
 .other{display:block;text-align:center;margin:8px 0 2px;font-weight:800;font-size:14.5px;color:var(--muted)}
+.me{display:flex;align-items:center;gap:12px;padding:12px 14px;margin:2px 0 16px;background:#fff;border:1px solid #e3d9d0;border-radius:16px}
+.av{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:50%;overflow:hidden;background:var(--coral);color:#fff;font:900 20px/1 Inter,sans-serif;box-shadow:0 0 0 2px #fff,0 0 0 4px var(--coral)}
+.av img{width:100%;height:100%;object-fit:cover}
+.av.sm{width:34px;height:34px;font-size:15px;box-shadow:none}
+.me .who2{flex:1;min-width:0;line-height:1.2}.me .who2 b{display:block;font-size:18px;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.me .who2 small{display:block;font-size:12px;color:var(--muted);font-weight:600}
+.me .linkbtn{flex:none;font-size:13.5px}
 .page .count{text-align:right;margin-top:4px}
 .page .who{margin-top:18px;text-align:center}
 .linkbtn{background:none;border:0;padding:0;color:var(--ink);font-weight:800;text-decoration:underline;cursor:pointer}
@@ -207,7 +213,7 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a>
-  <div class="headright"><span class="pill">v0.21</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.22</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
@@ -366,6 +372,7 @@ ${rmBtn()}
 <p class="hint">You sign in on recoverymisfits.org, a free recovery community site, then land right back here.</p></section>`;
 const d=noteDraft(),who=rmName();
 return `<section class="page"><h1>Write a <span>note.</span></h1>
+<div class="me"><span class="av" id="n_av">${meAv()}</span><span class="who2"><small>Writing as</small><b>${esc(who||'you')}</b><small>Recovery Misfits account</small></span><button type="button" class="linkbtn" id="n_out">Not you?</button></div>
 <p>For somebody on their first day. Keep it real, keep it kind. It goes in their pack exactly how you write it.</p>
 <form id="noteform" novalidate>
 <label class="field" for="n_body">Your note</label>
@@ -376,8 +383,7 @@ return `<section class="page"><h1>Write a <span>note.</span></h1>
 <p class="hint">Leave it blank to stay anonymous. No last names or phone numbers unless you want them on there.</p>
 <p class="hint" id="n_err" role="alert" style="color:#c03a22;font-weight:800"></p>
 <button class="action" type="submit" id="n_send">Send my note →</button>
-</form>
-<p class="hint who">Signed in as <b>${esc(who||'you')}</b> on Recovery Misfits · <button type="button" class="linkbtn" id="n_out">Not you?</button></p></section>`}
+</form></section>`}
 function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function kit(){let isMen=state.kit==='men',total=isMen?15*state.qty:null;return `<section class="page">
 <h1>Cover <span>Someone's Butt.</span></h1>
@@ -510,7 +516,7 @@ let lastCounted=null;
 function countVisit(p){const path=PATHS[p]||'/';if(path===lastCounted)return;lastCounted=path;
  const go=()=>{try{window.goatcounter.count({path,title:document.title})}catch(_){}};
  let tries=0;const wait=()=>{if(lastCounted!==path)return;if(window.goatcounter&&window.goatcounter.count)return go();if(++tries<40)setTimeout(wait,250)};wait()}
-function render(){let p=page();setMeta(p);app.innerHTML=({home,note,kit,request,drive,about,privacy,share,install}[p]||home)();if(document.querySelector('#bc-tiles'))fillCount();turnstile();countVisit(p);shown=p;setNav(false);window.scrollTo(0,0)}
+function render(){let p=page();setMeta(p);app.innerHTML=({home,note,kit,request,drive,about,privacy,share,install}[p]||home)();if(p==='note'&&rmTok())loadAv();if(document.querySelector('#bc-tiles'))fillCount();turnstile();countVisit(p);shown=p;setNav(false);window.scrollTo(0,0)}
 function go(p){if(p==='request')state.reqSent=false;if(p==='drive')state.thanks=false;const url=PATHS[p]||'/';if(history.state&&history.state.menu)history.replaceState({page:p},'',url);else if(p!==page())history.pushState({page:p},'',url);render()}
 /* WRITE A NOTE, ON SKIVVIES (3 Nov 2026, Mike): skivvies.org -> sign in with Recovery Misfits -> back here to write it.
    recoverymisfits.org/skivvies?to=note sends them back to /write-a-note#rm=<sign-in token>&u=<username>. The token is
@@ -522,13 +528,24 @@ const RM_IN='https://recoverymisfits.org/skivvies?to=note',NOTE_FN=SB_URL+'/func
  history.replaceState(null,'',location.pathname)})();
 function rmTok(){try{return sessionStorage.getItem('skv_rm')||''}catch(_){return''}}
 function rmName(){try{return sessionStorage.getItem('skv_rm_u')||''}catch(_){return''}}
-function rmOut(){try{sessionStorage.removeItem('skv_rm');sessionStorage.removeItem('skv_rm_u');localStorage.removeItem('skv_last_u')}catch(_){}}
+function rmOut(){try{sessionStorage.removeItem('skv_rm');sessionStorage.removeItem('skv_rm_u');localStorage.removeItem('skv_last_u');localStorage.removeItem('skv_last_av')}catch(_){}}
 /* "Continue as tacomike417" (Mike, 3 Nov 2026). skivvies.org can't peek into recoverymisfits.org (browsers keep
    sites apart), so Skivvies remembers who came back from Recovery Misfits last time on this device. First visit
    ever: the plain "I want to write a note" button. */
+/* their Recovery Misfits profile picture (Mike, 3 Nov 2026: "make that more obvious with the persons profile pic").
+   Looked up once with their sign-in, remembered on this device for the "Continue as" button. No picture: their first letter. */
+const RM_DB='https://rlytvfehbglsjfvprtbp.supabase.co',RM_PUB='sb_publishable_5r-l8Bj8PjXhq5qpp1b26g_QQ7xPQ7P';
+function lastAv(){try{return localStorage.getItem('skv_last_av')||''}catch(_){return''}}
+function avHTML(name,url){return url?`<img src="${esc(url)}" alt="">`:esc((name||'?').charAt(0).toUpperCase())}
+function meAv(){return avHTML(rmName(),lastAv())}
+async function loadAv(){const n=rmName(),t=rmTok();if(!n||!t)return;
+ try{const r=await fetch(RM_DB+'/rest/v1/porch_members?handle=eq.'+encodeURIComponent(n)+'&select=avatar_path',{headers:{apikey:RM_PUB,Authorization:'Bearer '+t}});
+  if(!r.ok)return;const row=(await r.json())[0],p=row&&row.avatar_path;if(!p)return;
+  const url=p.charAt(0)==='/'?'https://recoverymisfits.org'+p:RM_DB+'/storage/v1/object/public/porch/'+p;
+  if(url===lastAv())return;localStorage.setItem('skv_last_av',url);const el=document.getElementById('n_av');if(el)el.innerHTML=avHTML(n,url)}catch(_){}}
 function lastName(){try{return localStorage.getItem('skv_last_u')||''}catch(_){return''}}
 function rmBtn(){const n=lastName();return n
- ?`<a class="gbtn" href="${RM_IN}"><img src="/img/rm-icon.png" alt="" width="34" height="34"><span><b>Continue as ${esc(n)}</b><small>with your Recovery Misfits account</small></span></a><a class="other" href="${RM_IN}&switch=1">Use a different account</a>`
+ ?`<a class="gbtn" href="${RM_IN}"><span class="av sm">${avHTML(n,lastAv())}</span><span><b>Continue as ${esc(n)}</b><small>with your Recovery Misfits account</small></span></a><a class="other" href="${RM_IN}&switch=1">Use a different account</a>`
  :`<a class="gbtn" href="${RM_IN}"><img src="/img/rm-icon.png" alt="" width="34" height="34"><span><b>I want to write a note</b><small>Log in or sign up with a free recoverymisfits.org account</small></span></a>`}
 function noteDraft(v){try{if(v===undefined)return sessionStorage.getItem('skv_draft')||'';if(v)sessionStorage.setItem('skv_draft',v);else sessionStorage.removeItem('skv_draft')}catch(_){return''}}
 (()=>{const h=location.hash.slice(1);const p=PATHS[h]?h:pathPage();history.replaceState({page:p},'',PATHS[h]?PATHS[h]:location.pathname)})();
