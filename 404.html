@@ -83,6 +83,7 @@ a.cta{text-decoration:none;box-sizing:border-box}
 .nb .fine{margin:12px 2px 0;font-size:13px;line-height:1.45;color:var(--muted);text-align:center}
 .page .gbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;box-sizing:border-box;padding:13px 16px;margin:16px 0 8px;border:1px solid #c9d2cc;border-radius:999px;background:#fff;color:var(--ink);font-weight:800;text-decoration:none;box-shadow:0 1px 3px #0001}
 .page .gbtn img{width:34px;height:34px;border-radius:8px;flex:none}.page .gbtn span{text-align:left}.page .gbtn b{display:block;font-size:17px;font-weight:900}.page .gbtn small{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-top:2px}
+.other{display:block;text-align:center;margin:8px 0 2px;font-weight:800;font-size:14.5px;color:var(--muted)}
 .page .count{text-align:right;margin-top:4px}
 .page .who{margin-top:18px;text-align:center}
 .linkbtn{background:none;border:0;padding:0;color:var(--ink);font-weight:800;text-decoration:underline;cursor:pointer}
@@ -207,7 +208,7 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a>
-  <div class="headright"><span class="pill">v0.19</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.20</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
@@ -362,7 +363,7 @@ if(state.noteSent)return `<section class="page"><div class="success"><div class=
 <a class="crew" href="https://recoverymisfits.org/feed/porch.html?g=skivvies">Come hang out with the Skivvies crew →</a></section>`;
 if(!rmTok())return `<section class="page"><h1>Write a <span>note.</span></h1>
 <p>A few words for somebody on day one. We print it and tuck it in their pack with their new underwear.</p>
-<a class="gbtn" href="${RM_IN}"><img src="/img/rm-icon.png" alt="" width="34" height="34"><span><b>I want to write a note</b><small>Log in or sign up with a free recoverymisfits.org account</small></span></a>
+${rmBtn()}
 <p class="hint">You sign in on recoverymisfits.org, a free recovery community site, then land right back here.</p></section>`;
 const d=noteDraft(),who=rmName();
 return `<section class="page"><h1>Write a <span>note.</span></h1>
@@ -518,11 +519,18 @@ function go(p){if(p==='request')state.reqSent=false;if(p==='drive')state.thanks=
    the next note just bounces through Recovery Misfits again (already signed in there, so it's instant). */
 const RM_IN='https://recoverymisfits.org/skivvies?to=note',NOTE_FN=SB_URL+'/functions/v1/skivvies-note';
 (()=>{const m=location.hash.match(/^#rm=([^&]+)(?:&u=([^&]*))?/);if(!m)return;
- try{sessionStorage.setItem('skv_rm',decodeURIComponent(m[1]));sessionStorage.setItem('skv_rm_u',decodeURIComponent(m[2]||''))}catch(_){}
+ try{sessionStorage.setItem('skv_rm',decodeURIComponent(m[1]));sessionStorage.setItem('skv_rm_u',decodeURIComponent(m[2]||''));if(m[2])localStorage.setItem('skv_last_u',decodeURIComponent(m[2]))}catch(_){}
  history.replaceState(null,'',location.pathname)})();
 function rmTok(){try{return sessionStorage.getItem('skv_rm')||''}catch(_){return''}}
 function rmName(){try{return sessionStorage.getItem('skv_rm_u')||''}catch(_){return''}}
-function rmOut(){try{sessionStorage.removeItem('skv_rm');sessionStorage.removeItem('skv_rm_u')}catch(_){}}
+function rmOut(){try{sessionStorage.removeItem('skv_rm');sessionStorage.removeItem('skv_rm_u');localStorage.removeItem('skv_last_u')}catch(_){}}
+/* "Continue as tacomike417" (Mike, 3 Nov 2026). skivvies.org can't peek into recoverymisfits.org (browsers keep
+   sites apart), so Skivvies remembers who came back from Recovery Misfits last time on this device. First visit
+   ever: the plain "I want to write a note" button. */
+function lastName(){try{return localStorage.getItem('skv_last_u')||''}catch(_){return''}}
+function rmBtn(){const n=lastName();return n
+ ?`<a class="gbtn" href="${RM_IN}"><img src="/img/rm-icon.png" alt="" width="34" height="34"><span><b>Continue as ${esc(n)}</b><small>with your Recovery Misfits account</small></span></a><a class="other" href="${RM_IN}&switch=1">Use a different account</a>`
+ :`<a class="gbtn" href="${RM_IN}"><img src="/img/rm-icon.png" alt="" width="34" height="34"><span><b>I want to write a note</b><small>Log in or sign up with a free recoverymisfits.org account</small></span></a>`}
 function noteDraft(v){try{if(v===undefined)return sessionStorage.getItem('skv_draft')||'';if(v)sessionStorage.setItem('skv_draft',v);else sessionStorage.removeItem('skv_draft')}catch(_){return''}}
 (()=>{const h=location.hash.slice(1);const p=PATHS[h]?h:pathPage();history.replaceState({page:p},'',PATHS[h]?PATHS[h]:location.pathname)})();
 window.addEventListener('popstate',()=>{const was=navOpen();if(history.state&&history.state.menu){setNav(true);return}setNav(false);if(page()!==shown)render();else if(!was&&!document.querySelector('.nb.on'))window.scrollTo(0,0)});
@@ -587,14 +595,14 @@ render();
       <li><i>2</i><span>We print it out.</span></li>
       <li><i>3</i><span>It goes in their pack with their new underwear.</span></li>
     </ol>
-    <a class="gbtn" href="https://recoverymisfits.org/skivvies?to=note"><img src="/img/rm-icon.png" alt="" width="34" height="34"><span><b>I want to write a note</b><small>Log in or sign up with a free recoverymisfits.org account</small></span></a>
+    <div id="nb-btn"><a class="gbtn" href="https://recoverymisfits.org/skivvies?to=note"><img src="/img/rm-icon.png" alt="" width="34" height="34"><span><b>I want to write a note</b><small>Log in or sign up with a free recoverymisfits.org account</small></span></a></div>
     <p class="fine">You sign in with <b>recoverymisfits.org</b>, a free recovery community site, then come right back here to write it. Already have an account there? Just sign in. New? It walks you through making one.</p>
     <button class="later" id="nb-later" type="button">Not now</button>
   </div>
 </div>
 <script>
 (()=>{const nb=document.getElementById('nb');let open=false;
- const show=()=>{if(open)return;open=true;nb.hidden=false;requestAnimationFrame(()=>nb.classList.add('on'));
+ const show=()=>{if(open)return;open=true;document.getElementById('nb-btn').innerHTML=rmBtn();nb.hidden=false;requestAnimationFrame(()=>nb.classList.add('on'));
   if(history.state&&history.state.menu){setNav(false);history.replaceState({page:page(),note:true},'')}else history.pushState({page:page(),note:true},'');
   setTimeout(()=>{try{nb.querySelector('.gbtn').focus()}catch(_){}},60)};
  const hide=()=>{if(!open)return;open=false;nb.classList.remove('on');setTimeout(()=>{if(!open)nb.hidden=true},200)};
@@ -606,7 +614,7 @@ render();
  document.getElementById('nb-x').onclick=close;document.getElementById('nb-later').onclick=close;
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open)close()});
  // going on to Recovery Misfits: drop the lightbox from history first, so coming back lands on the page, not a closed box
- nb.querySelector('.gbtn').addEventListener('click',e=>{e.preventDefault();const u=e.currentTarget.href;open=false;location.replace(u)});
+ nb.addEventListener('click',e=>{const a=e.target.closest('#nb-btn a');if(!a)return;e.preventDefault();open=false;location.replace(a.href)});
 })();
 </script>
 </body>
