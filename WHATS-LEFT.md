@@ -110,3 +110,4 @@ skivvies.org > "I want to write a note" > sign in (or sign up) with Recovery Mis
 - Opening recoverymisfits.org/skivvies without ?to=note (e.g. the group link) still goes to the Porch group like before.
 - Notes still go to the skivvies-note function and land in /admin as pending. Nothing changed there.
 - [ ] Mike: test on the phone with a throwaway account.
+- v0.19 (same night, Mike: "it flashes some pages and looks spammy"): signed in already = no Recovery Misfits screens at all, just a moment of Skivvies cream and you're on the note page (it adds you to the group quietly if you weren't in it). Sign-in/sign-up screens only show when needed, and after signing in there's no "Thanks for helping" stop, it hops straight back. "Not you?" on Skivvies opens the account picker (?switch=1).

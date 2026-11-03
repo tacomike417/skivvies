@@ -207,7 +207,7 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a>
-  <div class="headright"><span class="pill">v0.18</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.19</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
@@ -544,7 +544,7 @@ if(e.target.id==='copy'){copyText(bulletin).then(()=>toast('Bulletin blurb copie
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-kit]')){e.preventDefault();state.kit=e.target.dataset.kit;render()}});
 document.addEventListener('change',e=>{if(e.target.id==='monthly')state.monthly=e.target.checked;if(e.target.id==='qty'){state.qty=Math.max(1,Math.min(10000,parseInt(e.target.value,10)||1));render()}});
 document.addEventListener('input',e=>{if(e.target.id==='n_body'){noteDraft(e.target.value);const c=document.getElementById('n_count');if(c)c.textContent=e.target.value.length+' / 600'}});
-document.addEventListener('click',e=>{if(e.target.id==='n_out'){rmOut();render();return}
+document.addEventListener('click',e=>{if(e.target.id==='n_out'){rmOut();location.href=RM_IN+'&switch=1';return}
  if(e.target.id==='n_again'){state.noteSent=false;render();return}});
 document.addEventListener('submit',async e=>{if(e.target.id==='noteform'){e.preventDefault();const err=document.getElementById('n_err'),btn=document.getElementById('n_send');
  const body=document.getElementById('n_body').value.trim(),sign=document.getElementById('n_sign').value.trim();
