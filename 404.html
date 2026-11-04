@@ -220,7 +220,7 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <div class="headleft"><button class="back" id="back" type="button" aria-label="Back" hidden>←</button><a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a></div>
-  <div class="headright"><span class="pill">v0.25</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.26</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
@@ -319,7 +319,7 @@ function home(){return `
     <a class="gtile" href="/cover-someones-butt" data-go="kit" aria-label="Donate a pack: sponsor new underwear for someone in need"><img src="/img/buttons/donate_a_pack-588.webp" srcset="/img/buttons/donate_a_pack-588.webp 588w, /img/buttons/donate_a_pack-882.webp 882w" sizes="(max-width:520px) 46vw, 240px" width="294" height="260" alt=""></a>
     <a class="gtile" href="https://recoverymisfits.org/skivvies?to=note" data-note aria-label="Write a note: encourage someone on their first day"><img src="/img/buttons/write_a_note-588.webp" srcset="/img/buttons/write_a_note-588.webp 588w, /img/buttons/write_a_note-882.webp 882w" sizes="(max-width:520px) 46vw, 240px" width="294" height="260" alt=""></a>
     <a class="gtile" href="/request-underwear" data-go="request" aria-label="Request supplies: get underwear for your program or shelter"><img src="/img/buttons/request_supplies-588.webp" srcset="/img/buttons/request_supplies-588.webp 588w, /img/buttons/request_supplies-882.webp 882w" sizes="(max-width:520px) 46vw, 240px" width="294" height="260" alt=""></a>
-    <a class="gtile" href="https://recoverymisfits.org/skivvies" aria-label="Join the Skivvies group on Recovery Misfits"><img src="/img/buttons/join_the_group-588.webp" srcset="/img/buttons/join_the_group-588.webp 588w, /img/buttons/join_the_group-882.webp 882w" sizes="(max-width:520px) 46vw, 240px" width="294" height="260" alt=""></a>
+    <a class="gtile" href="https://recoverymisfits.org/skivvies?to=group" aria-label="Join the Skivvies group on Recovery Misfits"><img src="/img/buttons/join_the_group-588.webp" srcset="/img/buttons/join_the_group-588.webp 588w, /img/buttons/join_the_group-882.webp 882w" sizes="(max-width:520px) 46vw, 240px" width="294" height="260" alt=""></a>
   </nav>
   <p class="scrollhint">Wait, what is this? ↓</p>
 </section>
@@ -375,7 +375,7 @@ function home(){return `
 function note(){
 if(state.noteSent)return `<section class="page"><div class="success"><div class="check">✓</div><h1>Got it.</h1><p>Thank you. Once it's approved, it gets printed and goes in somebody's pack with their new underwear.</p></div>
 <div class="actions"><button class="action" id="n_again">Write another one</button><button class="action ghost" data-go="home">Back home</button></div>
-<a class="crew" href="https://recoverymisfits.org/feed/porch.html?g=skivvies">Come hang out with the Skivvies crew →</a></section>`;
+<a class="crew" href="https://recoverymisfits.org/skivvies?to=group">Come hang out with the Skivvies crew →</a></section>`;
 if(!rmTok())return `<section class="page"><h1>Write a <span>note.</span></h1>
 <p>A few words for somebody on day one. We print it and tuck it in their pack with their new underwear.</p>
 ${rmBtn()}
