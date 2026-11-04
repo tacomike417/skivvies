@@ -6,6 +6,8 @@
  *                            The note goes up in the Skivvies group on RM, from the
  *                            skivvies house account, and the writer gets a DM.
  *   decline { id }           Same admin check. Just marks it.
+ *   use     { id }           Same admin check. An approved note went in a pack: used_count +1
+ *                            and the writer gets a DM ("just went out in a pack"). Reusable.
  *
  * The RM side checks a shared secret (skivvies_bridge, in both projects, readable by nobody
  * through the API). Deployed with verify_jwt off: it checks every token itself.
@@ -57,7 +59,7 @@ Deno.serve(async (req) => {
     return json({ ok: true });
   }
 
-  if (b.action === "approve" || b.action === "decline") {
+  if (b.action === "approve" || b.action === "decline" || b.action === "use") {
     const { data: who } = await admin.auth.getUser(jwt);
     const me = who?.user;
     if (!me) return json({ error: "Sign in first." }, 401);
@@ -66,6 +68,25 @@ Deno.serve(async (req) => {
     const id = Number(b.id);
     const { data: n } = await admin.from("skivvies_notes").select("*").eq("id", id).maybeSingle();
     if (!n) return json({ error: "That note isn't here." }, 404);
+    if (b.action === "use") {
+      if (n.status !== "approved") return json({ error: "Approve it first." }, 409);
+      // only count it if nobody else bumped it a split second ago (double tap)
+      const { data: bumped } = await admin.from("skivvies_notes")
+        .update({ used_count: (n.used_count || 0) + 1, last_used_at: new Date().toISOString() })
+        .eq("id", id).eq("used_count", n.used_count || 0).select("used_count");
+      if (!bumped || !bumped.length) return json({ error: "That tap already went through." }, 409);
+      const { data: br } = await admin.from("skivvies_bridge").select("secret").maybeSingle();
+      let told = false;
+      if (br) {
+        const r = await fetch(RM + "/rest/v1/rpc/skivvies_note_used", {
+          method: "POST",
+          headers: { apikey: RM_KEY, "Content-Type": "application/json" },
+          body: JSON.stringify({ p_secret: br.secret, p_writer: n.rm_user_id }),
+        });
+        told = r.ok;
+      }
+      return json({ ok: true, used: bumped[0].used_count, told });
+    }
     if (n.status !== "pending") return json({ error: "That one was already " + n.status + "." }, 409);
 
     if (b.action === "decline") {
