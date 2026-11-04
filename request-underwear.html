@@ -203,6 +203,11 @@ textarea{min-height:90px}
 .tag1 span{display:block}
 .hero-swoosh{display:block;width:80%;height:9px;margin:6px auto 4px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 14' preserveAspectRatio='none'%3E%3Cpath d='M3 10C70 3 170 1 297 5c-90 1-190 3-292 8z' fill='%23f35d40'/%3E%3C/svg%3E") center/100% 100% no-repeat}
 .hero .tag2{margin:0 0 4px;font-size:clamp(21px,6.6vw,26px);color:var(--ink)}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0 6px}
+.tiles .gtile{display:block;border-radius:18px;transition:transform .12s}
+.tiles .gtile:active{transform:scale(.97)}
+.tiles .gtile:focus-visible{outline:3px solid var(--coral);outline-offset:3px}
+.tiles img{width:100%;height:auto;display:block}
 .hero .cta{border:3px solid var(--ink);box-shadow:0 5px 0 var(--ink);padding:16px 18px;margin-top:4px}
 .hero .cta strong{font-size:clamp(18px,5.6vw,22px)}.hero .cta small{font-size:clamp(12.5px,3.6vw,14px)}.hero .cta .right{font-size:30px}
 </style>
@@ -213,7 +218,7 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a>
-  <div class="headright"><span class="pill">v0.23</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.24</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
@@ -308,10 +313,12 @@ function home(){return `
   <span class="hero-swoosh" aria-hidden="true"></span>
   <p class="tag2">One pair at a time.</p>
   ${buttCount()}
-  <button class="cta" data-go="kit"><span class="copy"><strong>Cover Someone's Butt</strong><small>$15 covers new underwear and socks for somebody's first day.</small></span><span class="right">→</span></button>
-  <a class="cta light" href="https://recoverymisfits.org/skivvies?to=note" data-note><span class="copy"><strong>Write a note for somebody's day one</strong><small>Free. It gets printed and goes in their pack.</small></span><span class="right">→</span></a>
-  <button class="cta light" data-go="request"><span class="copy"><strong>Need underwear for your people?</strong><small>Sober house, treatment program or shelter in Stark County? Let us know.</small></span><span class="right">→</span></button>
-  <a class="cta light" href="https://recoverymisfits.org/skivvies"><span class="copy"><strong>Join the Skivvies group</strong><small>Free on Recovery Misfits. Read the notes and meet the people doing this.</small></span><span class="right">→</span></a>
+  <nav class="tiles" aria-label="Ways to help">
+    <a class="gtile" href="/cover-someones-butt" data-go="kit" aria-label="Donate a pack: sponsor new underwear for someone in need"><img src="/img/buttons/donate_a_pack-588.webp" srcset="/img/buttons/donate_a_pack-588.webp 588w, /img/buttons/donate_a_pack-882.webp 882w" sizes="(max-width:520px) 46vw, 240px" width="294" height="260" alt=""></a>
+    <a class="gtile" href="https://recoverymisfits.org/skivvies?to=note" data-note aria-label="Write a note: encourage someone on their first day"><img src="/img/buttons/write_a_note-588.webp" srcset="/img/buttons/write_a_note-588.webp 588w, /img/buttons/write_a_note-882.webp 882w" sizes="(max-width:520px) 46vw, 240px" width="294" height="260" alt=""></a>
+    <a class="gtile" href="/request-underwear" data-go="request" aria-label="Request supplies: get underwear for your program or shelter"><img src="/img/buttons/request_supplies-588.webp" srcset="/img/buttons/request_supplies-588.webp 588w, /img/buttons/request_supplies-882.webp 882w" sizes="(max-width:520px) 46vw, 240px" width="294" height="260" alt=""></a>
+    <a class="gtile" href="https://recoverymisfits.org/skivvies" aria-label="Join the Skivvies group on Recovery Misfits"><img src="/img/buttons/join_the_group-588.webp" srcset="/img/buttons/join_the_group-588.webp 588w, /img/buttons/join_the_group-882.webp 882w" sizes="(max-width:520px) 46vw, 240px" width="294" height="260" alt=""></a>
+  </nav>
   <p class="scrollhint">Wait, what is this? ↓</p>
 </section>
 
