@@ -1,6 +1,6 @@
 # Skivvies Project — skivvies.org
 
-New underwear, socks and basics for people starting recovery.
+New underwear and bras for people starting recovery.
 A program of Cornerstones Recovery Inc, a 501(c)(3).
 
 - `index.html` — the whole site (HTML, CSS, vanilla JS, no frameworks). Phone first, 390px.
