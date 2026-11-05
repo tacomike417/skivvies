@@ -91,6 +91,13 @@ input,select{width:100%;border:1px solid #bdcbc2;border-radius:12px;padding:13px
     <ul class="reqs" id="notes"><li>Loading…</li></ul>
     <button class="link" id="notemore" type="button">Show approved notes (to print and use)</button>
   </div>
+  <!-- GIFTS (5 Nov 2026). Money comes through Stripe (Cornerstones Recovery, Inc. account).
+       Messages show on the wall at skivvies.org/cover-someones-butt only after you approve them here. -->
+  <div class="card" id="giftcard">
+    <label>Gifts <span class="badge hidden" id="giftbadge"></span></label>
+    <p class="rule" id="giftsum"></p>
+    <ul class="reqs" id="gifts"><li>Loading…</li></ul>
+  </div>
   <div class="card" id="drvcard">
     <label>Undie Sunday sign-ups <span class="badge hidden" id="drvbadge"></span></label>
     <ul class="reqs" id="drives"><li>Loading…</li></ul>
@@ -132,7 +139,7 @@ async function boot(){
  if(!session){show('signin');return}
  const {data:isAdmin}=await sb.rpc('is_skivvies_admin');
  if(!isAdmin){$('#whoami').textContent=session.user.email;show('notadmin');return}
- show('panel');load();loadNotes();loadRequests();loadDrives()}
+ show('panel');load();loadNotes();loadRequests();loadDrives();loadGifts()}
 
 async function load(){
  const {data,error}=await sb.from('skivvies_butt_count').select('year,people,updated_at').order('year',{ascending:false});
@@ -212,6 +219,20 @@ $('#notes').onclick=async e=>{const b=e.target.closest('[data-note]');if(!b)retu
  if(b.dataset.act==='use'){b.textContent=data.told?'Sent to them ✓':'Counted ✓ (they weren\'t told)';b.nextElementSibling.textContent=usedTxt(data.used);
   setTimeout(()=>{b.textContent='Use this note 🍑';b.disabled=false},2500);return}
  loadNotes()};
+
+async function loadGifts(){
+ const {data,error}=await sb.from('skivvies_gifts').select('id,created_at,paid_at,mode,kind,qty,monthly,amount_cents,donor_name,anonymous,message,message_status,donor_email').eq('paid',true).order('paid_at',{ascending:false}).limit(60);
+ const ul=$('#gifts');if(error){ul.innerHTML=`<li>${esc(error.message)}</li>`;return}
+ const live=(data||[]).filter(g=>g.mode==='live');const packs=live.reduce((t,g)=>t+g.qty,0),dollars=live.reduce((t,g)=>t+g.amount_cents,0)/100;
+ $('#giftsum').textContent=live.length?`Live so far: ${live.length} gift${live.length===1?'':'s'}, ${packs} pack${packs===1?'':'s'}, $${dollars.toLocaleString()}. Stripe takes its fee before it hits the bank.`:'No real gifts yet.';
+ const waiting=(data||[]).filter(g=>g.message_status==='pending').length;const bd=$('#giftbadge');bd.textContent=waiting+' message'+(waiting===1?'':'s')+' to read';bd.classList.toggle('hidden',!waiting);
+ if(!data||!data.length){ul.innerHTML='<li>No gifts yet.</li>';return}
+ const fmt=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+ ul.innerHTML=data.map(g=>`<li><div class="top"><span class="place">${g.mode==='test'?'<span class="badge">TEST</span> ':''}$${(g.amount_cents/100).toLocaleString()}${g.monthly?' / month':''} · ${g.qty} ${g.kind==='women'?(g.qty===1?'woman':'women'):(g.qty===1?'guy':'guys')}</span><span class="when">${fmt(g.paid_at)}</span></div>
+  <div class="meta">${g.anonymous||!g.donor_name?'Anonymous':esc(g.donor_name)}${g.donor_email?' · <a href="mailto:'+esc(g.donor_email)+'">'+esc(g.donor_email)+'</a>':''}</div>
+  ${g.message?`<div class="notes">${esc(g.message)}</div>${g.message_status==='pending'?`<button class="mini" data-gift="${g.id}" data-to="approved">Put it on the wall</button> <button class="mini" data-gift="${g.id}" data-to="hidden">Keep it off</button>`:`<div class="meta">${g.message_status==='approved'?'On the wall ✓':'Kept off the wall'} · <button class="link" data-gift="${g.id}" data-to="${g.message_status==='approved'?'hidden':'approved'}">${g.message_status==='approved'?'Take it down':'Put it up'}</button></div>`}`:''}</li>`).join('')}
+$('#gifts').onclick=async e=>{const b=e.target.closest('[data-gift]');if(!b)return;b.disabled=true;
+ await sb.from('skivvies_gifts').update({message_status:b.dataset.to}).eq('id',+b.dataset.gift);loadGifts()};
 
 sb.auth.onAuthStateChange((ev)=>{if(ev==='SIGNED_IN'||ev==='SIGNED_OUT')boot()});
 boot();

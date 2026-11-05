@@ -12,6 +12,18 @@ One to-do list for the whole project. New to-dos go here.
 - [ ] Connect both accounts to a scheduler (Buffer, like Recovery Misfits) so posts can be queued
 - [ ] Make the first 3 launch graphics (see marketing/POST-QUEUE.md)
 
+## Giving is built (v0.30, 5 Nov 2026), test mode until Mike says go
+- Stripe: "Cornerstones Recovery, Inc" account (separate from Thunkbox), payouts to Huntington ending 7048.
+- Edge function skivvies-give (Miscellaneous project, verify_jwt off): makes the Stripe Checkout page ($20 a pack,
+  guy or girl, any number, one-time or monthly) and confirms it was paid. Secret: STRIPE_SECRET_KEY.
+  sk_test_ key = test mode, sk_live_ key = real money. Table skivvies_gifts (supabase/skv_06_gifts.sql, applied).
+- Cover Someone's Butt page: name or anonymous, optional message, Give button -> Stripe -> thank-you screen.
+  Messages wait in admin (Gifts card) until "Put it on the wall". The wall shows live gifts only.
+- Tax receipt: Stripe's own receipt email, with the 501(c)(3) / EIN / "no goods or services" line on the item.
+- [ ] Mike: put the TEST secret key in, try a $20 test gift with card 4242 4242 4242 4242.
+- [ ] Mike: Stripe Settings -> Customer emails -> turn on "Successful payments" (that's what sends receipts).
+- [ ] When it looks right: swap in the LIVE secret key. That's the switch that opens real giving.
+
 ## Done 5 Nov 2026 (v0.28, v0.29)
 - [x] v0.29: footer line "Skivvies is a program of Cornerstones Recovery, Inc., a 501(c)(3)..." with the EIN, so Stripe can match the site to the nonprofit.
 - [x] Site copy: underwear and bras, not socks. $20 for a guy or a woman (Cover Someone's Butt page: both cards $20, totals work for both). Giving button still says "Giving opens soon" until Stripe is hooked up.

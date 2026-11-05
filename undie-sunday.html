@@ -219,7 +219,7 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <div class="headleft"><button class="back" id="back" type="button" aria-label="Back" hidden>←</button><a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a></div>
-  <div class="headright"><span class="pill">v0.29</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.30</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
@@ -304,7 +304,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
 window.addEventListener('appinstalled',()=>{deferredPrompt=null;toast('Skivvies is on your phone.');if(page()==='install')render()});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 const app=document.querySelector('#app'),nav=document.querySelector('#nav'),menu=document.querySelector('#menu');
-let state={kit:'men',qty:1,monthly:false,thanks:false};
+let state={kit:'men',qty:1,monthly:false,thanks:false,anon:true,gname:'',gmsg:'',gift:null};
 const bulletin='Join our Undie Sunday for Skivvies! Bring NEW underwear and bras to help men and women starting recovery in Stark County, Ohio. Because rock bottom shouldn\'t be bare bottom. skivvies.org';
 
 function home(){return `
@@ -394,19 +394,34 @@ return `<section class="page"><h1>Write a <span>note.</span></h1>
 <button class="action" type="submit" id="n_send">Send my note →</button>
 </form></section>`}
 function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function kit(){let isMen=state.kit==='men',total=20*state.qty;return `<section class="page">
+function kit(){if(state.gift)return giftThanks();const total=20*state.qty,per=state.monthly?' / month':'';return `<section class="page">
 <h1>Cover <span>Someone's Butt.</span></h1>
 <p>Twenty bucks covers new underwear for somebody's first day. For a woman, that includes a bra.</p>
-<div class="card ${isMen?'selected':''}" role="button" tabindex="0" data-kit="men"><h3>For a guy <span class="price">$20</span></h3><p>New boxer briefs for his first day</p></div>
-<div class="card ${!isMen?'selected':''}" role="button" tabindex="0" data-kit="women"><h3>For a woman <span class="price">$20</span></h3><p>New underwear and a bra for her first day</p></div>
+<div class="card ${state.kit==='men'?'selected':''}" role="button" tabindex="0" data-kit="men"><h3>For a guy <span class="price">$20</span></h3><p>New boxer briefs for his first day</p></div>
+<div class="card ${state.kit==='women'?'selected':''}" role="button" tabindex="0" data-kit="women"><h3>For a woman <span class="price">$20</span></h3><p>New underwear and a bra for her first day</p></div>
 <h3>How many?</h3>
 <div class="options">${[1,5,10].map(n=>`<button class="option ${state.qty===n?'active':''}" data-qty="${n}">${n}</button>`).join('')}<button class="option ${![1,5,10].includes(state.qty)?'active':''}" data-customqty="1">Custom</button></div>
-${![1,5,10].includes(state.qty)?`<label class="field" for="qty">How many</label><input id="qty" type="number" min="1" max="10000" value="${state.qty}">`:''}
+${![1,5,10].includes(state.qty)?`<label class="field" for="qty">How many</label><input id="qty" type="number" inputmode="numeric" min="1" max="10000" value="${state.qty}">`:''}
 <label class="toggle"><input id="monthly" type="checkbox" ${state.monthly?'checked':''}> Make it monthly</label>
-<div class="total">${total===null?'Price coming':'$'+total+(state.monthly?' / month':'')}</div>
-<button class="action" data-checkout="kit" ${total===null?'disabled':''}>${total===null?"Women's coming soon":'Giving opens soon'}</button>
-<p class="hint">We're not taking money yet. Follow along and we'll say when.</p>
+<label class="toggle"><input id="anon" type="checkbox" ${state.anon?'checked':''}> Give anonymously</label>
+${state.anon?'':`<label class="field" for="g_name">Your name on the wall</label><input id="g_name" maxlength="40" autocomplete="name" placeholder="Like “Mike, 4 years” or “The Smith family”" value="${esc(state.gname)}">`}
+<label class="field" for="g_msg">Leave a message <span style="font-weight:600;color:var(--muted)">(optional)</span></label>
+<textarea id="g_msg" maxlength="280" rows="3" placeholder="Rooting for you. Day one is the hardest one.">${esc(state.gmsg)}</textarea>
+<p class="hint">Messages go up on the wall below after a quick look.</p>
+<div class="total" id="g_total">$${total}${per}</div>
+<button class="action" id="give">Give $${total}${per} →</button>
+<p class="hint">Secure checkout by Stripe. Skivvies is a program of Cornerstones Recovery, Inc., a 501(c)(3) nonprofit (EIN 99-4095027), so your gift is tax-deductible. Your receipt comes by email.</p>
+<div id="wall"></div>
 </section>`}
+function giftThanks(){const g=state.gift;if(g.loading)return `<section class="page"><div class="success"><h1>Checking on your gift…</h1></div></section>`;
+if(g.error)return `<section class="page"><div class="success"><h1>Hmm.</h1><p>${esc(g.error)}</p><p>If you were charged, your Stripe receipt is your proof. Questions: hello@skivvies.org</p></div><div class="actions"><button class="action" data-go="kit" id="giftdone">Back</button></div></section>`;
+if(!g.paid)return `<section class="page"><div class="success"><h1>No charge went through.</h1><p>Nothing was taken. Want to try again?</p></div><div class="actions"><button class="action" data-go="kit" id="giftdone">Try again</button></div></section>`;
+const n=g.qty,who=g.kind==='women'?(n===1?'a woman':n+' women'):(n===1?'a guy':n+' guys');
+return `<section class="page"><div class="success"><div class="check">✓</div>${g.test?'<p class="hint" style="color:#c03a22;font-weight:800">TEST MODE. No real money moved.</p>':''}<h1>You covered ${n===1?'a butt':n+' butts'}.</h1><p>That's new underwear for ${who} on day one${g.monthly?', every month':''}. Thank you.</p><p class="hint">Your tax receipt from Cornerstones Recovery, Inc. is on its way to your email from Stripe.</p></div><div class="actions"><button class="outline" id="sharebtn">Tell somebody about Skivvies</button><button class="action" data-go="home" id="giftdone">Back home</button></div></section>`}
+const GIVE_FN=SB_URL+'/functions/v1/skivvies-give';
+async function giveFn(body){const r=await fetch(GIVE_FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+SB_KEY},body:JSON.stringify(body)});const d=await r.json().catch(()=>({}));if(!r.ok||!d.ok)throw new Error(d.error||'That didn\'t go through. Try again.');return d}
+async function loadWall(){const el=document.getElementById('wall');if(!el)return;try{const r=await fetch(SB_URL+'/rest/v1/rpc/skivvies_wall',{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY,Authorization:'Bearer '+SB_KEY},body:'{}'});const d=r.ok?await r.json():[];
+if(!d.length||!document.getElementById('wall'))return;el.innerHTML=`<h3 style="margin-top:28px">The wall</h3>`+d.map(w=>`<div class="card"><p style="margin:0 0 6px">${esc(w.message)}</p><p class="hint" style="margin:0">${esc(w.who)} · ${w.qty} ${w.kind==='women'?(w.qty===1?'woman':'women'):(w.qty===1?'guy':'guys')}${w.monthly?' a month':''}</p></div>`).join('')}catch(_){}}
 
 function drive(){if(state.thanks)return `<section class="page"><div class="success"><div class="check">✓</div><h1>You're in.</h1><p>Thanks for covering some butts. We'll be in touch about pickup.</p></div><div class="actions"><button class="outline" id="flyer">Download a flyer (coming soon)</button><button class="outline" id="copy">Copy the bulletin blurb</button><button class="action" data-go="home">Back home</button></div></section>`;
 return `<section class="page"><h1>Host an <span>Undie Sunday.</span></h1>
@@ -525,7 +540,7 @@ let lastCounted=null;
 function countVisit(p){const path=PATHS[p]||'/';if(path===lastCounted)return;lastCounted=path;
  const go=()=>{try{window.goatcounter.count({path,title:document.title})}catch(_){}};
  let tries=0;const wait=()=>{if(lastCounted!==path)return;if(window.goatcounter&&window.goatcounter.count)return go();if(++tries<40)setTimeout(wait,250)};wait()}
-function render(){let p=page();setMeta(p);app.innerHTML=({home,note,kit,request,drive,about,privacy,share,install}[p]||home)();if(p==='note'&&rmTok())loadAv();if(document.querySelector('#bc-tiles'))fillCount();turnstile();countVisit(p);shown=p;document.getElementById('back').hidden=(p==='home');setNav(false);window.scrollTo(0,0)}
+function render(){let p=page();setMeta(p);app.innerHTML=({home,note,kit,request,drive,about,privacy,share,install}[p]||home)();if(p==='note'&&rmTok())loadAv();if(document.querySelector('#bc-tiles'))fillCount();if(document.getElementById('wall'))loadWall();turnstile();countVisit(p);shown=p;document.getElementById('back').hidden=(p==='home');setNav(false);window.scrollTo(0,0)}
 document.getElementById('back').addEventListener('click',()=>{if(history.state&&history.state.page&&history.length>1)history.back();else go('home')});
 function go(p){if(p==='request')state.reqSent=false;if(p==='drive')state.thanks=false;const url=PATHS[p]||'/';if(history.state&&history.state.menu)history.replaceState({page:p},'',url);else if(p!==page())history.pushState({page:p},'',url);render()}
 /* WRITE A NOTE, ON SKIVVIES (3 Nov 2026, Mike): skivvies.org -> sign in with Recovery Misfits -> back here to write it.
@@ -558,6 +573,7 @@ function rmBtn(){const n=lastName();return n
  ?`<a class="gbtn" href="${RM_IN}"><span class="av sm">${avHTML(n,lastAv())}</span><span><b>Continue as ${esc(n)}</b><small>with your Recovery Misfits account</small></span></a><a class="other" href="${RM_IN}&switch=1">Use a different account</a>`
  :`<a class="gbtn" href="${RM_IN}"><img src="/img/rm-icon.png" alt="" width="34" height="34"><span><b>I want to write a note</b><small>Log in or sign up with a free recoverymisfits.org account</small></span></a>`}
 function noteDraft(v){try{if(v===undefined)return sessionStorage.getItem('skv_draft')||'';if(v)sessionStorage.setItem('skv_draft',v);else sessionStorage.removeItem('skv_draft')}catch(_){return''}}
+const GIFT_ID=new URLSearchParams(location.search).get('gift');if(GIFT_ID)state.gift={loading:true};
 (()=>{const h=location.hash.slice(1);const p=PATHS[h]?h:pathPage();history.replaceState({page:p},'',PATHS[h]?PATHS[h]:location.pathname)})();
 window.addEventListener('popstate',()=>{const was=navOpen();if(history.state&&history.state.menu){setNav(true);return}setNav(false);if(page()!==shown)render();else if(!was&&!document.querySelector('.nb.on'))window.scrollTo(0,0)});
 menu.onclick=()=>{navOpen()?closeNav():openNav()};
@@ -568,7 +584,8 @@ document.addEventListener('click',e=>{let b=e.target.closest('[data-go]');if(b){
 b=e.target.closest('[data-kit]');if(b){state.kit=b.dataset.kit;render();return}
 b=e.target.closest('[data-qty]');if(b){state.qty=+b.dataset.qty;render();return}
 b=e.target.closest('[data-customqty]');if(b){state.qty=2;render();return}
-b=e.target.closest('[data-checkout]');if(b){toast('Giving opens soon. Nothing was charged.');return}
+if(e.target.id==='give'){const btn=e.target;if(!state.anon&&!state.gname.trim()){toast('Add a name, or check Give anonymously.');document.getElementById('g_name')?.focus();return}btn.disabled=true;btn.textContent='Opening secure checkout…';giveFn({action:'checkout',kind:state.kit,qty:state.qty,monthly:state.monthly,anon:state.anon,name:state.gname,message:state.gmsg}).then(d=>{location.href=d.url}).catch(err=>{toast(err.message);btn.disabled=false;btn.textContent='Give $'+(20*state.qty)+(state.monthly?' / month':'')+' →'});return}
+if(e.target.id==='giftdone'){state.gift=null;history.replaceState(history.state,'',location.pathname)}
 if(e.target.id==='nextslogan'){sloganIdx=(sloganIdx+1+Math.floor(Math.random()*(SLOGANS.length-1)))%SLOGANS.length;const q=document.querySelector('#slogan');q.style.opacity=0;setTimeout(()=>{q.textContent=SLOGANS[sloganIdx];q.style.opacity=1},120);return}
 if(e.target.id==='doinstall'&&deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;render()});return}
 if(e.target.id==='sharebtn'){const d={title:'Skivvies',text:"Because rock bottom shouldn't be bare bottom. New underwear and bras for people starting recovery.",url:'https://skivvies.org'};if(navigator.share){navigator.share(d).catch(()=>{})}else{copyText(d.url).then(()=>toast('Link copied. Paste it anywhere.'))}return}
@@ -576,8 +593,8 @@ if(e.target.id==='copylink'){copyText('https://skivvies.org').then(()=>toast('Li
 if(e.target.id==='flyer'){toast('Flyer is coming soon.');return}
 if(e.target.id==='copy'){copyText(bulletin).then(()=>toast('Bulletin blurb copied.')).catch(()=>toast('Could not copy. Press and hold to copy it instead.'));return}});
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-kit]')){e.preventDefault();state.kit=e.target.dataset.kit;render()}});
-document.addEventListener('change',e=>{if(e.target.id==='monthly')state.monthly=e.target.checked;if(e.target.id==='qty'){state.qty=Math.max(1,Math.min(10000,parseInt(e.target.value,10)||1));render()}});
-document.addEventListener('input',e=>{if(e.target.id==='n_body'){noteDraft(e.target.value);const c=document.getElementById('n_count');if(c)c.textContent=e.target.value.length+' / 600'}});
+document.addEventListener('change',e=>{if(e.target.id==='monthly'){state.monthly=e.target.checked;render()}if(e.target.id==='anon'){state.anon=e.target.checked;render()}if(e.target.id==='qty'){state.qty=Math.max(1,Math.min(10000,parseInt(e.target.value,10)||1));render()}});
+document.addEventListener('input',e=>{if(e.target.id==='g_name')state.gname=e.target.value;if(e.target.id==='g_msg')state.gmsg=e.target.value;if(e.target.id==='n_body'){noteDraft(e.target.value);const c=document.getElementById('n_count');if(c)c.textContent=e.target.value.length+' / 600'}});
 document.addEventListener('click',e=>{if(e.target.id==='n_out'){rmOut();location.href=RM_IN+'&switch=1';return}
  if(e.target.id==='n_again'){state.noteSent=false;render();return}});
 document.addEventListener('submit',async e=>{if(e.target.id==='noteform'){e.preventDefault();const err=document.getElementById('n_err'),btn=document.getElementById('n_send');
@@ -611,6 +628,7 @@ const mv=ev=>{const dx=ev.pageX-x;if(Math.abs(dx)>3)moved=true;st.scrollLeft=sl-
 const up=()=>{st.classList.remove('dragging');document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up)};
 document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up)});
 render();
+if(GIFT_ID)giveFn({action:'confirm',session:GIFT_ID}).then(d=>{state.gift=d}).catch(err=>{state.gift={error:err.message}}).finally(()=>{if(page()==='kit')render()});
 </script>
 <div class="nb" id="nb" role="dialog" aria-modal="true" aria-labelledby="nb-h" hidden>
   <div class="in">
