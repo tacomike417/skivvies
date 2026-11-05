@@ -12,7 +12,8 @@ One to-do list for the whole project. New to-dos go here.
 - [ ] Connect both accounts to a scheduler (Buffer, like Recovery Misfits) so posts can be queued
 - [ ] Make the first 3 launch graphics (see marketing/POST-QUEUE.md)
 
-## Done 5 Nov 2026 (v0.28)
+## Done 5 Nov 2026 (v0.28, v0.29)
+- [x] v0.29: footer line "Skivvies is a program of Cornerstones Recovery, Inc., a 501(c)(3)..." with the EIN, so Stripe can match the site to the nonprofit.
 - [x] Site copy: underwear and bras, not socks. $20 for a guy or a woman (Cover Someone's Butt page: both cards $20, totals work for both). Giving button still says "Giving opens soon" until Stripe is hooked up.
 
 ## Before taking money
