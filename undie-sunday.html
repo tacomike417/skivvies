@@ -5,19 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#fff6f0">
 <title>Host an Undie Sunday — Skivvies</title>
-<meta name="description" content="Pick a Sunday, put out a box, collect new underwear and socks for people starting recovery in Stark County, Ohio. We'll come grab it.">
+<meta name="description" content="Pick a Sunday, put out a box, collect new underwear and bras for people starting recovery in Stark County, Ohio. We'll come grab it.">
 <link rel="canonical" href="https://skivvies.org/undie-sunday">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Skivvies">
 <meta property="og:title" content="Host an Undie Sunday — Skivvies">
-<meta property="og:description" content="Pick a Sunday, put out a box, collect new underwear and socks for people starting recovery in Stark County, Ohio. We'll come grab it.">
+<meta property="og:description" content="Pick a Sunday, put out a box, collect new underwear and bras for people starting recovery in Stark County, Ohio. We'll come grab it.">
 <meta property="og:url" content="https://skivvies.org/undie-sunday">
 <meta property="og:image" content="https://skivvies.org/img/og-image.jpg">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Skivvies: a thong and boxer briefs with sunrises. Because rock bottom shouldn't be bare bottom.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="robots" content="index,follow">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Skivvies","url":"https://skivvies.org/","logo":"https://skivvies.org/img/icon-512.png","email":"hello@skivvies.org","slogan":"Because rock bottom shouldn't be bare bottom.","description":"New underwear and socks for men and women on day one of recovery in Stark County, Ohio.","areaServed":{"@type":"AdministrativeArea","name":"Stark County, Ohio"},"sameAs":["https://www.instagram.com/skivviesproject","https://www.facebook.com/skivvies.org"]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Skivvies","url":"https://skivvies.org/","logo":"https://skivvies.org/img/icon-512.png","email":"hello@skivvies.org","slogan":"Because rock bottom shouldn't be bare bottom.","description":"New underwear and bras for men and women on day one of recovery in Stark County, Ohio.","areaServed":{"@type":"AdministrativeArea","name":"Stark County, Ohio"},"sameAs":["https://www.instagram.com/skivviesproject","https://www.facebook.com/skivvies.org"]}</script>
 <link rel="icon" href="/img/icon-192.png">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
@@ -219,7 +219,7 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <div class="headleft"><button class="back" id="back" type="button" aria-label="Back" hidden>←</button><a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a></div>
-  <div class="headright"><span class="pill">v0.27</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.28</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
@@ -233,7 +233,7 @@ textarea{min-height:90px}
 </header>
 <div class="scrim" id="scrim"></div>
 <main id="app"></main>
-<noscript><p style="padding:20px">Skivvies hands new underwear and socks to men and women on day one of recovery in Stark County, Ohio. Because rock bottom shouldn't be bare bottom. One pair at a time. Email hello@skivvies.org.</p></noscript>
+<noscript><p style="padding:20px">Skivvies hands new underwear and bras to men and women on day one of recovery in Stark County, Ohio. Because rock bottom shouldn't be bare bottom. One pair at a time. Email hello@skivvies.org.</p></noscript>
 <footer class="footer"><span><a class="linkbutton" style="margin:0;padding:0;font-size:12px" href="/share" data-go="share">Share</a> · <a class="linkbutton" style="margin:0;padding:0;font-size:12px" href="/privacy" data-go="privacy">Privacy</a> · hello@skivvies.org</span><a href="https://apps.thunkbox.com" target="_blank" rel="noopener">Apps by ThunkBox ↗</a></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -298,14 +298,14 @@ function fillCount(){const box=document.querySelector('#bc-tiles');if(!box)retur
  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){roll();return}
  const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();requestAnimationFrame(()=>requestAnimationFrame(roll))}},{threshold:.5});io.observe(box)}
 const STRIP=["03", "04", "05", "06", "07", "09", "12", "13", "14", "16", "01", "02"];
-const SLOGANS=["Because rock bottom shouldn't be bare bottom.", "One pair at a time.", "New underwear and socks for people starting recovery. Stark County, Ohio.", "Help us briefly change lives.", "No ifs, ands, or bare butts.", "Nobody donates underwear. We do.", "Everybody deserves a fresh start. Especially their underwear.", "New life. New undies. No exceptions.", "Day one. Clean socks. It matters more than you'd think.", "Save a pair. Change a life.", "Give a pair. Show you care.", "Skivvies: that's the whole program. New underwear for people on day one of recovery.", "We've got recovery covered. Now let's cover their butts.", "Don't leave recovery hanging.", "Rock bottom is a place. Bare bottom is a choice. Ours.", "Shelters can't take used underwear. Think about that for a second.", "Fresh pair. Fresh start. Same day.", "Yes, we're a charity about underwear. No, we won't stop making the jokes.", "Step one: admit you need new drawers.", "Most people arrive with the clothes on their back. Sometimes not even all of those.", "Support comes in many forms. Ours has an elastic waistband.", "Boxers or briefs? Yes.", "The peach is a metaphor. The underwear is not.", "New. Tags on. Yours.", "Sobriety is hard. Underwear shouldn't be.", "Cheeky by name. Serious by nature.", "Socks are the most requested item at every shelter in America. Still true in Stark County.", "Keep coming back. Keep your pants on.", "Clean living starts with clean underwear.", "This is what dignity looks like at 6 a.m. on your first morning.", "One day at a time. One pair at a time.", "If you've been to the bottom, you know. If you haven't, we'll keep it brief.", "Underwear is the most needed and least donated piece of clothing. We're fixing the second half.", "Rock bottom has a dress code now.", "Not all heroes wear capes. Some just wear new underwear for the first time in months.", "Men and women. Stark County. Day one. That's who this is for.", "We can't fix everything. We can fix this.", "Thong story short: people starting over deserve the basics.", "Because rock bottom shouldn't be bare bottom.", "Skivvies. New basics for people starting recovery. Follow along.", "Bottoms up! Wait, wrong meeting.", "Higher power, lower coverage.", "Keep coming back. We've got your backside.", "Rock bottom is rough enough without going commando.", "The only thing we're enabling is better underwear.", "Brief encounters. Lasting recovery.", "Surrender your old ways. And those old boxers.", "Good things come to those who change their panties.", "Your sponsor can't fix everything. We can fix your drawers.", "Step one: get your briefs together.", "Less baggage. More cheekage.", "One day at a time. Two cheeks at a time.", "We believe in second chances and fresh underpants.", "Rock bottom looks better with fresh panties."];
+const SLOGANS=["Because rock bottom shouldn't be bare bottom.", "One pair at a time.", "New underwear and bras for people starting recovery. Stark County, Ohio.", "Help us briefly change lives.", "No ifs, ands, or bare butts.", "Nobody donates underwear. We do.", "Everybody deserves a fresh start. Especially their underwear.", "New life. New undies. No exceptions.", "Day one. Clean underwear. It matters more than you'd think.", "Save a pair. Change a life.", "Give a pair. Show you care.", "Skivvies: that's the whole program. New underwear for people on day one of recovery.", "We've got recovery covered. Now let's cover their butts.", "Don't leave recovery hanging.", "Rock bottom is a place. Bare bottom is a choice. Ours.", "Shelters can't take used underwear. Think about that for a second.", "Fresh pair. Fresh start. Same day.", "Yes, we're a charity about underwear. No, we won't stop making the jokes.", "Step one: admit you need new drawers.", "Most people arrive with the clothes on their back. Sometimes not even all of those.", "Support comes in many forms. Ours has an elastic waistband.", "Boxers or briefs? Yes.", "The peach is a metaphor. The underwear is not.", "New. Tags on. Yours.", "Sobriety is hard. Underwear shouldn't be.", "Cheeky by name. Serious by nature.", "Socks are the most requested item at every shelter in America. Still true in Stark County.", "Keep coming back. Keep your pants on.", "Clean living starts with clean underwear.", "This is what dignity looks like at 6 a.m. on your first morning.", "One day at a time. One pair at a time.", "If you've been to the bottom, you know. If you haven't, we'll keep it brief.", "Underwear is the most needed and least donated piece of clothing. We're fixing the second half.", "Rock bottom has a dress code now.", "Not all heroes wear capes. Some just wear new underwear for the first time in months.", "Men and women. Stark County. Day one. That's who this is for.", "We can't fix everything. We can fix this.", "Thong story short: people starting over deserve the basics.", "Because rock bottom shouldn't be bare bottom.", "Skivvies. New basics for people starting recovery. Follow along.", "Bottoms up! Wait, wrong meeting.", "Higher power, lower coverage.", "Keep coming back. We've got your backside.", "Rock bottom is rough enough without going commando.", "The only thing we're enabling is better underwear.", "Brief encounters. Lasting recovery.", "Surrender your old ways. And those old boxers.", "Good things come to those who change their panties.", "Your sponsor can't fix everything. We can fix your drawers.", "Step one: get your briefs together.", "Less baggage. More cheekage.", "One day at a time. Two cheeks at a time.", "We believe in second chances and fresh underpants.", "Rock bottom looks better with fresh panties."];
 let sloganIdx=0;let deferredPrompt=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;if(page()==='install')render()});
 window.addEventListener('appinstalled',()=>{deferredPrompt=null;toast('Skivvies is on your phone.');if(page()==='install')render()});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 const app=document.querySelector('#app'),nav=document.querySelector('#nav'),menu=document.querySelector('#menu');
 let state={kit:'men',qty:1,monthly:false,thanks:false};
-const bulletin='Join our Undie Sunday for Skivvies! Bring NEW underwear and socks to help men and women starting recovery in Stark County, Ohio. Because rock bottom shouldn\'t be bare bottom. skivvies.org';
+const bulletin='Join our Undie Sunday for Skivvies! Bring NEW underwear and bras to help men and women starting recovery in Stark County, Ohio. Because rock bottom shouldn\'t be bare bottom. skivvies.org';
 
 function home(){return `
 <section class="hero">
@@ -325,7 +325,7 @@ function home(){return `
 
 <section class="section">
   <h2>So what is this?</h2>
-  <p class="big">We hand new underwear and socks to men and women on day one of recovery in Stark County, Ohio.</p>
+  <p class="big">We hand new underwear and bras to men and women on day one of recovery in Stark County, Ohio.</p>
   <p>That's it. That's the whole thing. People show up to treatment with a bag, or no bag, and almost never with clean drawers. We fix that part.</p>
 </section>
 
@@ -352,7 +352,7 @@ function home(){return `
 <section class="section">
   <div class="duo"><img src="/img/bra-panties.png" alt=""><img src="/img/boxers-pair.png" alt=""></div>
   <h2>Got a church? A shop? A team?</h2>
-  <p>Pick a Sunday. Put out a box. Collect new underwear and socks. We'll come grab it. We call it an Undie Sunday, and yes, you can say that from the pulpit.</p>
+  <p>Pick a Sunday. Put out a box. Collect new underwear and bras. We'll come grab it. We call it an Undie Sunday, and yes, you can say that from the pulpit.</p>
   <button class="cta light" data-go="drive"><span class="copy"><strong>Host an Undie Sunday</strong><small>Takes two minutes to sign up.</small></span><span class="right">→</span></button>
 </section>
 
@@ -394,11 +394,11 @@ return `<section class="page"><h1>Write a <span>note.</span></h1>
 <button class="action" type="submit" id="n_send">Send my note →</button>
 </form></section>`}
 function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function kit(){let isMen=state.kit==='men',total=isMen?15*state.qty:null;return `<section class="page">
+function kit(){let isMen=state.kit==='men',total=20*state.qty;return `<section class="page">
 <h1>Cover <span>Someone's Butt.</span></h1>
-<p>Fifteen bucks covers new underwear and socks for somebody's first day. If there's anything left over, it goes to a tee and the basics.</p>
-<div class="card ${isMen?'selected':''}" role="button" tabindex="0" data-kit="men"><h3>For a guy <span class="price">$15</span></h3><p>3 pairs boxer briefs · 3 pairs socks · and whatever else $15 stretches to</p></div>
-<div class="card ${!isMen?'selected':''}" role="button" tabindex="0" data-kit="women"><h3>For a woman <span class="price">$__</span></h3><p>Underwear · socks · and we're working out the rest</p><p class="hint">Pricing this one out now.</p></div>
+<p>Twenty bucks covers new underwear for somebody's first day. For a woman, that includes a bra.</p>
+<div class="card ${isMen?'selected':''}" role="button" tabindex="0" data-kit="men"><h3>For a guy <span class="price">$20</span></h3><p>New boxer briefs for his first day</p></div>
+<div class="card ${!isMen?'selected':''}" role="button" tabindex="0" data-kit="women"><h3>For a woman <span class="price">$20</span></h3><p>New underwear and a bra for her first day</p></div>
 <h3>How many?</h3>
 <div class="options">${[1,5,10].map(n=>`<button class="option ${state.qty===n?'active':''}" data-qty="${n}">${n}</button>`).join('')}<button class="option ${![1,5,10].includes(state.qty)?'active':''}" data-customqty="1">Custom</button></div>
 ${![1,5,10].includes(state.qty)?`<label class="field" for="qty">How many</label><input id="qty" type="number" min="1" max="10000" value="${state.qty}">`:''}
@@ -410,7 +410,7 @@ ${![1,5,10].includes(state.qty)?`<label class="field" for="qty">How many</label>
 
 function drive(){if(state.thanks)return `<section class="page"><div class="success"><div class="check">✓</div><h1>You're in.</h1><p>Thanks for covering some butts. We'll be in touch about pickup.</p></div><div class="actions"><button class="outline" id="flyer">Download a flyer (coming soon)</button><button class="outline" id="copy">Copy the bulletin blurb</button><button class="action" data-go="home">Back home</button></div></section>`;
 return `<section class="page"><h1>Host an <span>Undie Sunday.</span></h1>
-<p>Pick a Sunday. Collect <strong>new</strong> underwear and socks at your church, shop, school or team. We'll come get them.</p>
+<p>Pick a Sunday. Collect <strong>new</strong> underwear and bras at your church, shop, school or team. We'll come get them.</p>
 <form id="driveform">
 <label class="field" for="org">Church / business / group</label><input id="org" name="organization" required maxlength="120">
 <label class="field" for="contact">Your name</label><input id="contact" name="contact" required maxlength="120">
@@ -428,7 +428,7 @@ return `<section class="page"><h1>Host an <span>Undie Sunday.</span></h1>
 
 function request(){if(state.reqSent)return `<section class="page"><div class="success"><div class="check">✓</div><h1>Got it.</h1><p>Thanks for looking out for your people. We'll reach out soon to see what we can do.</p></div><div class="actions"><button class="action" data-go="home">Back home</button></div></section>`;
 return `<section class="page"><h1>Need <span>underwear?</span></h1>
-<p>Run a sober house, treatment program or shelter in Stark County? Tell us about your people and we'll reach out to see what we can do. New underwear and socks only.</p>
+<p>Run a sober house, treatment program or shelter in Stark County? Tell us about your people and we'll reach out to see what we can do. New underwear and bras only.</p>
 <form id="reqform" novalidate>
 <label class="field" for="r_place">Name of the place</label><input id="r_place" required minlength="2" maxlength="120" autocomplete="organization">
 <label class="field" for="r_type">What kind of place?</label><select id="r_type"><option>Sober house</option><option>Treatment program</option><option>Shelter</option><option>Other</option></select>
@@ -445,9 +445,9 @@ return `<section class="page"><h1>Need <span>underwear?</span></h1>
 </form></section>`}
 
 function privacy(){return `<section class="page"><h1>Your info, <span>plain and simple.</span></h1>
-<p>Skivvies is a small project getting new underwear and socks to people starting recovery in Stark County, Ohio. Here's what happens with anything you send us.</p>
+<p>Skivvies is a small project getting new underwear and bras to people starting recovery in Stark County, Ohio. Here's what happens with anything you send us.</p>
 <div class="card"><h3>What we collect</h3><p>Only what you type into our forms: the Undie Sunday sign-up and the "Need underwear?" request. That's names, a phone number or email, the name of your group or place, and your notes.</p></div>
-<div class="card"><h3>What we do with it</h3><p>We use it to get back to you about underwear and socks. That's it. We don't sell it, rent it, trade it or put you on somebody else's mailing list.</p></div>
+<div class="card"><h3>What we do with it</h3><p>We use it to get back to you about underwear and bras. That's it. We don't sell it, rent it, trade it or put you on somebody else's mailing list.</p></div>
 <div class="card"><h3>Where it lives</h3><p>Form info is stored with Supabase, our database company, and a copy is emailed to us. Only the Skivvies admin can read it.</p></div>
 <div class="card"><h3>No names of people in treatment</h3><p>Please don't send us the names or health details of anyone in recovery. We don't need them, and the Skivvies Count only tracks how many people got new underwear, never who.</p></div>
 <div class="card"><h3>Visitor counts</h3><p>We count page visits with GoatCounter, which doesn't use cookies or track you across other sites. It just tells us how many people stopped by.</p></div>
@@ -465,7 +465,7 @@ function about(){return `<section class="page about">
 <p>And I got to thinking…</p>
 <blockquote class="about-quote">We're supposed to be happy, joyous, and free. Not happy, joyous, and freeballing.</blockquote>
 <p>That's where Skivvies comes in.</p>
-<p>We're a little project with a pretty simple mission: getting brand-new underwear and socks to men and women entering addiction treatment in Stark County, Ohio.</p>
+<p>We're a little project with a pretty simple mission: getting brand-new underwear and bras to men and women entering addiction treatment in Stark County, Ohio.</p>
 <p>Some people arrive with suitcases. Others arrive with everything they own in a plastic bag. Some arrive with nothing at all.</p>
 <p>We can't fix everything they're going through. But we can make sure they've got a clean pair of drawers when they start putting their lives back together.</p>
 <p class="about-big">We take recovery seriously. Ourselves? Not so much.</p>
@@ -500,13 +500,13 @@ ${deferredPrompt?`<button class="action" id="doinstall">Install Skivvies</button
 </section>`}
 // real page addresses (better for Google); old #about style links still work
 const PATHS={home:'/',note:'/write-a-note',kit:'/cover-someones-butt',request:'/request-underwear',drive:'/undie-sunday',about:'/about',privacy:'/privacy',share:'/share',install:'/install'};
-const META={home:["Skivvies — Because rock bottom shouldn't be bare bottom.","New underwear and socks for men and women on day one of recovery in Stark County, Ohio. Because rock bottom shouldn't be bare bottom."],
+const META={home:["Skivvies — Because rock bottom shouldn't be bare bottom.","New underwear and bras for men and women on day one of recovery in Stark County, Ohio. Because rock bottom shouldn't be bare bottom."],
  note:["Write a Note — Skivvies","Write a few words for somebody on day one of recovery. We print it and tuck it in their pack with their new underwear."],
- kit:["Cover Someone's Butt — Skivvies","$15 covers new underwear and socks for somebody's first day of recovery in Stark County, Ohio."],
- request:["Request Underwear — Skivvies","Run a sober house, treatment program or shelter in Stark County, Ohio? Tell us your people need new underwear and socks and we'll be in touch."],
- drive:["Host an Undie Sunday — Skivvies","Pick a Sunday, put out a box, collect new underwear and socks for people starting recovery in Stark County, Ohio. We'll come grab it."],
+ kit:["Cover Someone's Butt — Skivvies","$20 covers new underwear for somebody's first day of recovery in Stark County, Ohio."],
+ request:["Request Underwear — Skivvies","Run a sober house, treatment program or shelter in Stark County, Ohio? Tell us your people need new underwear and bras and we'll be in touch."],
+ drive:["Host an Undie Sunday — Skivvies","Pick a Sunday, put out a box, collect new underwear and bras for people starting recovery in Stark County, Ohio. We'll come grab it."],
  about:["About — Happy. Joyous. Free. Not freeballing. — Skivvies","Why Skivvies exists: people were showing up to addiction treatment without underwear. We fix that part, one pair at a time, in Stark County, Ohio."],
- privacy:["Privacy — Skivvies","What Skivvies does with the info you send us: we use it to reach you about underwear and socks, and that's it. No selling, no ads, no tracking cookies."],
+ privacy:["Privacy — Skivvies","What Skivvies does with the info you send us: we use it to reach you about underwear and bras, and that's it. No selling, no ads, no tracking cookies."],
  share:["Share Skivvies — Spread the word","Text it, post it, stick it on the church bulletin board. Share skivvies.org and the QR code."],
  install:["Install the Skivvies app","Put Skivvies on your phone. It installs as a web based app, no app store needed."]};
 function pathPage(){const p=location.pathname.replace(/\/+$/,'')||'/';return Object.keys(PATHS).find(k=>PATHS[k]===p)||'home'}
@@ -571,7 +571,7 @@ b=e.target.closest('[data-customqty]');if(b){state.qty=2;render();return}
 b=e.target.closest('[data-checkout]');if(b){toast('Giving opens soon. Nothing was charged.');return}
 if(e.target.id==='nextslogan'){sloganIdx=(sloganIdx+1+Math.floor(Math.random()*(SLOGANS.length-1)))%SLOGANS.length;const q=document.querySelector('#slogan');q.style.opacity=0;setTimeout(()=>{q.textContent=SLOGANS[sloganIdx];q.style.opacity=1},120);return}
 if(e.target.id==='doinstall'&&deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(()=>{deferredPrompt=null;render()});return}
-if(e.target.id==='sharebtn'){const d={title:'Skivvies',text:"Because rock bottom shouldn't be bare bottom. New underwear and socks for people starting recovery.",url:'https://skivvies.org'};if(navigator.share){navigator.share(d).catch(()=>{})}else{copyText(d.url).then(()=>toast('Link copied. Paste it anywhere.'))}return}
+if(e.target.id==='sharebtn'){const d={title:'Skivvies',text:"Because rock bottom shouldn't be bare bottom. New underwear and bras for people starting recovery.",url:'https://skivvies.org'};if(navigator.share){navigator.share(d).catch(()=>{})}else{copyText(d.url).then(()=>toast('Link copied. Paste it anywhere.'))}return}
 if(e.target.id==='copylink'){copyText('https://skivvies.org').then(()=>toast('Link copied.')).catch(()=>toast('Could not copy.'));return}
 if(e.target.id==='flyer'){toast('Flyer is coming soon.');return}
 if(e.target.id==='copy'){copyText(bulletin).then(()=>toast('Bulletin blurb copied.')).catch(()=>toast('Could not copy. Press and hold to copy it instead.'));return}});
