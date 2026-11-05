@@ -143,6 +143,11 @@ p{line-height:1.5;margin:0 0 12px;font-size:16px}
 .card.selected{border:2px solid var(--coral);background:#fff9f5}
 .card h3{margin:0 0 7px;font-size:21px}.card p{font-size:14px;margin:7px 0}
 .price{font-size:25px;font-weight:900;color:#e95335}
+.card.pick{display:flex;align-items:center;gap:14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.card.pick>div{flex:1}.card.pick h3{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.card.pick .box{flex:none;width:30px;height:30px;border:3px solid var(--ink);border-radius:8px;background:#fff;display:grid;place-items:center;transition:background .12s}
+.card.pick.selected .box{background:var(--coral);box-shadow:0 3px 0 var(--ink)}
+.card.pick.selected .box::after{content:"";width:8px;height:15px;border:solid #fff;border-width:0 4px 4px 0;transform:translateY(-2px) rotate(45deg)}
 .options{display:flex;flex-wrap:wrap;gap:8px;margin:13px 0}
 .option{padding:11px 15px;border:1px solid #cdd7d0;border-radius:10px;background:#fff;font-weight:750;color:var(--ink)}
 .option.active{background:var(--ink);color:#fff;border-color:var(--ink)}
@@ -228,7 +233,7 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <div class="headleft"><button class="back" id="back" type="button" aria-label="Back" hidden>←</button><a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a></div>
-  <div class="headright"><span class="pill">v0.32</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.33</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
@@ -403,8 +408,8 @@ function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 function kit(){if(state.gift)return giftThanks();const total=20*state.qty,per=state.monthly?' / month':'';return `<section class="page">
 <h1>Cover <span>Someone's Butt.</span></h1>
 <p>Twenty bucks covers new underwear for somebody's first day. For a woman, that includes a bra.</p>
-<div class="card ${state.kit==='men'?'selected':''}" role="button" tabindex="0" data-kit="men"><h3>For a guy <span class="price">$20</span></h3><p>New boxer briefs for his first day</p></div>
-<div class="card ${state.kit==='women'?'selected':''}" role="button" tabindex="0" data-kit="women"><h3>For a woman <span class="price">$20</span></h3><p>New underwear and a bra for her first day</p></div>
+<div class="card pick ${state.kit==='men'?'selected':''}" role="radio" aria-checked="${state.kit==='men'}" tabindex="0" data-kit="men"><span class="box" aria-hidden="true"></span><div><h3>For a guy <span class="price">$20</span></h3><p>New boxer briefs for his first day</p></div></div>
+<div class="card pick ${state.kit==='women'?'selected':''}" role="radio" aria-checked="${state.kit==='women'}" tabindex="0" data-kit="women"><span class="box" aria-hidden="true"></span><div><h3>For a woman <span class="price">$20</span></h3><p>New underwear and a bra for her first day</p></div></div>
 <h3>How many?</h3>
 <div class="options">${[1,5,10].map(n=>`<button class="option ${state.qty===n?'active':''}" data-qty="${n}">${n}</button>`).join('')}<button class="option ${![1,5,10].includes(state.qty)?'active':''}" data-customqty="1">Custom</button></div>
 ${![1,5,10].includes(state.qty)?`<label class="field" for="qty">How many</label><input id="qty" type="number" inputmode="numeric" min="1" max="10000" value="${state.qty}">`:''}
