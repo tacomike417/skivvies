@@ -180,13 +180,10 @@ textarea{min-height:90px}
 .tile.q b{position:absolute;inset:0;display:grid;place-items:center;padding-bottom:2%;color:#f8bc54;font:900 15cqw/1 Inter,sans-serif;text-shadow:0 .6cqw 0 #000a}
 .bc-pile{position:absolute;z-index:2;width:25cqw;height:auto;top:36cqw;filter:drop-shadow(0 1cqw 0 #10252040)}
 .bc-pile.l{left:-1cqw}.bc-pile.r{right:-1cqw}
-.bc-ribbon{position:relative;z-index:4;width:76cqw;margin:5.5cqw auto 0;aspect-ratio:760/220;background:url(/img/counter/ribbon.webp) center/100% 100% no-repeat;display:flex;align-items:center;justify-content:center;padding:0 7cqw 4.5cqw;color:#fff3df;font:italic 400 10cqw/1 Anton,Inter,sans-serif;letter-spacing:.02em;text-transform:uppercase;text-shadow:.5cqw .5cqw 0 #102520;white-space:nowrap}
+.bc-ribbon{position:relative;z-index:4;width:76cqw;margin:5.5cqw auto 0;aspect-ratio:760/220;display:flex;align-items:center;justify-content:center;padding:0 7cqw 4.5cqw;color:#fff3df;font:italic 400 10cqw/1 Anton,Inter,sans-serif;letter-spacing:.02em;text-transform:uppercase;text-shadow:.5cqw .5cqw 0 #102520;white-space:nowrap}
+.bc-ribbon::before{content:"";position:absolute;inset:0;z-index:-1;background:url(/img/counter/ribbon.webp) center/100% 100% no-repeat;clip-path:inset(0 2.5%)}
 .bc-ribbon span{display:inline-block;transform:skewX(-8deg)}
 .bc-ribbon.long{font-size:7cqw}
-.bc-strip{position:relative;z-index:3;margin:-3.5cqw 3cqw 0;padding:6cqw 6cqw 5.5cqw;background:url(/img/counter/strip.webp) center/100% 100% no-repeat;color:#fff3df;text-align:center}
-.bc-line1{margin:0;font:italic 400 6.2cqw/1.1 Anton,Inter,sans-serif;letter-spacing:.03em;text-transform:uppercase}
-.bc-line1 em{font-style:inherit;color:#f8bc54}
-.bc-line2{margin:1.6cqw 0 0;font-size:3cqw;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:#f3e3d4}
 @media(prefers-reduced-motion:reduce){.reel{transition:none}}
 .about-art{display:flex;justify-content:center;gap:4px;margin:-6px 0 4px}.about-art img{width:34%;height:auto}
 .about h1{line-height:1.02}
@@ -204,7 +201,11 @@ textarea{min-height:90px}
 .tag1 span{display:block}
 .hero-swoosh{display:block;width:80%;height:9px;margin:6px auto 4px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 14' preserveAspectRatio='none'%3E%3Cpath d='M3 10C70 3 170 1 297 5c-90 1-190 3-292 8z' fill='%23f35d40'/%3E%3C/svg%3E") center/100% 100% no-repeat}
 .hero .tag2{margin:0 0 4px;font-size:clamp(21px,6.6vw,26px);color:var(--ink)}
-.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0 6px}
+.donate-now{display:block;margin:2px -14px 4px;transition:transform .12s;-webkit-tap-highlight-color:transparent}
+.donate-now img{width:100%;height:auto;display:block}
+.donate-now:active{transform:scale(.97)}
+.donate-now:focus-visible{outline:3px solid var(--coral);outline-offset:2px;border-radius:40px}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:8px 0 6px}
 .tiles .gtile{display:block;border-radius:18px;transition:transform .12s}
 .tiles .gtile:active{transform:scale(.97)}
 .tiles .gtile:focus-visible{outline:3px solid var(--coral);outline-offset:3px}
@@ -220,7 +221,7 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <div class="headleft"><button class="back" id="back" type="button" aria-label="Back" hidden>←</button><a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a></div>
-  <div class="headright"><span class="pill">v0.30</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.31</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
@@ -276,7 +277,6 @@ function buttCount(){return `<section class="bc" aria-labelledby="bc-h">
   </div>
   <img class="bc-pile l" src="/img/counter/pile-left.webp" alt="" aria-hidden="true"><img class="bc-pile r" src="/img/counter/pile-right.webp" alt="" aria-hidden="true">
   <div class="bc-ribbon" id="bc-ribbon" aria-hidden="true"></div>
-  <div class="bc-strip" aria-hidden="true"><p class="bc-line1" id="bc-line1"></p><p class="bc-line2" id="bc-line2"></p></div>
   <p class="sr" id="bc-sr"></p>
 </section>`}
 function fillCount(){const box=document.querySelector('#bc-tiles');if(!box)return;
@@ -285,14 +285,10 @@ function fillCount(){const box=document.querySelector('#bc-tiles');if(!box)retur
  const reel=()=>`<span class="reel">${[0,1,2,3,4,5,6,7,8,9].map(x=>`<img src="/img/counter/digit_${x}.webp" alt="">`).join('')}</span>`;
  if(n===null){box.className='bc-tiles';box.innerHTML=Array(3).fill(`<span class="tile q"><b>?</b></span>`).join('');
   const rb=document.querySelector('#bc-ribbon');rb.innerHTML='<span>Counting starts soon!</span>';rb.classList.add('long');
-  document.querySelector('#bc-line1').innerHTML='First pairs go out <em>soon.</em> Every butt gets counted.';
-  document.querySelector('#bc-line2').textContent='Honest numbers only. No padding.';
   document.querySelector('#bc-sr').textContent='The Skivvies Count: counting starts soon, once the first pairs are handed out.';return}
  const ds=String(n).padStart(3,'0').split('');
  box.className='bc-tiles n'+Math.min(ds.length,6);box.innerHTML=ds.map(()=>`<span class="tile">${reel()}</span>`).join('');
  const rb=document.querySelector('#bc-ribbon');rb.classList.remove('long');rb.innerHTML=`<span>Butts covered!</span>`;
- document.querySelector('#bc-line1').innerHTML=`<em>${n.toLocaleString()}</em> fresh starts. <em>${n.toLocaleString()}</em> clean drawers.`;
- document.querySelector('#bc-line2').textContent=since?`Since ${since}. And we're just getting warmed up.`:"And we're just getting warmed up.";
  document.querySelector('#bc-sr').textContent=`The Skivvies Count: ${n.toLocaleString()} butts covered${since?' since '+since:''}.`;
  const roll=()=>box.querySelectorAll('.reel').forEach((r,i)=>{r.style.setProperty('--t',(1.1+i*.35)+'s');r.style.setProperty('--d',ds[i])});
  // roll once when the board scrolls into view
@@ -315,11 +311,11 @@ function home(){return `
   <span class="hero-swoosh" aria-hidden="true"></span>
   <p class="tag2">One pair at a time.</p>
   ${buttCount()}
-  <nav class="tiles" aria-label="Ways to help">
-    <a class="gtile" href="/cover-someones-butt" data-go="kit" aria-label="Donate a pack: sponsor new underwear for someone in need"><img src="/img/buttons/donate_a_pack-588.webp" srcset="/img/buttons/donate_a_pack-588.webp 588w, /img/buttons/donate_a_pack-882.webp 882w" sizes="(max-width:520px) 46vw, 240px" width="294" height="260" alt=""></a>
-    <a class="gtile" href="https://recoverymisfits.org/skivvies?to=note" data-note aria-label="Write a note: encourage someone on their first day"><img src="/img/buttons/write_a_note-588.webp" srcset="/img/buttons/write_a_note-588.webp 588w, /img/buttons/write_a_note-882.webp 882w" sizes="(max-width:520px) 46vw, 240px" width="294" height="260" alt=""></a>
-    <a class="gtile" href="/request-underwear" data-go="request" aria-label="Request supplies: get underwear for your program or shelter"><img src="/img/buttons/request_supplies-588.webp" srcset="/img/buttons/request_supplies-588.webp 588w, /img/buttons/request_supplies-882.webp 882w" sizes="(max-width:520px) 46vw, 240px" width="294" height="260" alt=""></a>
-    <a class="gtile" href="https://recoverymisfits.org/skivvies?to=group" target="_blank" rel="noopener" aria-label="Join the Skivvies group on Recovery Misfits"><img src="/img/buttons/join_the_group-588.webp" srcset="/img/buttons/join_the_group-588.webp 588w, /img/buttons/join_the_group-882.webp 882w" sizes="(max-width:520px) 46vw, 240px" width="294" height="260" alt=""></a>
+  <a class="donate-now" href="/cover-someones-butt" data-go="kit" aria-label="Donate now. Help us cover the next butt."><img src="/img/buttons/donate_now-700.webp" srcset="/img/buttons/donate_now-700.webp 700w, /img/buttons/donate_now-1100.webp 1100w" sizes="(max-width:520px) 100vw, 500px" width="700" height="221" alt=""></a>
+  <nav class="tiles" aria-label="More ways to help">
+    <a class="gtile" href="https://recoverymisfits.org/skivvies?to=note" data-note aria-label="Write a note: encourage someone on their first day"><img src="/img/buttons/write_a_note-588.webp" srcset="/img/buttons/write_a_note-588.webp 588w, /img/buttons/write_a_note-882.webp 882w" sizes="(max-width:520px) 32vw, 170px" width="294" height="260" alt=""></a>
+    <a class="gtile" href="/request-underwear" data-go="request" aria-label="Request supplies: get underwear for your program or shelter"><img src="/img/buttons/request_supplies-588.webp" srcset="/img/buttons/request_supplies-588.webp 588w, /img/buttons/request_supplies-882.webp 882w" sizes="(max-width:520px) 32vw, 170px" width="294" height="260" alt=""></a>
+    <a class="gtile" href="https://recoverymisfits.org/skivvies?to=group" target="_blank" rel="noopener" aria-label="Join the Skivvies group on Recovery Misfits"><img src="/img/buttons/join_the_group-588.webp" srcset="/img/buttons/join_the_group-588.webp 588w, /img/buttons/join_the_group-882.webp 882w" sizes="(max-width:520px) 32vw, 170px" width="294" height="260" alt=""></a>
   </nav>
   <p class="scrollhint">Wait, what is this? ↓</p>
 </section>
