@@ -12,16 +12,22 @@
  */
 (function () {
   "use strict";
-  var SITE = "https://skivvies.org";
+  var SITE = window.SKIVVIES_SITE || "https://skivvies.org";
+  /* One caption per piece of art. The art (img/cards/gave-N.webp, out-N.webp, drawn by ChatGPT 6 Nov 2026,
+   * Mike's rule: underwear characters only, never a person in a rough state) fills the card; the caption is
+   * the text that goes with the post. If the art fails to load the old drawn card is used instead. */
   var LINES = {
     gave: [
       "I just covered somebody's butt.\nYour turn.",
       "Best $20 I spent all week:\nunderwear for a stranger's day one.",
-      "Rock bottom shouldn't be\nbare bottom. I helped."
+      "Rock bottom shouldn't be\nbare bottom. I helped.",
+      "Fresh drawers for a stranger's\nday one. Done.",
+      "Your turn. Cover a butt."
     ],
     out: [
       "My pair went out today.\nSomebody walked into day one covered.",
-      "Update: my butt-covering\nhas been deployed."
+      "Update: my butt-covering\nhas been deployed.",
+      "Somebody started day one covered.\nThat was my pair."
     ]
   };
   var EMOJI = { gave: "🍑", out: "🩲" };
@@ -63,10 +69,26 @@
     var lines = LINES[kind], li = Math.max(0, Math.min(lines.length - 1, o.line | 0));
     var text = lines[li], count = Number(o.count) || 0;
     await fonts();
-    var pics = await Promise.all([img(SITE + "/img/thong.png"), img(SITE + "/img/boxers.png")]);
     var W = 1080, H = 1350, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
     var c = cv.getContext("2d");
     c.fillStyle = "#fff6f0"; c.fillRect(0, 0, W, H);
+    var art = await img(SITE + "/img/cards/" + kind + "-" + (li + 1) + ".webp?v=1");
+    if (art) {
+      /* cover the canvas with the art, cropping evenly; its bottom 20% is plain cream for the count + site line */
+      c.drawImage(art, 0, 0, W, H);
+      var yy = H - 150;
+      if (count >= 2) {
+        c.font = "400 44px Anton, Impact, sans-serif"; c.textAlign = "center"; c.textBaseline = "middle";
+        var ct2 = count.toLocaleString() + " BUTTS COVERED SO FAR", cw2 = c.measureText(ct2).width + 70;
+        c.fillStyle = "#f8bc54"; rr(c, (W - cw2) / 2, yy - 36, cw2, 72, 36); c.fill();
+        c.fillStyle = "#102520"; c.fillText(ct2, W / 2, yy + 1);
+        yy += 90;
+      } else yy += 30;
+      c.font = "900 54px Inter, Arial, sans-serif"; c.fillStyle = "#102520"; c.textAlign = "center"; c.textBaseline = "middle";
+      c.fillText("skivvies.org", W / 2, yy);
+      return new Promise(function (ok) { cv.toBlob(function (b) { ok(b); }, "image/png"); });
+    }
+    var pics = await Promise.all([img(SITE + "/img/thong.png"), img(SITE + "/img/boxers.png")]);
     /* the two icons */
     var s = 300, gap = 40, x0 = (W - (s * 2 + gap)) / 2, y0 = 100;
     if (pics[0]) c.drawImage(pics[0], x0, y0, s, s);

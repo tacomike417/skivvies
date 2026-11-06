@@ -240,7 +240,7 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <div class="headleft"><button class="back" id="back" type="button" aria-label="Back" hidden>←</button><a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a></div>
-  <div class="headright"><span class="pill">v0.38</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.39</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
@@ -258,7 +258,7 @@ textarea{min-height:90px}
 <footer class="footer"><span><a class="linkbutton" style="margin:0;padding:0;font-size:12px" href="/share" data-go="share">Share</a> · <a class="linkbutton" style="margin:0;padding:0;font-size:12px" href="/privacy" data-go="privacy">Privacy</a> · hello@skivvies.org</span><a href="https://apps.thunkbox.com" target="_blank" rel="noopener">Apps by ThunkBox ↗</a><span style="flex-basis:100%;line-height:1.5">Skivvies is a program of Cornerstones Recovery, Inc., a 501(c)(3) nonprofit in Alliance, Ohio. EIN 99-4095027.</span></footer>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="/card.js?v=1"></script>
+<script src="/card.js?v=2"></script>
 <script>
 let toastTimer;function toast(m){const t=document.querySelector('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2800)}
 function copyText(x){if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(x);return new Promise((ok,no)=>{const a=document.createElement('textarea');a.value=x;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();const done=document.execCommand('copy');a.remove();done?ok():no()})}

@@ -129,62 +129,12 @@ skivvies.org > "I want to write a note" > sign in (or sign up) with Recovery Mis
 - v0.19 (same night, Mike: "it flashes some pages and looks spammy"): signed in already = no Recovery Misfits screens at all, just a moment of Skivvies cream and you're on the note page (it adds you to the group quietly if you weren't in it). Sign-in/sign-up screens only show when needed, and after signing in there's no "Thanks for helping" stop, it hops straight back. "Not you?" on Skivvies opens the account picker (?switch=1).
 - v0.20 (same night, Mike: "it should detect that i am logged in as tacomike417 and ask me to continue"): the note button says "Continue as <name>" with "Use a different account" under it. skivvies.org can't see inside recoverymisfits.org (browsers keep sites apart), so it remembers who came back from Recovery Misfits last time on that device. The very first time on a device it's the plain "I want to write a note" button. "Not you?" forgets the name.
 
-## Parked: "butts paid for" line (decided 5 Nov 2026, not built)
-- Home, one line under the counter: "X more butts paid for". Hidden until it hits 2. No dollars, no packs on the home page.
-- Counting rule: $20 covers 2 guys or 1 woman. Paid guy gift = 2 butts per $20, woman gift = 1 butt.
-- Admin box "Offline butts paid for": Mike types the number himself for cash, checks and his own $100 opening gift (that $100 counts for Skivvies).
-- Donate page cards stay as they are ($20 for a guy / $20 for a woman).
-- Don't auto-subtract covered butts: donated underwear covers butts with no money behind it.
-
-## PLAN (decided 6 Nov 2026, not built yet): the line, stock, receipts, in-kind, sharing, year-end
-Phone wins for all admin screens.
-
-**Built 6 Nov 2026 (v0.37, all database changes applied, functions deployed):** the books dashboard,
-hand out (moves the line + sends the Resend email), receipts with photo, donated underwear log + thank-you
-letter, year-end report. Email sends from skivvies@recoverymisfits.org (Resend free plan caps at 3 domains;
-skivvies.org isn't one of them). Replies go to hello@skivvies.org.
-**Still to build:** share/meme cards (after giving + in the email), Recovery Misfits Porch post + group join.
-
-### The line (donor notifications)
-- Every pair PAID FOR gets a number in line (#1, #2...). Guy or girl doesn't matter for the line.
-- Mike logs "X went out". When the count reaches a donor's first number, they get ONE email:
-  "Your first pair went out today" (+ "N more to go" if their gift covered more).
-- Never says who got it or which place. Their note went with it, if they left one.
-- Donated (in-kind) pairs NEVER move the line.
-
-### Handing out (admin)
-- "How many went out? [3] · From: Bought (12 left) ▾". Bought pile goes first by default;
-  one tap switches to Donated. Auto-switches to Donated when Bought is empty.
-- Print note for the pack, then tap Went out.
-
-### Admin dashboard
-- Money: donations in (online + cash/checks) − Stripe fees − spent = money on hand.
-- Pairs: bought + donated − given out = in stock (two piles: Bought / Donated).
-- Line: "Next up: donor #9".
-
-### Receipts
-- Snap a Walmart receipt or screenshot an online order; enter store, amount, pairs bought. Image stored privately.
-
-### In-kind (donated underwear), kept separate from money
-- Log: who, date, what ("12 pairs new men's boxer briefs"), optional photo, Mike's estimated value (for the books only).
-- One-tap thank-you letter that describes the items, NO dollar value (donor values it). Ask Kelly to confirm before year-end.
-
-### Year-end button
-- One report: cash donations, Stripe fees, purchases (with receipt images), in-kind section (pairs + est. value), pairs given out, money left.
-
-### Big home counter
-- STAYS on donations (goes up when someone gives). Given-out is tracked in admin only.
-
-### Sharing
-- Share prompt BOTH right after giving AND in the "your pair went out" email.
-- Primary: Share to Recovery Misfits -> posts on the MAIN Porch with the meme card; "Join the Skivvies group" pre-checked (Mike: auto-add).
-- Secondary: phone share sheet with the card image (Facebook, Instagram Stories, text). Facebook gets the link with the meme as preview.
-- Card never shows the donor's name or amount.
-- Caption drafts (Mike asked me to draft):
-  - After giving: "I just covered somebody's butt. 🍑 Your turn." / "Best $20 I spent all week: underwear for a stranger's day one." / "Rock bottom shouldn't be bare bottom. I helped."
-  - When it goes out: "My pair went out today. Somebody walked into day one covered." / "Update: my butt-covering has been deployed. 🩲"
-
-### Needs set up
-- Email sending: Resend (free at this volume), sender hello@skivvies.org.
-- Stripe "Successful payments" receipt emails ON.
-- Recovery Misfits side: share-to-Porch landing + Skivvies group join.
+## Share-card art (6 Nov 2026, v0.39)
+- The share cards now use ChatGPT art: `img/cards/gave-1..5.webp`, `out-1..3.webp` (1080x1350, headline on the
+  art, bottom 20% cream where card.js draws the live count pill + skivvies.org). card.js falls back to the old
+  drawn card if an image fails to load.
+- Mike's rule for all Skivvies art: underwear characters and logos only. Never a person who looks down-and-out,
+  ragged, or in a rough state ("that's derogatory"). gave-1/gave-2 show happy, ordinary people giving; everything
+  else is the boxer-briefs character.
+- To add a card: drop a new webp in img/cards/, add its caption to LINES in card.js (one caption per image, same
+  order), bump the `card.js?v=` number in index.html and run build.py.
