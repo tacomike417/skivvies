@@ -139,8 +139,11 @@ skivvies.org > "I want to write a note" > sign in (or sign up) with Recovery Mis
 ## PLAN (decided 6 Nov 2026, not built yet): the line, stock, receipts, in-kind, sharing, year-end
 Phone wins for all admin screens.
 
-**Note: the cash/check log + donation report (v0.36) is built and in the repo, but its database
-change (supabase/skv_08_cash.sql) still needs applying, then push v0.36.**
+**Built 6 Nov 2026 (v0.37, all database changes applied, functions deployed):** the books dashboard,
+hand out (moves the line + sends the Resend email), receipts with photo, donated underwear log + thank-you
+letter, year-end report. Email sends from skivvies@recoverymisfits.org (Resend free plan caps at 3 domains;
+skivvies.org isn't one of them). Replies go to hello@skivvies.org.
+**Still to build:** share/meme cards (after giving + in the email), Recovery Misfits Porch post + group join.
 
 ### The line (donor notifications)
 - Every pair PAID FOR gets a number in line (#1, #2...). Guy or girl doesn't matter for the line.

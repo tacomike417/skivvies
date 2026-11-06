@@ -42,6 +42,7 @@ function wentOutEmail(opts: { name: string | null; qty: number; hadNote: boolean
     `Your pair went out today. Somebody in Stark County walked into day one of recovery with new underwear on, because of you.${more}${note}`, ``,
     `We don't say who or where. That part stays theirs.`, ``,
     `Thanks for covering a butt.`, `— Skivvies`, ``,
+    `Brag a little (it gets the next butt covered): ${SITE}/share-it?out=1`, ``,
     `Cover another one: ${SITE}/cover-someones-butt`, ``,
     `Skivvies is a program of Cornerstones Recovery, Inc., a 501(c)(3) nonprofit in Alliance, Ohio. Your receipt came from Stripe when you gave.`,
   ].join("\n");
@@ -53,7 +54,8 @@ function wentOutEmail(opts: { name: string | null; qty: number; hadNote: boolean
     <p style="font-size:17px;line-height:1.5;margin:0 0 14px">${esc(hi)}</p>
     <p style="font-size:17px;line-height:1.5;margin:0 0 14px">Somebody in Stark County walked into day one of recovery with new underwear on, because of you.${esc(more)}${esc(note)}</p>
     <p style="font-size:15px;line-height:1.5;color:#52635c;margin:0 0 22px">We don't say who or where. That part stays theirs.</p>
-    <a href="${SITE}/cover-someones-butt" style="display:inline-block;background:#f35d40;color:#fff;text-decoration:none;font-weight:900;font-size:17px;padding:14px 22px;border-radius:14px">Cover another butt →</a>
+    <a href="${SITE}/share-it?out=1" style="display:inline-block;background:#f35d40;color:#fff;text-decoration:none;font-weight:900;font-size:17px;padding:14px 22px;border-radius:14px">Brag a little 🍑</a>
+    <p style="font-size:14px;line-height:1.5;color:#52635c;margin:10px 0 0">Share the card on Recovery Misfits, Facebook or wherever. It gets the next butt covered. Or <a href="${SITE}/cover-someones-butt" style="color:#f35d40;font-weight:900">cover another one</a>.</p>
     <p style="font-size:17px;line-height:1.5;margin:26px 0 0">Thanks for covering a butt.<br>— Skivvies</p>
     <p style="font-size:12px;line-height:1.5;color:#52635c;margin:30px 0 0">Skivvies is a program of Cornerstones Recovery, Inc., a 501(c)(3) nonprofit in Alliance, Ohio. Your receipt came from Stripe when you gave. Questions: ${REPLY_TO}</p>
   </div></body></html>`;
