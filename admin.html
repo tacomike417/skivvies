@@ -78,10 +78,10 @@ input,select{width:100%;border:1px solid #bdcbc2;border-radius:12px;padding:13px
   <p class="lead">The homepage shows the <b>lifetime total</b>: every year added together. Right now that's <b id="lifetime">…</b>.</p>
   <form class="card row" id="countform">
     <div><label for="year">Year</label><select id="year"></select></div>
-    <div><label for="people">Butts covered that year</label><input id="people" class="big" type="number" inputmode="numeric" min="0" max="999999" step="1" required></div>
+    <div><label for="people">Hand-counted butts that year</label><input id="people" class="big" type="number" inputmode="numeric" min="0" max="999999" step="1" required></div>
     <button class="btn" id="savebtn">Save</button>
     <p class="msg" id="savemsg"></p>
-    <p class="rule">Type the total for the year you pick. The homepage adds all the years together.<br><b>Count people, not packs.</b> Only people who actually got new underwear, each person once per year. A 3-pack split between 3 people = 3. Three pairs to one person = 1. Donations don't count until they're handed out.<br>The homepage shows question marks until the lifetime total is 2 or more.</p>
+    <p class="rule"><b>Online gifts count themselves.</b> Every paid gift on the site adds to the homepage counter on its own: $20 = 2 guys or 1 woman. <b>Don't type those in here.</b><br>Type only what came in another way: cash, checks, Undie Sunday, donated underwear. This box is the total for the year you pick.<br>The homepage adds all years + online gifts together, and shows question marks until the total is 2 or more.</p>
   </form>
   <!-- NOTES FROM THE CREW (2 Nov 2026, Mike). Written in the Skivvies group on Recovery Misfits.
        Approve = it goes up in the group from the skivvies account and the writer gets a message.
@@ -144,7 +144,7 @@ async function boot(){
 async function load(){
  const {data,error}=await sb.from('skivvies_butt_count').select('year,people,updated_at').order('year',{ascending:false});
  if(error){$('#savemsg').className='msg err';$('#savemsg').textContent=error.message;return}
- rows=data||[];const life=rows.reduce((t,r)=>t+(r.people||0),0);$('#lifetime').textContent=life.toLocaleString()+(life<2?' (homepage shows ? ? ? until 2)':'');const now=new Date().getFullYear();const years=new Set(rows.map(r=>r.year));years.add(now);
+ rows=data||[];const hand=rows.reduce((t,r)=>t+(r.people||0),0);let online=0;try{const c=await sb.rpc('skivvies_counter');online=(c.data&&c.data.gifts)||0}catch(_){}const life=hand+online;$('#lifetime').textContent=life.toLocaleString()+` (${hand.toLocaleString()} by hand + ${online.toLocaleString()} from online gifts)`+(life<2?' — homepage shows ? ? ? until 2':'');const now=new Date().getFullYear();const years=new Set(rows.map(r=>r.year));years.add(now);
  const sel=$('#year');const cur=sel.value;sel.innerHTML=[...years].sort((a,b)=>b-a).map(y=>`<option value="${y}">${y}</option>`).join('');
  sel.value=cur&&years.has(+cur)?cur:String(rows[0]?.year||now);fillPeople();loadHistory()}
 function fillPeople(){const r=rows.find(r=>r.year===+$('#year').value);$('#people').value=r?r.people:0}

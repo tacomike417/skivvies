@@ -233,7 +233,7 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <div class="headleft"><button class="back" id="back" type="button" aria-label="Back" hidden>←</button><a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a></div>
-  <div class="headright"><span class="pill">v0.34</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.35</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
@@ -276,8 +276,9 @@ async function sendForm(kind,data,form){const token=form.querySelector('[name="c
  if(window.turnstile&&TURNSTILE_SITEKEY)try{window.turnstile.reset()}catch(_){}}
 let COUNT=null;
 // LIFETIME total: every year's count added together (Mike, 31 Oct 2026)
-fetch(SB_URL+'/rest/v1/skivvies_butt_count?select=year,people',{headers:{apikey:SB_KEY}})
- .then(r=>r.ok?r.json():Promise.reject()).then(d=>d&&d.length?{people:d.reduce((t,r)=>t+(r.people||0),0),since:Math.min(...d.map(r=>r.year))}:Promise.reject())
+// + paid online gifts count themselves ($20 = 2 guys or 1 woman), worked out by skivvies_counter() (Mike, 5 Nov 2026)
+fetch(SB_URL+'/rest/v1/rpc/skivvies_counter',{method:'POST',headers:{apikey:SB_KEY,'Content-Type':'application/json'},body:'{}'})
+ .then(r=>r.ok?r.json():Promise.reject()).then(d=>d&&Number.isInteger(d.hand)?{people:d.hand+(d.gifts||0),since:d.since}:Promise.reject())
  .catch(()=>fetch('/count.json',{cache:'no-store'}).then(r=>r.ok?r.json():null))
  .then(c=>{COUNT=c;if(page()==='home')fillCount()}).catch(()=>{});
 function buttCount(){return `<section class="bc" aria-labelledby="bc-h">
