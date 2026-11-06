@@ -89,12 +89,14 @@ Deno.serve(async (req) => {
       const { data: row } = await db.from("skivvies_gifts").select("*").eq("stripe_session", id).maybeSingle();
       if (!row) return json({ error: "We couldn't find that gift." }, 404);
       if (!row.paid) {
-        const s = await stripe("checkout/sessions/" + id, undefined, "GET");
+        const s = await stripe("checkout/sessions/" + id + "?expand[]=payment_intent.latest_charge.balance_transaction", undefined, "GET");
+        const fee = s?.payment_intent?.latest_charge?.balance_transaction?.fee; // Stripe's cut, for the books
         const paid = s.payment_status === "paid" || (s.mode === "subscription" && s.status === "complete" && s.payment_status !== "unpaid");
         if (!paid) return json({ ok: true, paid: false });
         await db.from("skivvies_gifts").update({
           paid: true, paid_at: new Date().toISOString(),
           donor_email: s.customer_details?.email || null,
+          fee_cents: typeof fee === "number" ? fee : null,
           message_status: row.message ? "pending" : "none",
         }).eq("id", row.id).eq("paid", false);
       }

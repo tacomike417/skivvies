@@ -135,3 +135,53 @@ skivvies.org > "I want to write a note" > sign in (or sign up) with Recovery Mis
 - Admin box "Offline butts paid for": Mike types the number himself for cash, checks and his own $100 opening gift (that $100 counts for Skivvies).
 - Donate page cards stay as they are ($20 for a guy / $20 for a woman).
 - Don't auto-subtract covered butts: donated underwear covers butts with no money behind it.
+
+## PLAN (decided 6 Nov 2026, not built yet): the line, stock, receipts, in-kind, sharing, year-end
+Phone wins for all admin screens.
+
+**Note: the cash/check log + donation report (v0.36) is built and in the repo, but its database
+change (supabase/skv_08_cash.sql) still needs applying, then push v0.36.**
+
+### The line (donor notifications)
+- Every pair PAID FOR gets a number in line (#1, #2...). Guy or girl doesn't matter for the line.
+- Mike logs "X went out". When the count reaches a donor's first number, they get ONE email:
+  "Your first pair went out today" (+ "N more to go" if their gift covered more).
+- Never says who got it or which place. Their note went with it, if they left one.
+- Donated (in-kind) pairs NEVER move the line.
+
+### Handing out (admin)
+- "How many went out? [3] · From: Bought (12 left) ▾". Bought pile goes first by default;
+  one tap switches to Donated. Auto-switches to Donated when Bought is empty.
+- Print note for the pack, then tap Went out.
+
+### Admin dashboard
+- Money: donations in (online + cash/checks) − Stripe fees − spent = money on hand.
+- Pairs: bought + donated − given out = in stock (two piles: Bought / Donated).
+- Line: "Next up: donor #9".
+
+### Receipts
+- Snap a Walmart receipt or screenshot an online order; enter store, amount, pairs bought. Image stored privately.
+
+### In-kind (donated underwear), kept separate from money
+- Log: who, date, what ("12 pairs new men's boxer briefs"), optional photo, Mike's estimated value (for the books only).
+- One-tap thank-you letter that describes the items, NO dollar value (donor values it). Ask Kelly to confirm before year-end.
+
+### Year-end button
+- One report: cash donations, Stripe fees, purchases (with receipt images), in-kind section (pairs + est. value), pairs given out, money left.
+
+### Big home counter
+- STAYS on donations (goes up when someone gives). Given-out is tracked in admin only.
+
+### Sharing
+- Share prompt BOTH right after giving AND in the "your pair went out" email.
+- Primary: Share to Recovery Misfits -> posts on the MAIN Porch with the meme card; "Join the Skivvies group" pre-checked (Mike: auto-add).
+- Secondary: phone share sheet with the card image (Facebook, Instagram Stories, text). Facebook gets the link with the meme as preview.
+- Card never shows the donor's name or amount.
+- Caption drafts (Mike asked me to draft):
+  - After giving: "I just covered somebody's butt. 🍑 Your turn." / "Best $20 I spent all week: underwear for a stranger's day one." / "Rock bottom shouldn't be bare bottom. I helped."
+  - When it goes out: "My pair went out today. Somebody walked into day one covered." / "Update: my butt-covering has been deployed. 🩲"
+
+### Needs set up
+- Email sending: Resend (free at this volume), sender hello@skivvies.org.
+- Stripe "Successful payments" receipt emails ON.
+- Recovery Misfits side: share-to-Porch landing + Skivvies group join.

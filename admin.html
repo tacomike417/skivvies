@@ -47,9 +47,48 @@ input,select{width:100%;border:1px solid #bdcbc2;border-radius:12px;padding:13px
 .mini{border:1px solid var(--ink);background:#fff;color:var(--ink);border-radius:10px;padding:7px 12px;font-weight:800;font-size:13px;cursor:pointer;margin-top:6px}
 .foot{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);margin-top:8px}
 .foot a{color:inherit;font-weight:700}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.two input[type=date]{padding:12px 8px}
+.cash-amt{font-weight:900}
+#report{position:fixed;inset:0;z-index:20;background:#f2f3f0;overflow:auto;-webkit-overflow-scrolling:touch}
+.rp-bar{position:sticky;top:0;display:flex;gap:10px;align-items:center;max-width:760px;margin:0 auto;padding:12px 16px;background:#f2f3f0}
+.rp-x{flex:none;width:46px;height:46px;border-radius:50%;border:2px solid var(--ink);background:#fff;font-size:20px;font-weight:900;cursor:pointer}
+.rp-print{flex:1;padding:13px}
+.rp-page{max-width:760px;margin:0 auto 30px;background:#fff;padding:22px 18px;border-radius:14px}
+.rp-page h2{font:400 28px/1 Anton,Inter,sans-serif;text-transform:uppercase;letter-spacing:.02em;margin:0 0 6px}
+.rp-org{margin:0 0 4px;font-size:13px;color:var(--muted);line-height:1.4}.rp-range{margin:8px 0 12px;font-weight:800}
+.rp-tots{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 14px}
+.rp-tots div{border:1px solid #e6d9d0;border-radius:12px;padding:10px}.rp-tots b{display:block;font-size:20px;font-weight:900}.rp-tots span{font-size:12px;color:var(--muted);font-weight:700}
+.rp-t{width:100%;border-collapse:collapse;font-size:13px}.rp-t th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:2px solid var(--ink);padding:6px 4px}
+.rp-t td{border-bottom:1px solid #eee;padding:8px 4px;vertical-align:top}.rp-t .r{text-align:right;white-space:nowrap}.rp-t td:first-child,.rp-t .nw{white-space:nowrap}
+.rp-t .em{display:block;font-size:11px;color:var(--muted);overflow-wrap:anywhere}.rp-t td{overflow-wrap:anywhere}
+.rp-foot{font-size:12px;color:var(--muted);margin:12px 0 0;line-height:1.45}
+body.printing .shell{display:none}
+@media print{body{background:#fff}.shell,.rp-bar{display:none!important}#report{position:static;overflow:visible;background:#fff}.rp-page{max-width:none;margin:0;padding:0;border-radius:0}}
+.stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 8px}
+.stat3 div{border:1px solid #e6d9d0;border-radius:12px;padding:10px 8px;text-align:center}
+.stat3 b{display:block;font-size:24px;font-weight:900;letter-spacing:-.02em}.stat3 span{font-size:11px;color:var(--muted);font-weight:700;line-height:1.2;display:block;margin-top:2px}
+.stat3.money b{font-size:19px}
+.seg{display:grid;grid-template-columns:1fr 1fr;border:2px solid var(--ink);border-radius:12px;overflow:hidden}
+.seg button{border:0;background:#fff;color:var(--ink);padding:12px 8px;font-weight:900;font-size:15px;cursor:pointer}
+.seg button.on{background:var(--ink);color:#fff}.seg small{display:block;font-size:11px;font-weight:700;opacity:.75}
+.badge.line{background:var(--gold);color:var(--ink)}.badge.went{background:#2f7d55}
+input[type=file]{padding:10px;font-size:14px}
+.thumb{display:inline-block;margin-top:6px;font-weight:800;font-size:13px;color:var(--ink)}
 </style>
 </head>
 <body>
+<div id="report" class="hidden" role="dialog" aria-modal="true" aria-labelledby="rp_h">
+  <div class="rp-bar"><button class="rp-x" id="rp_close" aria-label="Close report">✕</button><button class="btn rp-print" id="rp_print">Print / Save PDF</button></div>
+  <div class="rp-page">
+    <h2 id="rp_h">Skivvies donations</h2>
+    <p class="rp-org">Cornerstones Recovery, Inc. · 501(c)(3) · <span style="white-space:nowrap">EIN 99-4095027</span><br>820 S. Linden Ave, Alliance, OH 44601</p>
+    <p class="rp-range" id="rp_range"></p>
+    <div class="rp-tots" id="rp_tots"></div>
+    <table class="rp-t"><thead><tr><th>Date</th><th>Donor</th><th>How</th><th class="r">Amount</th></tr></thead><tbody id="rp_rows"></tbody></table>
+    <p class="rp-foot" id="rp_foot"></p>
+  </div>
+</div>
 <div class="shell">
 <header><a class="brand" href="/">skivvies</a><span class="tag">Admin</span></header>
 
@@ -74,15 +113,92 @@ input,select{width:100%;border:1px solid #bdcbc2;border-radius:12px;padding:13px
 
 <!-- the admin -->
 <section id="panel" class="hidden">
-  <h1>The Skivvies Count</h1>
+  <h1>Skivvies admin</h1>
+  <!-- THE BOOKS (6 Nov 2026, Mike): one look at money, stock and the donor line. skivvies_books() does the math. -->
+  <div class="card" id="bookcard">
+    <label style="margin:0 0 10px">The books <span class="badge hidden" id="bookbadge"></span></label>
+    <div class="stat3" id="stock">
+      <div><b id="st_bought">…</b><span>bought pairs in stock</span></div>
+      <div><b id="st_donated">…</b><span>donated pairs in stock</span></div>
+      <div><b id="st_given">…</b><span>pairs given out</span></div>
+    </div>
+    <div class="stat3 money" id="money">
+      <div><b id="m_in">…</b><span>donations in</span></div>
+      <div><b id="m_out">…</b><span>fees + spent</span></div>
+      <div><b id="m_left">…</b><span>money on hand</span></div>
+    </div>
+    <p class="rule" id="linetxt"></p>
+    <p class="rule" id="feetxt"></p>
+  </div>
+
+  <!-- HAND OUT: the only thing that moves the donor line. Bought pile first; donated never emails anyone. -->
+  <form class="card row" id="handform">
+    <label style="margin:0">Hand out</label>
+    <div><label for="h_pairs">How many pairs went out?</label><input id="h_pairs" class="big" type="number" inputmode="numeric" min="1" max="10000" step="1" value="1" required></div>
+    <div><label>From which pile?</label>
+      <div class="seg" id="h_src"><button type="button" class="on" data-src="bought">Bought <small id="h_bn"></small></button><button type="button" data-src="donated">Donated <small id="h_dn"></small></button></div></div>
+    <div><label for="h_note">Note <span style="font-weight:400;color:var(--muted)">(optional, just for you)</span></label><input id="h_note" maxlength="300" placeholder="Where they went, which notes you used…"></div>
+    <button class="btn" id="h_save">They went out 🍑</button>
+    <p class="msg" id="h_msg"></p>
+    <p class="rule">Bought pairs move the donor line: whoever's turn it is gets the "your pair went out" email right now. Donated pairs don't email anybody.</p>
+    <ul class="reqs" id="handlist"></ul>
+  </form>
+
+  <!-- RECEIPTS: underwear bought with donation money. Photo or screenshot goes in the private bucket. -->
+  <form class="card row" id="buyform">
+    <label style="margin:0">Receipts <span style="font-weight:400;color:var(--muted)">(underwear you bought)</span></label>
+    <div class="two"><div><label for="b_store">Store</label><input id="b_store" maxlength="80" placeholder="Walmart, Amazon…" required></div>
+    <div><label for="b_date">Date</label><input id="b_date" type="date" required></div></div>
+    <div class="two"><div><label for="b_amt">Total paid</label><input id="b_amt" type="number" inputmode="decimal" min="0" step="0.01" placeholder="$" required></div>
+    <div><label for="b_pairs">Pairs</label><input id="b_pairs" type="number" inputmode="numeric" min="0" max="100000" step="1" placeholder="0" required></div></div>
+    <div><label for="b_file">Receipt photo or screenshot <span style="font-weight:400;color:var(--muted)">(optional)</span></label><input id="b_file" type="file" accept="image/*,application/pdf"></div>
+    <button class="btn" id="b_save">Save receipt</button>
+    <p class="msg" id="b_msg"></p>
+    <ul class="reqs" id="buylist"></ul>
+  </form>
+
+  <!-- DONATED UNDERWEAR (in-kind): kept apart from money. Letter describes the items, no dollar value. -->
+  <form class="card row" id="kindform">
+    <label style="margin:0">Donated underwear <span style="font-weight:400;color:var(--muted)">(somebody gave actual pairs)</span></label>
+    <div class="two"><div><label for="k_name">Who gave it</label><input id="k_name" maxlength="80" placeholder="Name or group" required></div>
+    <div><label for="k_date">Date</label><input id="k_date" type="date" required></div></div>
+    <div><label for="k_desc">What it was</label><input id="k_desc" maxlength="300" placeholder="12 pairs new men's boxer briefs, M–XL" required></div>
+    <div class="two"><div><label for="k_pairs">Pairs</label><input id="k_pairs" type="number" inputmode="numeric" min="0" max="100000" step="1" placeholder="0" required></div>
+    <div><label for="k_val">Worth about <span style="font-weight:400;color:var(--muted)">(your guess)</span></label><input id="k_val" type="number" inputmode="decimal" min="0" step="0.01" placeholder="$"></div></div>
+    <div><label for="k_file">Photo <span style="font-weight:400;color:var(--muted)">(optional)</span></label><input id="k_file" type="file" accept="image/*"></div>
+    <button class="btn" id="k_save">Log it</button>
+    <p class="msg" id="k_msg"></p>
+    <p class="rule">Your dollar guess is for the books only. The thank-you letter describes what they gave and leaves the value to them; that's how the IRS wants it. Each pair adds 1 to the homepage counter.</p>
+    <ul class="reqs" id="kindlist"></ul>
+  </form>
+
+  <h1 style="margin-top:26px">The Skivvies Count</h1>
   <p class="lead">The homepage shows the <b>lifetime total</b>: every year added together. Right now that's <b id="lifetime">…</b>.</p>
   <form class="card row" id="countform">
     <div><label for="year">Year</label><select id="year"></select></div>
-    <div><label for="people">Hand-counted butts that year</label><input id="people" class="big" type="number" inputmode="numeric" min="0" max="999999" step="1" required></div>
+    <div><label for="people">Adjustment for that year</label><input id="people" class="big" type="number" inputmode="numeric" min="0" max="999999" step="1" required></div>
     <button class="btn" id="savebtn">Save</button>
     <p class="msg" id="savemsg"></p>
-    <p class="rule"><b>Online gifts count themselves.</b> Every paid gift on the site adds to the homepage counter on its own: $20 = 2 guys or 1 woman. <b>Don't type those in here.</b><br>Type only what came in another way: cash, checks, Undie Sunday, donated underwear. This box is the total for the year you pick.<br>The homepage adds all years + online gifts together, and shows question marks until the total is 2 or more.</p>
+    <p class="rule"><b>Everything above counts itself.</b> Online gifts ($20 = 2 guys or 1 woman), cash and checks ($20 = 2) and donated pairs (1 each) all add to the homepage counter on their own. <b>Don't type those in here.</b><br>This box is only for old numbers from before the logs existed, or a fix. It's the total for the year you pick.</p>
   </form>
+  <!-- CASH & CHECKS (5 Nov 2026, Mike). Log money that didn't come through the site. $20 = 2 butts on the counter. -->
+  <form class="card row" id="cashform">
+    <label style="margin:0">Cash &amp; checks</label>
+    <div><label for="c_name">Who gave it</label><input id="c_name" maxlength="80" autocomplete="off" placeholder="Name, or Anonymous" required></div>
+    <div class="two"><div><label for="c_amt">Amount</label><input id="c_amt" type="number" inputmode="decimal" min="1" step="0.01" placeholder="$" required></div>
+    <div><label for="c_date">Date</label><input id="c_date" type="date" required></div></div>
+    <button class="btn" id="c_save">Log it</button>
+    <p class="msg" id="c_msg"></p>
+    <p class="rule">Every $20 adds 2 to the homepage counter.</p>
+    <ul class="reqs" id="cashlist"></ul>
+  </form>
+  <!-- DONATION REPORT: online + cash/checks, pick dates, print it or save as PDF for the nonprofit paperwork -->
+  <div class="card row">
+    <label style="margin:0">Year-end report</label>
+    <p class="rule" style="margin:0">Donations, Stripe fees, what you spent, what went out. Print it or save it as a PDF for the nonprofit paperwork.</p>
+    <div class="two"><div><label for="r_from">From</label><input id="r_from" type="date"></div><div><label for="r_to">To</label><input id="r_to" type="date"></div></div>
+    <button class="btn" type="button" id="r_open" style="background:var(--ink)">Open report</button>
+  </div>
   <!-- NOTES FROM THE CREW (2 Nov 2026, Mike). Written in the Skivvies group on Recovery Misfits.
        Approve = it goes up in the group from the skivvies account and the writer gets a message.
        Print the approved ones for the packs. -->
@@ -139,12 +255,12 @@ async function boot(){
  if(!session){show('signin');return}
  const {data:isAdmin}=await sb.rpc('is_skivvies_admin');
  if(!isAdmin){$('#whoami').textContent=session.user.email;show('notadmin');return}
- show('panel');load();loadNotes();loadRequests();loadDrives();loadGifts()}
+ show('panel');load();loadBooks();loadHandouts();loadBuys();loadKind();loadNotes();loadRequests();loadDrives();loadGifts();loadCash()}
 
 async function load(){
  const {data,error}=await sb.from('skivvies_butt_count').select('year,people,updated_at').order('year',{ascending:false});
  if(error){$('#savemsg').className='msg err';$('#savemsg').textContent=error.message;return}
- rows=data||[];const hand=rows.reduce((t,r)=>t+(r.people||0),0);let online=0;try{const c=await sb.rpc('skivvies_counter');online=(c.data&&c.data.gifts)||0}catch(_){}const life=hand+online;$('#lifetime').textContent=life.toLocaleString()+` (${hand.toLocaleString()} by hand + ${online.toLocaleString()} from online gifts)`+(life<2?' — homepage shows ? ? ? until 2':'');const now=new Date().getFullYear();const years=new Set(rows.map(r=>r.year));years.add(now);
+ rows=data||[];const hand=rows.reduce((t,r)=>t+(r.people||0),0);let online=0,cash=0,inkind=0;try{const c=await sb.rpc('skivvies_counter');online=(c.data&&c.data.gifts)||0;cash=(c.data&&c.data.cash)||0;inkind=(c.data&&c.data.inkind)||0}catch(_){}const life=hand+online+cash+inkind;$('#lifetime').textContent=life.toLocaleString()+` (${online.toLocaleString()} online + ${cash.toLocaleString()} cash/checks + ${inkind.toLocaleString()} donated pairs + ${hand.toLocaleString()} adjustment)`+(life<2?' — homepage shows ? ? ? until 2':'');const now=new Date().getFullYear();const years=new Set(rows.map(r=>r.year));years.add(now);
  const sel=$('#year');const cur=sel.value;sel.innerHTML=[...years].sort((a,b)=>b-a).map(y=>`<option value="${y}">${y}</option>`).join('');
  sel.value=cur&&years.has(+cur)?cur:String(rows[0]?.year||now);fillPeople();loadHistory()}
 function fillPeople(){const r=rows.find(r=>r.year===+$('#year').value);$('#people').value=r?r.people:0}
@@ -220,19 +336,172 @@ $('#notes').onclick=async e=>{const b=e.target.closest('[data-note]');if(!b)retu
   setTimeout(()=>{b.textContent='Use this note 🍑';b.disabled=false},2500);return}
  loadNotes()};
 
+let LINE={};
 async function loadGifts(){
- const {data,error}=await sb.from('skivvies_gifts').select('id,created_at,paid_at,mode,kind,qty,monthly,amount_cents,donor_name,anonymous,message,message_status,donor_email').eq('paid',true).order('paid_at',{ascending:false}).limit(60);
+ try{const {data:ln}=await sb.from('skivvies_line').select('id,line_start');LINE={};(ln||[]).forEach(r=>LINE[r.id]=r.line_start)}catch(_){}
+ const {data,error}=await sb.from('skivvies_gifts').select('id,created_at,paid_at,mode,kind,qty,monthly,amount_cents,donor_name,anonymous,message,message_status,donor_email,notified_at,fee_cents').eq('paid',true).order('paid_at',{ascending:false}).limit(60);
  const ul=$('#gifts');if(error){ul.innerHTML=`<li>${esc(error.message)}</li>`;return}
  const live=(data||[]).filter(g=>g.mode==='live');const packs=live.reduce((t,g)=>t+g.qty,0),dollars=live.reduce((t,g)=>t+g.amount_cents,0)/100;
  $('#giftsum').textContent=live.length?`Live so far: ${live.length} gift${live.length===1?'':'s'}, ${packs} pack${packs===1?'':'s'}, $${dollars.toLocaleString()}. Stripe takes its fee before it hits the bank.`:'No real gifts yet.';
  const waiting=(data||[]).filter(g=>g.message_status==='pending').length;const bd=$('#giftbadge');bd.textContent=waiting+' message'+(waiting===1?'':'s')+' to read';bd.classList.toggle('hidden',!waiting);
  if(!data||!data.length){ul.innerHTML='<li>No gifts yet.</li>';return}
  const fmt=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
- ul.innerHTML=data.map(g=>`<li><div class="top"><span class="place">${g.mode==='test'?'<span class="badge">TEST</span> ':''}$${(g.amount_cents/100).toLocaleString()}${g.monthly?' / month':''} · ${g.qty} ${g.kind==='women'?(g.qty===1?'woman':'women'):(g.qty===1?'guy':'guys')}</span><span class="when">${fmt(g.paid_at)}</span></div>
+ ul.innerHTML=data.map(g=>`<li><div class="top"><span class="place">${g.mode==='test'?'<span class="badge">TEST</span> ':''}${g.mode==='live'?(g.notified_at?'<span class="badge went">went out ✓</span> ':(LINE[g.id]?'<span class="badge line">#'+LINE[g.id]+' in line</span> ':'')):''}$${(g.amount_cents/100).toLocaleString()}${g.monthly?' / month':''} · ${g.qty} ${g.kind==='women'?(g.qty===1?'woman':'women'):(g.qty===1?'guy':'guys')}</span><span class="when">${fmt(g.paid_at)}</span></div>
   <div class="meta">${g.anonymous||!g.donor_name?'Anonymous':esc(g.donor_name)}${g.donor_email?' · <a href="mailto:'+esc(g.donor_email)+'">'+esc(g.donor_email)+'</a>':''}</div>
   ${g.message?`<div class="notes">${esc(g.message)}</div>${g.message_status==='pending'?`<button class="mini" data-gift="${g.id}" data-to="approved">Put it on the wall</button> <button class="mini" data-gift="${g.id}" data-to="hidden">Keep it off</button>`:`<div class="meta">${g.message_status==='approved'?'On the wall ✓':'Kept off the wall'} · <button class="link" data-gift="${g.id}" data-to="${g.message_status==='approved'?'hidden':'approved'}">${g.message_status==='approved'?'Take it down':'Put it up'}</button></div>`}`:''}</li>`).join('')}
 $('#gifts').onclick=async e=>{const b=e.target.closest('[data-gift]');if(!b)return;b.disabled=true;
  await sb.from('skivvies_gifts').update({message_status:b.dataset.to}).eq('id',+b.dataset.gift);loadGifts()};
+
+// ---- cash & checks ----
+const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const money=c=>'$'+(c/100).toLocaleString(undefined,{minimumFractionDigits:c%100?2:0,maximumFractionDigits:2});
+const dayTxt=d=>new Date(d+'T12:00:00').toLocaleDateString([], {month:'short',day:'numeric',year:'numeric'});
+$('#c_date').value=today();$('#r_from').value=new Date().getFullYear()+'-01-01';$('#r_to').value=today();
+async function loadCash(){
+ const {data,error}=await sb.from('skivvies_cash_gifts').select('id,gift_date,donor_name,amount_cents').order('gift_date',{ascending:false}).order('id',{ascending:false}).limit(15);
+ const ul=$('#cashlist');if(error){ul.innerHTML=`<li>${esc(error.message)}</li>`;return}
+ ul.innerHTML=(data||[]).map(g=>`<li><div class="top"><span class="place">${esc(g.donor_name)} · <span class="cash-amt">${money(g.amount_cents)}</span></span><span class="when">${dayTxt(g.gift_date)}</span></div>
+  <div class="meta">+${Math.floor(g.amount_cents/2000)*2} on the counter</div><button class="mini" type="button" data-cash="${g.id}">Delete</button></li>`).join('')}
+$('#cashform').onsubmit=async e=>{e.preventDefault();const m=$('#c_msg');
+ const name=$('#c_name').value.trim(),cents=Math.round(parseFloat($('#c_amt').value)*100),date=$('#c_date').value;
+ if(!name||!(cents>0)||!date){m.className='msg err';m.textContent='Fill in who, how much and the date.';return}
+ $('#c_save').disabled=true;m.className='msg';m.textContent='Saving…';
+ const {error}=await sb.from('skivvies_cash_gifts').insert({donor_name:name,amount_cents:cents,gift_date:date});
+ $('#c_save').disabled=false;
+ if(error){m.className='msg err';m.textContent=error.message;return}
+ m.className='msg ok';m.textContent=`Logged ${money(cents)} from ${name}. +${Math.floor(cents/2000)*2} on the counter.`;
+ $('#c_name').value='';$('#c_amt').value='';$('#c_date').value=today();loadCash();load()};
+$('#cashlist').onclick=async e=>{const b=e.target.closest('[data-cash]');if(!b)return;
+ if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again to delete';return}
+ b.disabled=true;await sb.from('skivvies_cash_gifts').delete().eq('id',+b.dataset.cash);loadCash();load()};
+
+// ---- donation report (online + cash/checks) ----
+async function openReport(fromHistory){
+ const from=$('#r_from').value,to=$('#r_to').value;if(!from||!to){alert('Pick both dates.');return}
+ const end=new Date(to+'T00:00:00');end.setDate(end.getDate()+1);
+ const [on,ca]=await Promise.all([
+  sb.from('skivvies_gifts').select('paid_at,donor_name,anonymous,donor_email,amount_cents,monthly,kind,qty').eq('mode','live').eq('paid',true).gte('paid_at',new Date(from+'T00:00:00').toISOString()).lt('paid_at',end.toISOString()),
+  sb.from('skivvies_cash_gifts').select('gift_date,donor_name,amount_cents').gte('gift_date',from).lte('gift_date',to)]);
+ if(on.error||ca.error){alert((on.error||ca.error).message);return}
+ const loc=t=>{const d=new Date(t);return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+ const rows=[...(on.data||[]).map(g=>({d:loc(g.paid_at),who:g.donor_name||'Anonymous',em:g.donor_email||'',how:'Online'+(g.monthly?' (monthly)':''),c:g.amount_cents})),
+  ...(ca.data||[]).map(g=>({d:g.gift_date,who:g.donor_name,how:'Cash/check',c:g.amount_cents}))].sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:0);
+ const sum=f=>rows.filter(f).reduce((t,r)=>t+r.c,0);const tOn=sum(r=>r.how.startsWith('Online')),tCa=sum(r=>r.how==='Cash/check');
+ $('#rp_h').textContent='Skivvies donations';document.querySelector('.rp-t').style.display='';
+ $('#rp_range').textContent=`${dayTxt(from)} – ${dayTxt(to)}`;
+ let bk=null;try{const r=await sb.rpc('skivvies_books',{p_from:from,p_to:to});bk=r.data}catch(_){}
+ $('#rp_tots').innerHTML=`<div><b>${money(tOn+tCa)}</b><span>Donations in · ${rows.length} gift${rows.length===1?'':'s'}</span></div><div><b>${money(tOn)}</b><span>Online</span></div><div><b>${money(tCa)}</b><span>Cash / checks</span></div>`+(bk?`
+  <div><b>${money(bk.fee_cents)}</b><span>Stripe fees${bk.fees_missing?' (missing '+bk.fees_missing+')':''}</span></div><div><b>${money(bk.spent_cents)}</b><span>Spent on underwear</span></div><div><b>${money(tOn+tCa-bk.fee_cents-bk.spent_cents)}</b><span>Left over</span></div>
+  <div><b>${bk.pairs_bought}</b><span>Pairs bought</span></div><div><b>${bk.pairs_donated}</b><span>Pairs donated (in-kind${bk.inkind_value_cents?', about '+money(bk.inkind_value_cents):''})</span></div><div><b>${bk.given_bought+bk.given_donated}</b><span>Pairs given out</span></div>`:'');
+ $('#rp_rows').innerHTML=rows.length?rows.map(r=>`<tr><td>${new Date(r.d+'T12:00:00').toLocaleDateString([], {month:'numeric',day:'numeric',year:'2-digit'})}</td><td>${esc(r.who)}${r.em?`<small class="em">${esc(r.em)}</small>`:''}</td><td class="nw">${r.how}</td><td class="r">${money(r.c)}</td></tr>`).join(''):'<tr><td colspan="4">No gifts in these dates.</td></tr>';
+ $('#rp_foot').textContent=`Online amounts are before Stripe's fee. Test gifts are left out. Receipts and in-kind photos are in the admin, under Receipts and Donated underwear. Made ${new Date().toLocaleString()}.`;
+ $('#report').classList.remove('hidden');document.body.style.overflow='hidden';
+ if(!fromHistory)history.pushState({report:1},'');}
+function closeReport(){$('#report').classList.add('hidden');document.body.style.overflow=''}
+$('#r_open').onclick=()=>openReport(false);
+$('#rp_close').onclick=()=>{if(history.state&&history.state.report)history.back();else closeReport()};
+$('#rp_print').onclick=()=>window.print();
+window.addEventListener('popstate',()=>{if(!$('#report').classList.contains('hidden'))closeReport()});
+
+// ---- the books ----
+async function loadBooks(){
+ const {data:b,error}=await sb.rpc('skivvies_books');if(error||!b){$('#linetxt').textContent=error?error.message:'';return}
+ $('#st_bought').textContent=b.stock_bought;$('#st_donated').textContent=b.stock_donated;$('#st_given').textContent=b.given_bought+b.given_donated;
+ $('#h_bn').textContent=b.stock_bought+' left';$('#h_dn').textContent=b.stock_donated+' left';
+ const inn=b.online_cents+b.cash_cents,out=b.fee_cents+b.spent_cents;
+ $('#m_in').textContent=money(inn);$('#m_out').textContent=money(out);$('#m_left').textContent=money(inn-out);
+ const next=b.line_given+1;
+ const gone=Math.min(b.line_given,b.line_total);
+ $('#linetxt').innerHTML=b.line_total?`<b>The line:</b> ${gone} of ${b.line_total} paid-for pair${b.line_total===1?' has':'s have'} gone out. ${b.line_given>=b.line_total?'Everybody who gave online has been told.':'Next up is #'+next+'.'}`:'<b>The line:</b> no online gifts yet.';
+ $('#feetxt').innerHTML=b.fees_missing?`Stripe's fee is missing on ${b.fees_missing} gift${b.fees_missing===1?'':'s'}. <button class="link" type="button" id="feebtn" style="padding:0">Pull fees from Stripe</button>`:(b.online_count?`Stripe kept ${money(b.fee_cents)} so far.`:'');
+ const fb=$('#feebtn');if(fb)fb.onclick=async()=>{fb.disabled=true;fb.textContent='Asking Stripe…';const r=await callHandout({action:'fees'});fb.textContent=r.ok?`Got ${r.done} of ${r.of}`:(r.error||'Hmm');loadBooks();loadGifts()};
+ if(b.stock_bought<=0&&b.stock_donated>0)pickSrc('donated');else if(b.stock_bought>0)pickSrc(curSrc)}
+async function callHandout(body){const {data:{session}}=await sb.auth.getSession();
+ const {data,error}=await sb.functions.invoke('skivvies-handout',{body,headers:{Authorization:'Bearer '+(session&&session.access_token)}});
+ if(error||!data){let m='';try{if(error&&error.context)m=(await error.context.json()).error}catch(_){}return {error:m||'That didn\'t go through. Try again.'}}return data}
+
+// ---- hand out ----
+let curSrc='bought';
+function pickSrc(src){curSrc=src;document.querySelectorAll('#h_src button').forEach(b=>b.classList.toggle('on',b.dataset.src===src))}
+$('#h_src').onclick=e=>{const b=e.target.closest('[data-src]');if(b)pickSrc(b.dataset.src)};
+$('#handform').onsubmit=async e=>{e.preventDefault();const m=$('#h_msg');const n=parseInt($('#h_pairs').value,10);
+ if(!(n>=1)){m.className='msg err';m.textContent='How many went out?';return}
+ $('#h_save').disabled=true;m.className='msg';m.textContent='Saving…';
+ const r=await callHandout({action:'handout',pairs:n,source:curSrc,note:$('#h_note').value.trim(),date:today()});
+ $('#h_save').disabled=false;
+ if(!r.ok){m.className='msg err';m.textContent=r.error;return}
+ m.className='msg ok';m.textContent=`${n} ${curSrc} pair${n===1?'':'s'} out.`+(curSrc==='bought'?(r.sent?` ${r.sent} donor${r.sent===1?'':'s'} just got the email.`:' Nobody was due an email yet.')+(r.failed?` ${r.failed} email${r.failed===1?'':'s'} failed.`:''):'');
+ $('#h_pairs').value=1;$('#h_note').value='';loadBooks();loadHandouts();loadGifts()};
+async function loadHandouts(){
+ const {data}=await sb.from('skivvies_handouts').select('id,handed_on,pairs,source,note').order('id',{ascending:false}).limit(8);
+ $('#handlist').innerHTML=(data||[]).map((h,i)=>`<li><div class="top"><span class="place">${h.pairs} ${h.source} pair${h.pairs===1?'':'s'}</span><span class="when">${dayTxt(h.handed_on)}</span></div>${h.note?`<div class="meta">${esc(h.note)}</div>`:''}${i===0?`<button class="mini" type="button" data-undo="${h.id}">Undo (wrong number)</button>`:''}</li>`).join('')}
+$('#handlist').onclick=async e=>{const b=e.target.closest('[data-undo]');if(!b)return;
+ if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again to undo';return}
+ b.disabled=true;await callHandout({action:'undo',id:+b.dataset.undo});loadBooks();loadHandouts();loadGifts()};
+
+// ---- files in the private bucket ----
+async function putFile(input,folder){const f=input.files&&input.files[0];if(!f)return null;
+ const ext=(f.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
+ const path=`${folder}/${today()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
+ const {error}=await sb.storage.from('skivvies-private').upload(path,f,{contentType:f.type||undefined});
+ if(error)throw new Error('The file didn\'t upload: '+error.message);return path}
+async function fileLink(path){if(!path)return '';const {data}=await sb.storage.from('skivvies-private').createSignedUrl(path,600);return data&&data.signedUrl?`<a class="thumb" href="${data.signedUrl}" target="_blank" rel="noopener">See the file ↗</a>`:''}
+
+// ---- receipts ----
+$('#b_date').value=today();
+$('#buyform').onsubmit=async e=>{e.preventDefault();const m=$('#b_msg');
+ const store=$('#b_store').value.trim(),cents=Math.round(parseFloat($('#b_amt').value||'0')*100),pairs=parseInt($('#b_pairs').value,10),date=$('#b_date').value;
+ if(!store||!(cents>=0)||!(pairs>=0)||!date){m.className='msg err';m.textContent='Fill in the store, what you paid, how many pairs and the date.';return}
+ $('#b_save').disabled=true;m.className='msg';m.textContent='Saving…';
+ try{const receipt_path=await putFile($('#b_file'),'receipts');
+  const {error}=await sb.from('skivvies_purchases').insert({store,amount_cents:cents,pairs,bought_on:date,receipt_path});if(error)throw error;
+  m.className='msg ok';m.textContent=`Saved. ${pairs} pair${pairs===1?'':'s'} added to the bought pile.`;
+  $('#b_store').value='';$('#b_amt').value='';$('#b_pairs').value='';$('#b_file').value='';$('#b_date').value=today();loadBooks();loadBuys()}
+ catch(err){m.className='msg err';m.textContent=err.message}
+ $('#b_save').disabled=false};
+async function loadBuys(){
+ const {data}=await sb.from('skivvies_purchases').select('id,bought_on,store,amount_cents,pairs,receipt_path').order('bought_on',{ascending:false}).order('id',{ascending:false}).limit(10);
+ const rows=await Promise.all((data||[]).map(async p=>`<li><div class="top"><span class="place">${esc(p.store)} · <span class="cash-amt">${money(p.amount_cents)}</span></span><span class="when">${dayTxt(p.bought_on)}</span></div><div class="meta">${p.pairs} pair${p.pairs===1?'':'s'}</div>${await fileLink(p.receipt_path)} <button class="mini" type="button" data-buy="${p.id}">Delete</button></li>`));
+ $('#buylist').innerHTML=rows.join('')}
+$('#buylist').onclick=async e=>{const b=e.target.closest('[data-buy]');if(!b)return;
+ if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again to delete';return}
+ b.disabled=true;await sb.from('skivvies_purchases').delete().eq('id',+b.dataset.buy);loadBooks();loadBuys()};
+
+// ---- donated underwear (in-kind) ----
+$('#k_date').value=today();
+$('#kindform').onsubmit=async e=>{e.preventDefault();const m=$('#k_msg');
+ const donor_name=$('#k_name').value.trim(),description=$('#k_desc').value.trim(),pairs=parseInt($('#k_pairs').value,10),date=$('#k_date').value;
+ const v=$('#k_val').value;const est=v===''?null:Math.round(parseFloat(v)*100);
+ if(!donor_name||!description||!(pairs>=0)||!date){m.className='msg err';m.textContent='Fill in who, what it was, how many pairs and the date.';return}
+ $('#k_save').disabled=true;m.className='msg';m.textContent='Saving…';
+ try{const photo_path=await putFile($('#k_file'),'inkind');
+  const {error}=await sb.from('skivvies_inkind').insert({donor_name,description,pairs,gift_date:date,est_value_cents:est,photo_path});if(error)throw error;
+  m.className='msg ok';m.textContent=`Logged. ${pairs} pair${pairs===1?'':'s'} added to the donated pile and the homepage counter.`;
+  $('#k_name').value='';$('#k_desc').value='';$('#k_pairs').value='';$('#k_val').value='';$('#k_file').value='';$('#k_date').value=today();loadBooks();load();loadKind()}
+ catch(err){m.className='msg err';m.textContent=err.message}
+ $('#k_save').disabled=false};
+async function loadKind(){
+ const {data}=await sb.from('skivvies_inkind').select('id,gift_date,donor_name,description,pairs,est_value_cents,photo_path').order('gift_date',{ascending:false}).order('id',{ascending:false}).limit(10);
+ const rows=await Promise.all((data||[]).map(async k=>`<li><div class="top"><span class="place">${esc(k.donor_name)}</span><span class="when">${dayTxt(k.gift_date)}</span></div><div class="meta">${esc(k.description)} · ${k.pairs} pair${k.pairs===1?'':'s'}${k.est_value_cents!=null?' · about '+money(k.est_value_cents):''}</div>${await fileLink(k.photo_path)} <button class="mini" type="button" data-letter="${k.id}">Thank-you letter</button> <button class="mini" type="button" data-kind="${k.id}">Delete</button></li>`));
+ $('#kindlist').innerHTML=rows.join('')}
+$('#kindlist').onclick=async e=>{const l=e.target.closest('[data-letter]');if(l){openLetter(+l.dataset.letter);return}
+ const b=e.target.closest('[data-kind]');if(!b)return;
+ if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again to delete';return}
+ b.disabled=true;await sb.from('skivvies_inkind').delete().eq('id',+b.dataset.kind);loadBooks();load();loadKind()};
+// the in-kind thank-you letter: describes the items, no dollar value (the donor values it for their own taxes)
+async function openLetter(id,fromHistory){
+ const {data:k}=await sb.from('skivvies_inkind').select('*').eq('id',id).maybeSingle();if(!k)return;
+ $('#rp_h').textContent='Thank you';$('#rp_range').textContent='';$('#rp_tots').innerHTML='';
+ $('#rp_rows').innerHTML='';document.querySelector('.rp-t').style.display='none';
+ $('#rp_foot').innerHTML=`<div style="font-size:15px;color:var(--ink);line-height:1.6">
+  <p>${dayTxt(k.gift_date)}</p>
+  <p>Dear ${esc(k.donor_name)},</p>
+  <p>Thank you for your donation to Skivvies, a program of Cornerstones Recovery, Inc.:</p>
+  <p style="padding:10px 14px;border:1px solid #e6d9d0;border-radius:10px"><b>${esc(k.description)}</b>${k.pairs?` (${k.pairs} pair${k.pairs===1?'':'s'})`:''}</p>
+  <p>Every pair goes to somebody walking into day one of recovery in Stark County, Ohio. Because rock bottom shouldn't be bare bottom.</p>
+  <p>No goods or services were provided in exchange for this donation. Cornerstones Recovery, Inc. is a 501(c)(3) tax-exempt organization, EIN 99-4095027. This letter describes the items you donated; the value of a non-cash gift is determined by the donor.</p>
+  <p>With thanks,<br><br><br>Michael Nasvadi, Treasurer<br>Cornerstones Recovery, Inc.<br>820 S. Linden Ave, Alliance, OH 44601<br>hello@skivvies.org</p></div>`;
+ $('#report').classList.remove('hidden');document.body.style.overflow='hidden';if(!fromHistory)history.pushState({report:1},'')}
 
 sb.auth.onAuthStateChange((ev)=>{if(ev==='SIGNED_IN'||ev==='SIGNED_OUT')boot()});
 boot();
