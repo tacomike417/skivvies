@@ -128,3 +128,10 @@ skivvies.org > "I want to write a note" > sign in (or sign up) with Recovery Mis
 - [ ] Mike: test on the phone with a throwaway account.
 - v0.19 (same night, Mike: "it flashes some pages and looks spammy"): signed in already = no Recovery Misfits screens at all, just a moment of Skivvies cream and you're on the note page (it adds you to the group quietly if you weren't in it). Sign-in/sign-up screens only show when needed, and after signing in there's no "Thanks for helping" stop, it hops straight back. "Not you?" on Skivvies opens the account picker (?switch=1).
 - v0.20 (same night, Mike: "it should detect that i am logged in as tacomike417 and ask me to continue"): the note button says "Continue as <name>" with "Use a different account" under it. skivvies.org can't see inside recoverymisfits.org (browsers keep sites apart), so it remembers who came back from Recovery Misfits last time on that device. The very first time on a device it's the plain "I want to write a note" button. "Not you?" forgets the name.
+
+## Parked: "butts paid for" line (decided 5 Nov 2026, not built)
+- Home, one line under the counter: "X more butts paid for". Hidden until it hits 2. No dollars, no packs on the home page.
+- Counting rule: $20 covers 2 guys or 1 woman. Paid guy gift = 2 butts per $20, woman gift = 1 butt.
+- Admin box "Offline butts paid for": Mike types the number himself for cash, checks and his own $100 opening gift (that $100 counts for Skivvies).
+- Donate page cards stay as they are ($20 for a guy / $20 for a woman).
+- Don't auto-subtract covered butts: donated underwear covers butts with no money behind it.

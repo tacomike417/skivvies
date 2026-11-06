@@ -233,7 +233,7 @@ textarea{min-height:90px}
 <div class="shell">
 <header class="header">
   <div class="headleft"><button class="back" id="back" type="button" aria-label="Back" hidden>←</button><a class="brand" href="/" data-go="home" aria-label="Skivvies home">skivvies</a></div>
-  <div class="headright"><span class="pill">v0.33</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
+  <div class="headright"><span class="pill">v0.34</span><button class="menu" id="menu" aria-label="Open menu" aria-expanded="false">☰</button></div>
   <nav class="nav" id="nav" aria-label="Main navigation">
     <a href="/" data-go="home">Home</a>
     <a href="/cover-someones-butt" data-go="kit">Cover Someone's Butt</a>
@@ -313,7 +313,10 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
 window.addEventListener('appinstalled',()=>{deferredPrompt=null;toast('Skivvies is on your phone.');if(page()==='install')render()});
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 const app=document.querySelector('#app'),nav=document.querySelector('#nav'),menu=document.querySelector('#menu');
-let state={kit:'men',qty:1,monthly:false,thanks:false,anon:true,gname:'',gmsg:'',gift:null};
+// gift name + message survive a reload (kept in this tab only, wiped once the gift goes through)
+function gDraft(v){try{if(v===undefined)return JSON.parse(sessionStorage.getItem('skv_gift_draft')||'{}');if(v)sessionStorage.setItem('skv_gift_draft',JSON.stringify(v));else sessionStorage.removeItem('skv_gift_draft')}catch(_){return {}}}
+const GD=gDraft()||{};
+let state={kit:'men',qty:1,monthly:false,thanks:false,anon:GD.anon!==false,gname:GD.gname||'',gmsg:GD.gmsg||'',gift:null};
 const bulletin='Join our Undie Sunday for Skivvies! Bring NEW underwear and bras to help men and women starting recovery in Stark County, Ohio. Because rock bottom shouldn\'t be bare bottom. skivvies.org';
 
 function home(){return `
@@ -417,7 +420,7 @@ ${![1,5,10].includes(state.qty)?`<label class="field" for="qty">How many</label>
 <label class="toggle"><input id="anon" type="checkbox" ${state.anon?'checked':''}> Give anonymously</label>
 ${state.anon?'':`<label class="field" for="g_name">Your name on the wall</label><input id="g_name" maxlength="40" autocomplete="name" placeholder="Like “Mike, 4 years” or “The Smith family”" value="${esc(state.gname)}">`}
 <label class="field" for="g_msg">Leave a message <span style="font-weight:600;color:var(--muted)">(optional)</span></label>
-<textarea id="g_msg" maxlength="280" rows="3" placeholder="Rooting for you. Day one is the hardest one.">${esc(state.gmsg)}</textarea>
+<textarea id="g_msg" maxlength="280" rows="3" placeholder="Example: Rooting for you. Day one is the hardest one.">${esc(state.gmsg)}</textarea>
 <p class="hint">Messages go up on the wall below after a quick look.</p>
 <div class="total" id="g_total">$${total}${per}</div>
 <button class="action" id="give">Give $${total}${per} →</button>
@@ -584,7 +587,7 @@ function rmBtn(){const n=lastName();return n
  ?`<a class="gbtn" href="${RM_IN}"><span class="av sm">${avHTML(n,lastAv())}</span><span><b>Continue as ${esc(n)}</b><small>with your Recovery Misfits account</small></span></a><a class="other" href="${RM_IN}&switch=1">Use a different account</a>`
  :`<a class="gbtn" href="${RM_IN}"><img src="/img/rm-icon.png" alt="" width="34" height="34"><span><b>I want to write a note</b><small>Log in or sign up with a free recoverymisfits.org account</small></span></a>`}
 function noteDraft(v){try{if(v===undefined)return sessionStorage.getItem('skv_draft')||'';if(v)sessionStorage.setItem('skv_draft',v);else sessionStorage.removeItem('skv_draft')}catch(_){return''}}
-const GIFT_ID=new URLSearchParams(location.search).get('gift');if(GIFT_ID)state.gift={loading:true};
+const GIFT_ID=new URLSearchParams(location.search).get('gift');if(GIFT_ID){state.gift={loading:true};gDraft(null);state.gmsg='';state.gname=''}
 (()=>{const h=location.hash.slice(1);const p=PATHS[h]?h:pathPage();history.replaceState({page:p},'',PATHS[h]?PATHS[h]:location.pathname)})();
 window.addEventListener('popstate',()=>{const was=navOpen();if(history.state&&history.state.menu){setNav(true);return}setNav(false);if(page()!==shown)render();else if(!was&&!document.querySelector('.nb.on'))window.scrollTo(0,0)});
 menu.onclick=()=>{navOpen()?closeNav():openNav()};
@@ -604,8 +607,8 @@ if(e.target.id==='copylink'){copyText('https://skivvies.org').then(()=>toast('Li
 if(e.target.id==='flyer'){toast('Flyer is coming soon.');return}
 if(e.target.id==='copy'){copyText(bulletin).then(()=>toast('Bulletin blurb copied.')).catch(()=>toast('Could not copy. Press and hold to copy it instead.'));return}});
 document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-kit]')){e.preventDefault();state.kit=e.target.dataset.kit;render()}});
-document.addEventListener('change',e=>{if(e.target.id==='monthly'){state.monthly=e.target.checked;render()}if(e.target.id==='anon'){state.anon=e.target.checked;render()}if(e.target.id==='qty'){state.qty=Math.max(1,Math.min(10000,parseInt(e.target.value,10)||1));render()}});
-document.addEventListener('input',e=>{if(e.target.id==='g_name')state.gname=e.target.value;if(e.target.id==='g_msg')state.gmsg=e.target.value;if(e.target.id==='n_body'){noteDraft(e.target.value);const c=document.getElementById('n_count');if(c)c.textContent=e.target.value.length+' / 600'}});
+document.addEventListener('change',e=>{if(e.target.id==='monthly'){state.monthly=e.target.checked;render()}if(e.target.id==='anon'){state.anon=e.target.checked;gDraft({anon:state.anon,gname:state.gname,gmsg:state.gmsg});render()}if(e.target.id==='qty'){state.qty=Math.max(1,Math.min(10000,parseInt(e.target.value,10)||1));render()}});
+document.addEventListener('input',e=>{if(e.target.id==='g_name'||e.target.id==='g_msg'){if(e.target.id==='g_name')state.gname=e.target.value;else state.gmsg=e.target.value;gDraft({anon:state.anon,gname:state.gname,gmsg:state.gmsg})}if(e.target.id==='n_body'){noteDraft(e.target.value);const c=document.getElementById('n_count');if(c)c.textContent=e.target.value.length+' / 600'}});
 document.addEventListener('click',e=>{if(e.target.id==='n_out'){rmOut();location.href=RM_IN+'&switch=1';return}
  if(e.target.id==='n_again'){state.noteSent=false;render();return}});
 document.addEventListener('submit',async e=>{if(e.target.id==='noteform'){e.preventDefault();const err=document.getElementById('n_err'),btn=document.getElementById('n_send');
