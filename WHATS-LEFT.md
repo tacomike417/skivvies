@@ -23,7 +23,8 @@ One to-do list for the whole project. New to-dos go here.
 - [ ] Mike: put the TEST secret key in, try a $20 test gift with card 4242 4242 4242 4242.
 - [x] Stripe "Successful payments" receipt emails turned on (13 Nov 2026).
 - [x] 13 Nov 2026: skivvies-give v6. After a gift the donor gets our own email (tax letter PDF attached + link, share card, Recovery Misfits group invite, "we'll email you when your pair goes out") and Mike gets a "new gift" email at hello@skivvies.org. SQL: skv_10_gift_emails.sql.
-- [ ] Gifts only get recorded and emailed when the donor lands back on skivvies.org after paying. Add a server-side sweep (or Stripe webhook) to catch people who close the tab early.
+- [x] 13 Nov 2026: Mike gets a "to approve" email (hello@skivvies.org) when a note from Recovery Misfits is waiting, and the new-gift email says "(note to approve)" when the donor left one.
+- [ ] Gifts only get recorded and emailed when the donor lands back on skivvies.org after paying. Mike decided 13 Nov to leave it as is (no webhook for now). Revisit if monthly gifts start: only month one gets recorded.
 - [ ] When it looks right: swap in the LIVE secret key. That's the switch that opens real giving.
 
 ## Done 5 Nov 2026 (v0.28, v0.29)

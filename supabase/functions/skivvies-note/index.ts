@@ -1,7 +1,8 @@
 /* SKIVVIES NOTES (2 Nov 2026, Mike). Miscellaneous project.
  *
  *   submit  { body, sign }   Authorization: a Recovery Misfits token.
- *                            The note lands in skivvies_notes as pending.
+ *                            The note lands in skivvies_notes as pending, and Mike gets a
+ *                            "to approve" email (hello@skivvies.org).
  *   approve { id }           Authorization: a Skivvies admin's token (this project).
  *                            The note goes up in the Skivvies group on RM, from the
  *                            skivvies house account, and the writer gets a DM.
@@ -24,6 +25,20 @@ const json = (d: unknown, s = 200) => new Response(JSON.stringify(d), { status: 
 const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!, { auth: { persistSession: false } });
 const RM = "https://rlytvfehbglsjfvprtbp.supabase.co";
 const RM_KEY = "sb_publishable_5r-l8Bj8PjXhq5qpp1b26g_QQ7xPQ7P";       // RM's public key
+
+// Heads-up to Mike that something is waiting for his OK in admin (13 Nov 2026).
+const RESEND = Deno.env.get("RESEND_API_KEY") || "";
+const FROM = Deno.env.get("SKIVVIES_FROM") || "Skivvies <skivvies@recoverymisfits.org>";
+const ALERT_TO = Deno.env.get("SKIVVIES_ALERT_TO") || "hello@skivvies.org";
+async function tellMike(subject: string, text: string) {
+  if (!RESEND) return;
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST", headers: { Authorization: "Bearer " + RESEND, "Content-Type": "application/json" },
+      body: JSON.stringify({ from: FROM, to: [ALERT_TO], subject, text }),
+    });
+  } catch { /* the note is saved either way */ }
+}
 
 async function rmUser(jwt: string) {
   const r = await fetch(RM + "/auth/v1/user", { headers: { apikey: RM_KEY, Authorization: "Bearer " + jwt } });
@@ -56,6 +71,9 @@ Deno.serve(async (req) => {
     if ((waiting || 0) >= 3) return json({ error: "You have 3 notes waiting to be read. Give us a minute to catch up." }, 429);
     const { error } = await admin.from("skivvies_notes").insert({ rm_user_id: u.id, rm_handle: handle, body, sign_as: sign });
     if (error) return json({ error: "That didn't save. Try again." }, 500);
+    await tellMike("To approve: a new Skivvies note from @" + handle,
+      ["@" + handle + " wrote a note for the packs. It stays hidden until you OK it.", "", '"' + body + '"', sign ? "Signed: " + sign : "Not signed.", "",
+       "Approve or decline: https://skivvies.org/admin"].join("\n"));
     return json({ ok: true });
   }
 

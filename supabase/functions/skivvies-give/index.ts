@@ -177,16 +177,15 @@ function thanksEmail(g: Gift) {
 
 function alertEmail(g: Gift) {
   const who = g.legal_name || g.donor_name || "Someone";
-  const subject = `${g.mode === "test" ? "[TEST] " : ""}New Skivvies gift: ${money(g.amount_cents)} from ${who}`;
+  const subject = `${g.mode === "test" ? "[TEST] " : ""}New Skivvies gift: ${money(g.amount_cents)} from ${who}${g.message ? " (note to approve)" : ""}`;
   const text = [
     `${who} just gave ${money(g.amount_cents)}${g.monthly ? " (monthly)" : ""}.`, ``,
     `For: ${packLabel(g)}`,
     `Shows on the site as: ${g.anonymous ? "Anonymous" : g.donor_name}`,
     `Email: ${g.donor_email || "none"}`,
     g.fee_cents != null ? `Stripe kept ${money(g.fee_cents)}, so ${money(g.amount_cents - g.fee_cents)} lands in the bank.` : ``,
-    g.message ? `\nTheir note (waiting for your OK in admin):\n"${g.message}"` : `\nNo note.`, ``,
+    g.message ? `\nTO APPROVE: they left a note. It stays hidden until you OK it.\n"${g.message}"\nApprove or decline: ${SITE}/admin` : `\nNo note. Nothing to approve.`, ``,
     `They got the thank-you email with their tax letter.`,
-    `Admin: ${SITE}/admin`,
   ].join("\n");
   return { subject, text, html: `<pre style="font:15px/1.5 Helvetica,Arial,sans-serif;white-space:pre-wrap">${esc(text)}</pre>` };
 }
