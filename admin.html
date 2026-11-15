@@ -83,6 +83,7 @@ input[type=file]{padding:10px;font-size:14px}
 .tabs button{flex:none;border:2px solid var(--ink);background:#fff;color:var(--ink);border-radius:30px;padding:9px 14px;font-weight:900;font-size:14px;cursor:pointer;white-space:nowrap}
 .tabs button.on{background:var(--ink);color:#fff}
 .dot{display:inline-block;min-width:20px;margin-left:6px;padding:1px 6px;border-radius:20px;background:var(--coral);color:#fff;font-size:12px;line-height:18px;text-align:center}
+.bignum{font:900 84px/1 Inter,sans-serif;letter-spacing:-.04em;margin:10px 0 8px}
 .th{font:400 30px/1 Anton,Inter,sans-serif;text-transform:uppercase;letter-spacing:.02em;margin:4px 0 8px}
 .cta{display:block;width:100%;text-align:left;border:3px solid var(--ink);border-radius:16px;background:var(--gold);color:var(--ink);padding:14px 16px;margin:0 0 16px;font-weight:900;font-size:16px;cursor:pointer;box-shadow:4px 5px 0 var(--coral)}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
@@ -107,7 +108,7 @@ input[type=file]{padding:10px;font-size:14px}
   </div>
 </div>
 <div class="shell">
-<header><a class="brand" href="/">skivvies</a><span><span class="tag">Admin</span> <span class="ver">v2.1</span></span></header>
+<header><a class="brand" href="/">skivvies</a><span><span class="tag">Admin</span> <span class="ver">v2.2</span></span></header>
 
 <!-- signed out -->
 <section id="signin" class="hidden">
@@ -177,14 +178,18 @@ input[type=file]{padding:10px;font-size:14px}
 
   </div>
   <div class="pane hidden" id="pane_count">
-  <h2 class="th">The Skivvies Count</h2>
-  <p class="lead">The homepage shows the <b>lifetime total</b>: every year added together. Right now that's <b id="lifetime">…</b>.</p>
+  <!-- SKIVVIES COUNT (15 Nov 2026, Mike): one running total. See the number, add to it, that's it.
+       Years only exist behind the scenes: what you add lands on this year, for the year-end report. -->
+  <div class="card" style="text-align:center">
+    <label style="margin:0">The Skivvies Count</label>
+    <div class="bignum" id="lifetime">…</div>
+    <p class="rule" style="margin:0" id="lifenote"></p>
+  </div>
   <form class="card row" id="countform">
-    <div><label for="year">Year</label><select id="year"></select></div>
-    <div><label for="people">Adjustment for that year</label><input id="people" class="big" type="number" inputmode="numeric" min="0" max="999999" step="1" required></div>
-    <button class="btn" id="savebtn">Save</button>
+    <div><label for="people">Add to the count</label><input id="people" class="big" type="number" inputmode="numeric" min="-999999" max="999999" step="1" placeholder="0" required></div>
+    <button class="btn" id="savebtn">Add them</button>
     <p class="msg" id="savemsg"></p>
-    <p class="rule"><b>Everything above counts itself.</b> Online gifts ($20 = 2 guys or 1 woman), cash and checks ($20 = 2) and donated pairs (1 each) all add to the homepage counter on their own. <b>Don't type those in here.</b><br>This box is only for old numbers from before the logs existed, or a fix. It's the total for the year you pick.</p>
+    <p class="rule">Gifts, cash and checks, and donated pairs already count themselves. Add here only for anything else. Typed too many? Add a minus number to take them back off.</p>
   </form>
   </div>
   <div class="pane hidden" id="pane_cash">
@@ -313,11 +318,11 @@ async function boot(){
 async function load(){
  const {data,error}=await sb.from('skivvies_butt_count').select('year,people,updated_at').order('year',{ascending:false});
  if(error){$('#savemsg').className='msg err';$('#savemsg').textContent=error.message;return}
- rows=data||[];const hand=rows.reduce((t,r)=>t+(r.people||0),0);let online=0,cash=0,inkind=0;try{const c=await sb.rpc('skivvies_counter');online=(c.data&&c.data.gifts)||0;cash=(c.data&&c.data.cash)||0;inkind=(c.data&&c.data.inkind)||0}catch(_){}const life=hand+online+cash+inkind;$('#lifetime').textContent=life.toLocaleString()+` (${online.toLocaleString()} online + ${cash.toLocaleString()} cash/checks + ${inkind.toLocaleString()} donated pairs + ${hand.toLocaleString()} adjustment)`+(life<2?' — homepage shows ? ? ? until 2':'');const now=new Date().getFullYear();const years=new Set(rows.map(r=>r.year));years.add(now);
- const sel=$('#year');const cur=sel.value;sel.innerHTML=[...years].sort((a,b)=>b-a).map(y=>`<option value="${y}">${y}</option>`).join('');
- sel.value=cur&&years.has(+cur)?cur:String(rows[0]?.year||now);fillPeople();loadHistory()}
-function fillPeople(){const r=rows.find(r=>r.year===+$('#year').value);$('#people').value=r?r.people:0}
-$('#year').onchange=fillPeople;
+ rows=data||[];const hand=rows.reduce((t,r)=>t+(r.people||0),0);let online=0,cash=0,inkind=0;
+ try{const c=await sb.rpc('skivvies_counter');online=(c.data&&c.data.gifts)||0;cash=(c.data&&c.data.cash)||0;inkind=(c.data&&c.data.inkind)||0}catch(_){}
+ const life=hand+online+cash+inkind;$('#lifetime').textContent=life.toLocaleString();
+ $('#lifenote').textContent='This is the number on the homepage.'+(life<2?' It shows ? ? ? there until it reaches 2.':'');
+ loadHistory()}
 
 async function loadHistory(){
  const {data}=await sb.from('skivvies_butt_count_log').select('year,old_people,new_people,changed_at').order('id',{ascending:false}).limit(12);
@@ -355,15 +360,16 @@ async function loadDrives(){
 $('#drives').onclick=async e=>{const b=e.target.closest('[data-drv]');if(!b)return;b.disabled=true;
  const to=b.dataset.to;await sb.from('skivvies_drives').update({status:to,handled_at:to==='handled'?new Date().toISOString():null}).eq('id',+b.dataset.drv);loadDrives()};
 
-$('#countform').onsubmit=async e=>{e.preventDefault();const m=$('#savemsg');const n=parseInt($('#people').value,10),year=+$('#year').value;
- if(!(n>=0)){m.className='msg err';m.textContent='Type a whole number.';return}
- const old=rows.find(r=>r.year===year);
- if(old&&n<old.people&&!confirm(`Lower the ${year} count from ${old.people} to ${n}?`))return;
+$('#countform').onsubmit=async e=>{e.preventDefault();const m=$('#savemsg');const n=parseInt($('#people').value,10),year=new Date().getFullYear();
+ if(!n){m.className='msg err';m.textContent='Type how many to add.';return}
  $('#savebtn').disabled=true;m.className='msg';m.textContent='Saving…';
- const {error}=await sb.from('skivvies_butt_count').upsert({year,people:n},{onConflict:'year'});
+ // what you add lands on this year's row, so the year-end report can still split it by year
+ const {data:cur,error:e1}=await sb.from('skivvies_butt_count').select('people').eq('year',year).maybeSingle();
+ const now=(cur&&cur.people)||0,next=Math.max(0,now+n);
+ const {error}=e1?{error:e1}:await sb.from('skivvies_butt_count').upsert({year,people:next},{onConflict:'year'});
  $('#savebtn').disabled=false;
  if(error){m.className='msg err';m.textContent=error.message;return}
- m.className='msg ok';m.textContent=`Saved ${year}.`;load()};
+ const did=next-now;m.className='msg ok';m.textContent=did>=0?`Added ${did.toLocaleString()}.`:`Took ${(-did).toLocaleString()} off.`;$('#people').value='';load()};
 
 let showDone=false;
 async function loadNotes(){
