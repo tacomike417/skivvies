@@ -16,19 +16,13 @@
   /* One caption per piece of art. The art (img/cards/gave-N.webp, out-N.webp, drawn by ChatGPT 6 Nov 2026,
    * Mike's rule: underwear characters only, never a person in a rough state) fills the card; the caption is
    * the text that goes with the post. If the art fails to load the old drawn card is used instead. */
+  /* 15 Nov 2026, Mike: ONE card only, the Rock Bottom one with the Skivvies guy. The others were cute but you
+   * had to already know what Skivvies is to get them, and this card is for strangers. The old art
+   * (gave-1,2,4,5 and out-1,2,3) is still in img/cards if it's ever wanted back. */
+  var ART = "/img/cards/gave-3.webp?v=2";
   var LINES = {
-    gave: [
-      "I just covered somebody's butt.\nYour turn.",
-      "Best $20 I spent all week:\nunderwear for a stranger's day one.",
-      "Rock bottom shouldn't be\nbare bottom. I helped.",
-      "Fresh drawers for a stranger's\nday one. Done.",
-      "Your turn. Cover a butt."
-    ],
-    out: [
-      "My pair went out today.\nSomebody walked into day one covered.",
-      "Update: my butt-covering\nhas been deployed.",
-      "Somebody started day one covered.\nThat was my pair."
-    ]
+    gave: ["Rock bottom shouldn't be\nbare bottom. I helped."],
+    out: ["Rock bottom shouldn't be\nbare bottom. My pack went out today."]
   };
   var EMOJI = { gave: "🍑", out: "🩲" };
 
@@ -72,7 +66,7 @@
     var W = 1080, H = 1350, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
     var c = cv.getContext("2d");
     c.fillStyle = "#fff6f0"; c.fillRect(0, 0, W, H);
-    var art = await img(SITE + "/img/cards/" + kind + "-" + (li + 1) + ".webp?v=1");
+    var art = await img(SITE + ART);
     if (art) {
       /* cover the canvas with the art, cropping evenly; its bottom 20% is plain cream for the count + site line */
       c.drawImage(art, 0, 0, W, H);

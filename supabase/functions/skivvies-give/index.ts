@@ -144,11 +144,11 @@ function thanksEmail(g: Gift) {
     `It's attached as a PDF. You can also download it here: ${receiptUrl(g)}`,
     `${ORG} is a 501(c)(3) nonprofit, EIN ${EIN}. No goods or services were provided in exchange for your gift.`, ``,
     `PASS IT ON`,
-    `Grab a share card and post it. It gets the next butt covered: ${SITE}/share-it`, ``,
+    `Share the card. It gets the next butt covered: ${SITE}/share-it`, ``,
     `COME HANG OUT`,
     `Join the Skivvies group on Recovery Misfits (free): ${GROUP}`, ``,
     `WHAT HAPPENS NEXT`,
-    `We'll email you the day your pair goes out.`, ``,
+    `We'll email you the day your pack goes out.`, ``,
     `Thanks for covering a butt.`, `— Skivvies`, ``,
     `Skivvies is a program of ${ORG}, a 501(c)(3) nonprofit in Alliance, Ohio. Questions: ${REPLY_TO}`,
   ].join("\n");
@@ -166,9 +166,9 @@ function thanksEmail(g: Gift) {
     <p style="font-size:17px;line-height:1.5;margin:0 0 14px">${esc(hi)}</p>
     <p style="font-size:17px;line-height:1.5;margin:0 0 22px">Thank you. Your ${money(g.amount_cents)} just covered ${who} walking into day one of recovery in Stark County.${esc(anon)}</p>
     ${block("YOUR TAX LETTER", `It's attached to this email as a PDF, or download it below. ${esc(ORG)} is a 501(c)(3) nonprofit, EIN ${EIN}. No goods or services were provided in exchange for your gift.`, btn(receiptUrl(g), "Download tax letter (PDF)", "#102520", "#ffffff"))}
-    ${block("PASS IT ON", "Grab a share card and post it on Recovery Misfits, Facebook or wherever. It gets the next butt covered.", btn(SITE + "/share-it", "Get my share card 🍑", "#f35d40", "#ffffff"))}
+    ${block("PASS IT ON", `<a href="${SITE}/share-it"><img src="${SITE}/img/cards/rock-bottom.jpg" width="300" alt="Rock bottom shouldn't be bare bottom. skivvies.org" style="display:block;width:100%;max-width:300px;height:auto;border-radius:14px;border:0;margin:0 0 14px"></a>This is your card. Post it on Facebook, Recovery Misfits or wherever. It gets the next butt covered.`, btn(SITE + "/share-it", "Share the card 🍑", "#f35d40", "#ffffff"))}
     ${block("COME HANG OUT", "The Skivvies crew has a group on Recovery Misfits. It's free, and it's where the notes and updates land.", btn(GROUP, "Join the Skivvies group", "#f7b733", "#102520"))}
-    ${block("WHAT HAPPENS NEXT", "We'll email you the day your pair goes out.", "")}
+    ${block("WHAT HAPPENS NEXT", "We'll email you the day your pack goes out.", "")}
     <p style="font-size:17px;line-height:1.5;margin:22px 0 0">Thanks for covering a butt.<br>— Skivvies</p>
     <p style="font-size:12px;line-height:1.5;color:#52635c;margin:30px 0 0">Skivvies is a program of ${esc(ORG)}, a 501(c)(3) nonprofit in Alliance, Ohio. Questions: ${REPLY_TO}</p>
   </div></body></html>`;

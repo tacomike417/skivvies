@@ -18,6 +18,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:18p
 .brand{font-size:28px;font-weight:900;letter-spacing:-.05em;color:var(--ink);text-decoration:none}
 .tag{background:var(--ink);color:#fff;border-radius:30px;padding:5px 11px;font-size:12px;font-weight:800}
 h1{font:400 34px/1 Anton,Inter,sans-serif;text-transform:uppercase;letter-spacing:.02em;margin:14px 0 6px}
+#panel>h1{display:none}
 .lead{color:var(--muted);margin:0 0 18px;line-height:1.45}
 .card{background:#fff;border:1px solid #e6d9d0;border-radius:18px;padding:18px;margin:0 0 16px}
 label{display:block;font-weight:800;font-size:14px;margin:0 0 6px}
@@ -75,6 +76,21 @@ body.printing .shell{display:none}
 .badge.line{background:var(--gold);color:var(--ink)}.badge.went{background:#2f7d55}
 input[type=file]{padding:10px;font-size:14px}
 .thumb{display:inline-block;margin-top:6px;font-weight:800;font-size:13px;color:var(--ink)}
+.ver{background:#fff;color:#000;border:1px solid #000;border-radius:30px;padding:4px 10px;font-size:12px;font-weight:800}
+.tabs{display:flex;gap:8px;overflow-x:auto;margin:0 -20px 16px;padding:10px 20px;position:sticky;top:0;z-index:5;background:var(--cream);border-bottom:1px solid #e6d9d0;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:none;border:2px solid var(--ink);background:#fff;color:var(--ink);border-radius:30px;padding:9px 14px;font-weight:900;font-size:14px;cursor:pointer;white-space:nowrap}
+.tabs button.on{background:var(--ink);color:#fff}
+.dot{display:inline-block;min-width:20px;margin-left:6px;padding:1px 6px;border-radius:20px;background:var(--coral);color:#fff;font-size:12px;line-height:18px;text-align:center}
+.th{font:400 30px/1 Anton,Inter,sans-serif;text-transform:uppercase;letter-spacing:.02em;margin:4px 0 8px}
+.cta{display:block;width:100%;text-align:left;border:3px solid var(--ink);border-radius:16px;background:var(--gold);color:var(--ink);padding:14px 16px;margin:0 0 16px;font-weight:900;font-size:16px;cursor:pointer;box-shadow:4px 5px 0 var(--coral)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
+.chips button{border:1px solid var(--ink);background:#fff;color:var(--ink);border-radius:30px;padding:7px 13px;font-weight:800;font-size:13px;cursor:pointer}
+.chips button.on{background:var(--coral);border-color:var(--coral);color:#fff}
+.out{display:block;width:100%;margin-top:12px;border:0;border-radius:12px;background:var(--coral);color:#fff;padding:13px;font-weight:900;font-size:16px;cursor:pointer}
+.out:disabled{background:#c1c9c3}.out.sure{background:var(--ink)}
+.dot.hidden,.cta.hidden,.out.hidden{display:none}
+.gmsg{font-size:13px;font-weight:800;margin:6px 0 0}.gmsg.err{color:#c03a22}.gmsg.ok{color:#2f7d55}
 </style>
 </head>
 <body>
@@ -90,7 +106,7 @@ input[type=file]{padding:10px;font-size:14px}
   </div>
 </div>
 <div class="shell">
-<header><a class="brand" href="/">skivvies</a><span class="tag">Admin</span></header>
+<header><a class="brand" href="/">skivvies</a><span><span class="tag">Admin</span> <span class="ver">v2</span></span></header>
 
 <!-- signed out -->
 <section id="signin" class="hidden">
@@ -111,39 +127,23 @@ input[type=file]{padding:10px;font-size:14px}
   <button class="link" id="out1">Sign out</button>
 </section>
 
-<!-- the admin -->
+<!-- the admin: tabs (15 Nov 2026, Mike). Phone wins. Gifts is the landing tab. -->
 <section id="panel" class="hidden">
-  <h1>Skivvies admin</h1>
-  <!-- THE BOOKS (6 Nov 2026, Mike): one look at money, stock and the donor line. skivvies_books() does the math. -->
-  <div class="card" id="bookcard">
-    <label style="margin:0 0 10px">The books <span class="badge hidden" id="bookbadge"></span></label>
-    <div class="stat3" id="stock">
-      <div><b id="st_bought">…</b><span>bought pairs in stock</span></div>
-      <div><b id="st_donated">…</b><span>donated pairs in stock</span></div>
-      <div><b id="st_given">…</b><span>pairs given out</span></div>
-    </div>
-    <div class="stat3 money" id="money">
-      <div><b id="m_in">…</b><span>donations in</span></div>
-      <div><b id="m_out">…</b><span>fees + spent</span></div>
-      <div><b id="m_left">…</b><span>money on hand</span></div>
-    </div>
-    <p class="rule" id="linetxt"></p>
-    <p class="rule" id="feetxt"></p>
+  <nav class="tabs" id="tabs" aria-label="Admin sections"><button type="button" data-tab="gifts">Gifts<span class="dot hidden" id="dot_gifts"></span></button><button type="button" data-tab="receipts">Receipts<span class="dot hidden" id="dot_receipts"></span></button><button type="button" data-tab="donated">Donated underwear<span class="dot hidden" id="dot_donated"></span></button><button type="button" data-tab="count">Skivvies count<span class="dot hidden" id="dot_count"></span></button><button type="button" data-tab="cash">Cash & checks<span class="dot hidden" id="dot_cash"></span></button><button type="button" data-tab="sunday">Undie Sunday<span class="dot hidden" id="dot_sunday"></span></button><button type="button" data-tab="more">More<span class="dot hidden" id="dot_more"></span></button></nav>
+  <div class="pane hidden" id="pane_gifts">
+  <!-- GIFTS (15 Nov 2026, Mike): the landing tab. One button per gift, "Handed out": we used their money,
+       they get the email (pack + note went out, tax letter again, the card to share, thank you).
+       Messages show on the wall at skivvies.org/cover-someones-butt only after "Put it on the wall". -->
+  <button type="button" class="cta hidden" id="drvcta" data-go="sunday"></button>
+  <div class="card" id="giftcard">
+    <label>Gifts <span class="badge hidden" id="giftbadge"></span></label>
+    <p class="rule" id="giftsum" style="margin:0 0 12px"></p>
+    <div class="seg" id="g_view"><button type="button" class="on" data-view="wait">Waiting <small id="g_wn"></small></button><button type="button" data-view="done">Handed out <small id="g_dn"></small></button></div>
+    <div class="chips" id="g_kind"></div>
+    <ul class="reqs" id="gifts"><li>Loading…</li></ul>
   </div>
-
-  <!-- HAND OUT: the only thing that moves the donor line. Bought pile first; donated never emails anyone. -->
-  <form class="card row" id="handform">
-    <label style="margin:0">Hand out</label>
-    <div><label for="h_pairs">How many pairs went out?</label><input id="h_pairs" class="big" type="number" inputmode="numeric" min="1" max="10000" step="1" value="1" required></div>
-    <div><label>From which pile?</label>
-      <div class="seg" id="h_src"><button type="button" class="on" data-src="bought">Bought <small id="h_bn"></small></button><button type="button" data-src="donated">Donated <small id="h_dn"></small></button></div></div>
-    <div><label for="h_note">Note <span style="font-weight:400;color:var(--muted)">(optional, just for you)</span></label><input id="h_note" maxlength="300" placeholder="Where they went, which notes you used…"></div>
-    <button class="btn" id="h_save">They went out 🍑</button>
-    <p class="msg" id="h_msg"></p>
-    <p class="rule">Bought pairs move the donor line: whoever's turn it is gets the "your pair went out" email right now. Donated pairs don't email anybody.</p>
-    <ul class="reqs" id="handlist"></ul>
-  </form>
-
+  </div>
+  <div class="pane hidden" id="pane_receipts">
   <!-- RECEIPTS: underwear bought with donation money. Photo or screenshot goes in the private bucket. -->
   <form class="card row" id="buyform">
     <label style="margin:0">Receipts <span style="font-weight:400;color:var(--muted)">(underwear you bought)</span></label>
@@ -157,6 +157,8 @@ input[type=file]{padding:10px;font-size:14px}
     <ul class="reqs" id="buylist"></ul>
   </form>
 
+  </div>
+  <div class="pane hidden" id="pane_donated">
   <!-- DONATED UNDERWEAR (in-kind): kept apart from money. Letter describes the items, no dollar value. -->
   <form class="card row" id="kindform">
     <label style="margin:0">Donated underwear <span style="font-weight:400;color:var(--muted)">(somebody gave actual pairs)</span></label>
@@ -172,7 +174,9 @@ input[type=file]{padding:10px;font-size:14px}
     <ul class="reqs" id="kindlist"></ul>
   </form>
 
-  <h1 style="margin-top:26px">The Skivvies Count</h1>
+  </div>
+  <div class="pane hidden" id="pane_count">
+  <h2 class="th">The Skivvies Count</h2>
   <p class="lead">The homepage shows the <b>lifetime total</b>: every year added together. Right now that's <b id="lifetime">…</b>.</p>
   <form class="card row" id="countform">
     <div><label for="year">Year</label><select id="year"></select></div>
@@ -181,6 +185,8 @@ input[type=file]{padding:10px;font-size:14px}
     <p class="msg" id="savemsg"></p>
     <p class="rule"><b>Everything above counts itself.</b> Online gifts ($20 = 2 guys or 1 woman), cash and checks ($20 = 2) and donated pairs (1 each) all add to the homepage counter on their own. <b>Don't type those in here.</b><br>This box is only for old numbers from before the logs existed, or a fix. It's the total for the year you pick.</p>
   </form>
+  </div>
+  <div class="pane hidden" id="pane_cash">
   <!-- CASH & CHECKS (5 Nov 2026, Mike). Log money that didn't come through the site. $20 = 2 butts on the counter. -->
   <form class="card row" id="cashform">
     <label style="margin:0">Cash &amp; checks</label>
@@ -192,12 +198,54 @@ input[type=file]{padding:10px;font-size:14px}
     <p class="rule">Every $20 adds 2 to the homepage counter.</p>
     <ul class="reqs" id="cashlist"></ul>
   </form>
+  </div>
+  <div class="pane hidden" id="pane_sunday">
+  <div class="card" id="drvcard">
+    <label>Undie Sunday sign-ups <span class="badge hidden" id="drvbadge"></span></label>
+    <ul class="reqs" id="drives"><li>Loading…</li></ul>
+  </div>
+  </div>
+  <div class="pane hidden" id="pane_more">
+  <!-- THE BOOKS (6 Nov 2026, Mike): one look at money, stock and the donor line. skivvies_books() does the math. -->
+  <div class="card" id="bookcard">
+    <label style="margin:0 0 10px">The books <span class="badge hidden" id="bookbadge"></span></label>
+    <div class="stat3" id="stock">
+      <div><b id="st_bought">…</b><span>bought pairs in stock</span></div>
+      <div><b id="st_donated">…</b><span>donated pairs in stock</span></div>
+      <div><b id="st_given">…</b><span>pairs given out</span></div>
+    </div>
+    <div class="stat3 money" id="money">
+      <div><b id="m_in">…</b><span>donations in</span></div>
+      <div><b id="m_out">…</b><span>fees + spent</span></div>
+      <div><b id="m_left">…</b><span>money on hand</span></div>
+    </div>
+    <p class="rule hidden" id="linetxt"></p>
+    <p class="rule" id="feetxt"></p>
+  </div>
+
+  <!-- PAIRS OUT (15 Nov 2026, Mike): stock only. It emails nobody now; donors are told from the Gifts tab, one gift at a time. -->
+  <form class="card row" id="handform">
+    <label style="margin:0">Pairs out of stock <span style="font-weight:400;color:var(--muted)">(keeps the piles right)</span></label>
+    <div><label for="h_pairs">How many pairs went out?</label><input id="h_pairs" class="big" type="number" inputmode="numeric" min="1" max="10000" step="1" value="1" required></div>
+    <div><label>From which pile?</label>
+      <div class="seg" id="h_src"><button type="button" class="on" data-src="bought">Bought <small id="h_bn"></small></button><button type="button" data-src="donated">Donated <small id="h_dn"></small></button></div></div>
+    <div><label for="h_note">Note <span style="font-weight:400;color:var(--muted)">(optional, just for you)</span></label><input id="h_note" maxlength="300" placeholder="Where they went, which notes you used…"></div>
+    <button class="btn" id="h_save" style="background:var(--ink)">Take them off the pile</button>
+    <p class="msg" id="h_msg"></p>
+    <p class="rule">This only keeps the stock numbers right. It doesn't email anybody. To tell a donor their pack went out, use <b>Handed out</b> on the Gifts tab.</p>
+    <ul class="reqs" id="handlist"></ul>
+  </form>
+
   <!-- DONATION REPORT: online + cash/checks, pick dates, print it or save as PDF for the nonprofit paperwork -->
   <div class="card row">
     <label style="margin:0">Year-end report</label>
     <p class="rule" style="margin:0">Donations, Stripe fees, what you spent, what went out. Print it or save it as a PDF for the nonprofit paperwork.</p>
     <div class="two"><div><label for="r_from">From</label><input id="r_from" type="date"></div><div><label for="r_to">To</label><input id="r_to" type="date"></div></div>
     <button class="btn" type="button" id="r_open" style="background:var(--ink)">Open report</button>
+  </div>
+  <div class="card" id="reqcard">
+    <label>Underwear requests <span class="badge hidden" id="reqbadge"></span></label>
+    <ul class="reqs" id="reqs"><li>Loading…</li></ul>
   </div>
   <!-- NOTES FROM THE CREW (2 Nov 2026, Mike). Written in the Skivvies group on Recovery Misfits.
        Approve = it goes up in the group from the skivvies account and the writer gets a message.
@@ -207,24 +255,11 @@ input[type=file]{padding:10px;font-size:14px}
     <ul class="reqs" id="notes"><li>Loading…</li></ul>
     <button class="link" id="notemore" type="button">Show approved notes (to print and use)</button>
   </div>
-  <!-- GIFTS (5 Nov 2026). Money comes through Stripe (Cornerstones Recovery, Inc. account).
-       Messages show on the wall at skivvies.org/cover-someones-butt only after you approve them here. -->
-  <div class="card" id="giftcard">
-    <label>Gifts <span class="badge hidden" id="giftbadge"></span></label>
-    <p class="rule" id="giftsum"></p>
-    <ul class="reqs" id="gifts"><li>Loading…</li></ul>
-  </div>
-  <div class="card" id="drvcard">
-    <label>Undie Sunday sign-ups <span class="badge hidden" id="drvbadge"></span></label>
-    <ul class="reqs" id="drives"><li>Loading…</li></ul>
-  </div>
-  <div class="card" id="reqcard">
-    <label>Underwear requests <span class="badge hidden" id="reqbadge"></span></label>
-    <ul class="reqs" id="reqs"><li>Loading…</li></ul>
-  </div>
-  <div class="card">
+  <!-- Recent count changes: hidden 15 Nov 2026 (Mike). Take "hidden" off this card to bring it back. -->
+  <div class="card hidden">
     <label>Recent count changes</label>
     <ul class="hist" id="hist"><li>Loading…</li></ul>
+  </div>
   </div>
   <div class="foot"><a href="/">← Back to skivvies.org</a><button class="link" id="out2">Sign out</button></div>
 </section>
@@ -238,6 +273,15 @@ const sb=supabase.createClient(SB_URL,SB_KEY);
 const $=s=>document.querySelector(s);
 const show=id=>['signin','notadmin','panel'].forEach(x=>$('#'+x).classList.toggle('hidden',x!==id));
 let creating=false,rows=[];
+// ---- tabs (15 Nov 2026). Gifts is where you land. The tab is kept in the address (#receipts) so a refresh stays put.
+const TABS=['gifts','receipts','donated','count','cash','sunday','more'];
+function go(t,keep){if(!TABS.includes(t))t='gifts';TABS.forEach(k=>{$('#pane_'+k).classList.toggle('hidden',k!==t)});
+ document.querySelectorAll('#tabs button').forEach(b=>{const on=b.dataset.tab===t;b.classList.toggle('on',on);if(on)b.scrollIntoView({block:'nearest',inline:'center'})});
+ if(!keep)history.replaceState(history.state,'','#'+t);window.scrollTo(0,0)}
+$('#tabs').onclick=e=>{const b=e.target.closest('[data-tab]');if(b)go(b.dataset.tab)};
+$('#drvcta').onclick=()=>go('sunday');
+const dot=(k,n)=>{const d=$('#dot_'+k);d.textContent=n;d.classList.toggle('hidden',!n)};
+
 
 function setMode(c){creating=c;$('#signbtn').textContent=c?'Create my login':'Sign in';$('#pw').autocomplete=c?'new-password':'current-password'}
 
@@ -255,7 +299,7 @@ async function boot(){
  if(!session){show('signin');return}
  const {data:isAdmin}=await sb.rpc('is_skivvies_admin');
  if(!isAdmin){$('#whoami').textContent=session.user.email;show('notadmin');return}
- show('panel');load();loadBooks();loadHandouts();loadBuys();loadKind();loadNotes();loadRequests();loadDrives();loadGifts();loadCash()}
+ show('panel');go(location.hash.slice(1),true);load();loadBooks();loadHandouts();loadBuys();loadKind();loadNotes();loadRequests();loadDrives();loadGifts();loadCash()}
 
 async function load(){
  const {data,error}=await sb.from('skivvies_butt_count').select('year,people,updated_at').order('year',{ascending:false});
@@ -271,11 +315,12 @@ async function loadHistory(){
  const fmt=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
  $('#hist').innerHTML=(data&&data.length)?data.map(h=>`<li><span>${fmt(h.changed_at)} · ${h.year}</span><span>${h.old_people??'—'} → <b>${h.new_people}</b></span></li>`).join(''):'<li>No changes yet.</li>'}
 
+const MORE={req:0,note:0};const moreDot=()=>dot('more',MORE.req+MORE.note);
 const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 async function loadRequests(){
  const {data,error}=await sb.from('skivvies_requests').select('*').order('status',{ascending:false}).order('created_at',{ascending:false}).limit(50);
  const ul=$('#reqs');if(error){ul.innerHTML=`<li>${esc(error.message)}</li>`;return}
- const fresh=(data||[]).filter(r=>r.status==='new').length;const bd=$('#reqbadge');bd.textContent=fresh+' new';bd.classList.toggle('hidden',!fresh);
+ const fresh=(data||[]).filter(r=>r.status==='new').length;const bd=$('#reqbadge');bd.textContent=fresh+' new';bd.classList.toggle('hidden',!fresh);MORE.req=fresh;moreDot();
  if(!data||!data.length){ul.innerHTML='<li>No requests yet.</li>';return}
  const link=c=>/@/.test(c)?`<a href="mailto:${esc(c)}">${esc(c)}</a>`:`<a href="tel:${esc(c.replace(/[^\d+]/g,''))}">${esc(c)}</a>`;
  const fmt=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
@@ -290,6 +335,7 @@ async function loadDrives(){
  const {data,error}=await sb.from('skivvies_drives').select('*').order('status',{ascending:false}).order('created_at',{ascending:false}).limit(50);
  const ul=$('#drives');if(error){ul.innerHTML=`<li>${esc(error.message)}</li>`;return}
  const fresh=(data||[]).filter(r=>r.status==='new').length;const bd=$('#drvbadge');bd.textContent=fresh+' new';bd.classList.toggle('hidden',!fresh);
+ dot('sunday',fresh);const ct=$('#drvcta');ct.textContent=fresh?`🙌 ${fresh} new Undie Sunday sign-up${fresh===1?'':'s'}. Tap to see ${fresh===1?'it':'them'} →`:'';ct.classList.toggle('hidden',!fresh);
  if(!data||!data.length){ul.innerHTML='<li>No sign-ups yet.</li>';return}
  const fmt=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
  const day=d=>d?new Date(d+'T12:00:00').toLocaleDateString([], {month:'short',day:'numeric'}):'';
@@ -316,7 +362,7 @@ async function loadNotes(){
  q=showDone?q.eq('status','approved'):q.eq('status','pending');
  const {data,error}=await q;const ul=$('#notes');
  if(error){ul.innerHTML=`<li>${esc(error.message)}</li>`;return}
- if(!showDone){const bd=$('#notebadge');bd.textContent=(data||[]).length+' waiting';bd.classList.toggle('hidden',!(data||[]).length)}
+ if(!showDone){const bd=$('#notebadge');bd.textContent=(data||[]).length+' waiting';bd.classList.toggle('hidden',!(data||[]).length);MORE.note=(data||[]).length;moreDot()}
  $('#notemore').textContent=showDone?'Back to notes waiting':'Show approved notes (to print and use)';
  if(!data||!data.length){ul.innerHTML=`<li>${showDone?'No approved notes yet.':'No notes waiting.'}</li>`;return}
  const fmt=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
@@ -336,20 +382,46 @@ $('#notes').onclick=async e=>{const b=e.target.closest('[data-note]');if(!b)retu
   setTimeout(()=>{b.textContent='Use this note 🍑';b.disabled=false},2500);return}
  loadNotes()};
 
-let LINE={};
+// ---- gifts: one "Handed out" button per gift (15 Nov 2026, Mike). No more line. ----
+let GIFTS=[],gView='wait',gKind='all';
+const gWho=g=>`${g.qty} ${g.kind==='women'?(g.qty===1?'woman':'women'):(g.qty===1?'guy':'guys')}`;
 async function loadGifts(){
- try{const {data:ln}=await sb.from('skivvies_line').select('id,line_start');LINE={};(ln||[]).forEach(r=>LINE[r.id]=r.line_start)}catch(_){}
- const {data,error}=await sb.from('skivvies_gifts').select('id,created_at,paid_at,mode,kind,qty,monthly,amount_cents,donor_name,anonymous,message,message_status,donor_email,notified_at,fee_cents').eq('paid',true).order('paid_at',{ascending:false}).limit(60);
- const ul=$('#gifts');if(error){ul.innerHTML=`<li>${esc(error.message)}</li>`;return}
- const live=(data||[]).filter(g=>g.mode==='live');const packs=live.reduce((t,g)=>t+g.qty,0),dollars=live.reduce((t,g)=>t+g.amount_cents,0)/100;
- $('#giftsum').textContent=live.length?`Live so far: ${live.length} gift${live.length===1?'':'s'}, ${packs} pack${packs===1?'':'s'}, $${dollars.toLocaleString()}. Stripe takes its fee before it hits the bank.`:'No real gifts yet.';
- const waiting=(data||[]).filter(g=>g.message_status==='pending').length;const bd=$('#giftbadge');bd.textContent=waiting+' message'+(waiting===1?'':'s')+' to read';bd.classList.toggle('hidden',!waiting);
- if(!data||!data.length){ul.innerHTML='<li>No gifts yet.</li>';return}
+ const {data,error}=await sb.from('skivvies_gifts').select('id,created_at,paid_at,mode,kind,qty,monthly,amount_cents,donor_name,anonymous,message,message_status,donor_email,notified_at,fee_cents').eq('paid',true).order('paid_at',{ascending:true}).limit(500);
+ if(error){$('#gifts').innerHTML=`<li>${esc(error.message)}</li>`;return}
+ GIFTS=data||[];drawGifts()}
+function drawGifts(){
+ const ul=$('#gifts'),live=GIFTS.filter(g=>g.mode==='live');
+ const packs=live.reduce((t,g)=>t+g.qty,0),dollars=live.reduce((t,g)=>t+g.amount_cents,0)/100;
+ $('#giftsum').textContent=live.length?`${live.length} gift${live.length===1?'':'s'}, ${packs} pack${packs===1?'':'s'}, $${dollars.toLocaleString()} so far. Stripe takes its fee before it hits the bank.`:'No real gifts yet.';
+ const unread=GIFTS.filter(g=>g.message_status==='pending').length;const bd=$('#giftbadge');bd.textContent=unread+' message'+(unread===1?'':'s')+' to read';bd.classList.toggle('hidden',!unread);
+ const wait=GIFTS.filter(g=>!g.notified_at),done=GIFTS.filter(g=>g.notified_at);
+ dot('gifts',wait.length);
+ $('#g_wn').textContent=wait.length?wait.length+' to go':'all caught up';$('#g_dn').textContent=done.length?String(done.length):'';
+ document.querySelectorAll('#g_view button').forEach(b=>b.classList.toggle('on',b.dataset.view===gView));
+ let list=gView==='wait'?wait:done.slice().reverse();   // waiting: oldest first. handed out: newest first.
+ const n=k=>list.filter(g=>(g.kind==='women'?'women':'men')===k).reduce((t,g)=>t+g.qty,0);
+ const nm=n('men'),nw=n('women');
+ $('#g_kind').innerHTML=(nm&&nw)?[['all','All'],['men',`Guys · ${nm}`],['women',`Women · ${nw}`]].map(([k,t])=>`<button type="button" data-kind="${k}" class="${gKind===k?'on':''}">${t}</button>`).join(''):'';
+ if(!(nm&&nw))gKind='all';
+ if(gKind!=='all')list=list.filter(g=>(g.kind==='women'?'women':'men')===gKind);
+ if(!list.length){ul.innerHTML=`<li>${gView==='wait'?(GIFTS.length?'Every gift has been handed out. 🍑':'No gifts yet.'):'Nothing handed out yet.'}</li>`;return}
  const fmt=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
- ul.innerHTML=data.map(g=>`<li><div class="top"><span class="place">${g.mode==='test'?'<span class="badge">TEST</span> ':''}${g.mode==='live'?(g.notified_at?'<span class="badge went">went out ✓</span> ':(LINE[g.id]?'<span class="badge line">#'+LINE[g.id]+' in line</span> ':'')):''}$${(g.amount_cents/100).toLocaleString()}${g.monthly?' / month':''} · ${g.qty} ${g.kind==='women'?(g.qty===1?'woman':'women'):(g.qty===1?'guy':'guys')}</span><span class="when">${fmt(g.paid_at)}</span></div>
+ const day=d=>new Date(d).toLocaleDateString([], {month:'short',day:'numeric'});
+ ul.innerHTML=list.map(g=>`<li><div class="top"><span class="place">${g.mode==='test'?'<span class="badge">TEST</span> ':''}$${(g.amount_cents/100).toLocaleString()}${g.monthly?' / month':''} · ${gWho(g)}</span><span class="when">${fmt(g.paid_at)}</span></div>
   <div class="meta">${g.anonymous||!g.donor_name?'Anonymous':esc(g.donor_name)}${g.donor_email?' · <a href="mailto:'+esc(g.donor_email)+'">'+esc(g.donor_email)+'</a>':''}</div>
-  ${g.message?`<div class="notes">${esc(g.message)}</div>${g.message_status==='pending'?`<button class="mini" data-gift="${g.id}" data-to="approved">Put it on the wall</button> <button class="mini" data-gift="${g.id}" data-to="hidden">Keep it off</button>`:`<div class="meta">${g.message_status==='approved'?'On the wall ✓':'Kept off the wall'} · <button class="link" data-gift="${g.id}" data-to="${g.message_status==='approved'?'hidden':'approved'}">${g.message_status==='approved'?'Take it down':'Put it up'}</button></div>`}`:''}</li>`).join('')}
-$('#gifts').onclick=async e=>{const b=e.target.closest('[data-gift]');if(!b)return;b.disabled=true;
+  ${g.message?`<div class="notes">${esc(g.message)}</div>${g.message_status==='pending'?`<button class="mini" data-gift="${g.id}" data-to="approved">Put it on the wall</button> <button class="mini" data-gift="${g.id}" data-to="hidden">Keep it off</button>`:`<div class="meta">${g.message_status==='approved'?'On the wall ✓':'Kept off the wall'} · <button class="link" data-gift="${g.id}" data-to="${g.message_status==='approved'?'hidden':'approved'}">${g.message_status==='approved'?'Take it down':'Put it up'}</button></div>`}`:''}
+  ${g.notified_at?`<div class="meta"><span class="badge went" style="margin:0">Handed out ✓</span> ${day(g.notified_at)}${g.donor_email?' · they got the email':''}</div>`:`<button class="out" type="button" data-out="${g.id}">Handed out 🍑</button><div class="gmsg" id="gm_${g.id}"></div>`}</li>`).join('')}
+$('#g_view').onclick=e=>{const b=e.target.closest('[data-view]');if(!b)return;gView=b.dataset.view;drawGifts()};
+$('#g_kind').onclick=e=>{const b=e.target.closest('[data-kind]');if(!b)return;gKind=b.dataset.kind;drawGifts()};
+$('#gifts').onclick=async e=>{
+ const o=e.target.closest('[data-out]');
+ if(o){const g=GIFTS.find(x=>x.id===+o.dataset.out);
+  if(!o.dataset.sure){o.dataset.sure=1;o.classList.add('sure');o.textContent=g&&g.donor_email?'Tap again: this emails them now':'Tap again to mark it';return}
+  o.disabled=true;o.textContent='Sending…';const m=$('#gm_'+o.dataset.out);
+  const r=await callHandout({action:'gift_out',id:+o.dataset.out});
+  if(!r.ok){o.disabled=false;o.classList.remove('sure');delete o.dataset.sure;o.textContent='Handed out 🍑';m.className='gmsg err';m.textContent=r.error||'That didn\'t go through. Try again.';return}
+  await loadGifts();return}
+ const b=e.target.closest('[data-gift]');if(!b)return;b.disabled=true;
  await sb.from('skivvies_gifts').update({message_status:b.dataset.to}).eq('id',+b.dataset.gift);loadGifts()};
 
 // ---- cash & checks ----
@@ -410,9 +482,6 @@ async function loadBooks(){
  $('#h_bn').textContent=b.stock_bought+' left';$('#h_dn').textContent=b.stock_donated+' left';
  const inn=b.online_cents+b.cash_cents,out=b.fee_cents+b.spent_cents;
  $('#m_in').textContent=money(inn);$('#m_out').textContent=money(out);$('#m_left').textContent=money(inn-out);
- const next=b.line_given+1;
- const gone=Math.min(b.line_given,b.line_total);
- $('#linetxt').innerHTML=b.line_total?`<b>The line:</b> ${gone} of ${b.line_total} paid-for pair${b.line_total===1?' has':'s have'} gone out. ${b.line_given>=b.line_total?'Everybody who gave online has been told.':'Next up is #'+next+'.'}`:'<b>The line:</b> no online gifts yet.';
  $('#feetxt').innerHTML=b.fees_missing?`Stripe's fee is missing on ${b.fees_missing} gift${b.fees_missing===1?'':'s'}. <button class="link" type="button" id="feebtn" style="padding:0">Pull fees from Stripe</button>`:(b.online_count?`Stripe kept ${money(b.fee_cents)} so far.`:'');
  const fb=$('#feebtn');if(fb)fb.onclick=async()=>{fb.disabled=true;fb.textContent='Asking Stripe…';const r=await callHandout({action:'fees'});fb.textContent=r.ok?`Got ${r.done} of ${r.of}`:(r.error||'Hmm');loadBooks();loadGifts()};
  if(b.stock_bought<=0&&b.stock_donated>0)pickSrc('donated');else if(b.stock_bought>0)pickSrc(curSrc)}
@@ -430,7 +499,7 @@ $('#handform').onsubmit=async e=>{e.preventDefault();const m=$('#h_msg');const n
  const r=await callHandout({action:'handout',pairs:n,source:curSrc,note:$('#h_note').value.trim(),date:today()});
  $('#h_save').disabled=false;
  if(!r.ok){m.className='msg err';m.textContent=r.error;return}
- m.className='msg ok';m.textContent=`${n} ${curSrc} pair${n===1?'':'s'} out.`+(curSrc==='bought'?(r.sent?` ${r.sent} donor${r.sent===1?'':'s'} just got the email.`:' Nobody was due an email yet.')+(r.failed?` ${r.failed} email${r.failed===1?'':'s'} failed.`:''):'');
+ m.className='msg ok';m.textContent=`${n} ${curSrc} pair${n===1?'':'s'} off the pile.`;
  $('#h_pairs').value=1;$('#h_note').value='';loadBooks();loadHandouts();loadGifts()};
 async function loadHandouts(){
  const {data}=await sb.from('skivvies_handouts').select('id,handed_on,pairs,source,note').order('id',{ascending:false}).limit(8);

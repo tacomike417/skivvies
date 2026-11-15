@@ -141,3 +141,18 @@ skivvies.org > "I want to write a note" > sign in (or sign up) with Recovery Mis
   else is the boxer-briefs character.
 - To add a card: drop a new webp in img/cards/, add its caption to LINES in card.js (one caption per image, same
   order), bump the `card.js?v=` number in index.html and run build.py.
+
+## Admin v2 + one card (15 Nov 2026, v0.40) — Mike's layout
+- Admin is tabs now, phone wins: **Gifts** (landing) · Receipts · Donated underwear · Skivvies count · Cash & checks ·
+  Undie Sunday · More. The tab stays in the address (`/admin#receipts`).
+- **Gifts tab:** Waiting / Handed out, with Guys / Women chips when both are waiting. One button per gift,
+  **Handed out** (tap twice). It means we used their money. The donor gets one email: pack + their note went out,
+  the Rock Bottom card, the tax letter link again, thank you. One click covers the whole gift even if it's 2+ packs.
+  Edge function `skivvies-handout`, action `gift_out`. The old donor line ("#3 in line") is gone.
+- **Undie Sunday:** a count on the tab, plus a gold banner on the Gifts tab when a new sign-up is waiting.
+- **More:** the books, "Pairs out of stock" (stock only, emails nobody), year-end report, underwear requests,
+  notes from the Recovery Misfits group. "Recent count changes" is hidden (take `hidden` off its card to bring it back).
+- **One share card:** only Rock Bottom (the Skivvies guy with the flag). card.js draws `gave-3.webp` for both
+  "I gave" and "it went out". `img/cards/rock-bottom.jpg` is the same card for emails. Both donor emails show it.
+- [ ] Open question: "Handed out" doesn't take pairs off the bought pile. The pile only moves from More > Pairs out.
+- [ ] Keychains: note limit 80 characters once the test tag prints clean (see Downloads/final 3d projects/Skivvies Keychains).
