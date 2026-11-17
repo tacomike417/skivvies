@@ -121,7 +121,7 @@ One to-do list for the whole project. New to-dos go here.
 - Database: RM supabase/porch_76_skivvies_lane.sql; Miscellaneous supabase/skivvies_notes.sql + edge function skivvies-note. All applied.
 - [ ] Mike: test it with a throwaway account (phone)
 - [x] "Write a note" on skivvies.org (menu, hero, and a "No money? Write a note." section) → recoverymisfits.org/skivvies (v0.14). v0.15: tapping it opens a lightbox (what a note is + a Google-style "Continue with Recovery Misfits" button); the RM side is a "Sign in to continue to the Skivvies crew" screen: have an account or create one
-- [ ] Later: a print sheet button for approved notes (B&W laser, white or orange paper)
+- [x] 17 Nov 2026 (admin v2.3): new Notes tab, second from the left. Donor notes and crew notes in one list: "Waiting for you" (Yes, print this one / No thanks) on top, "Ready to print" below with a tick box per note and one Print button, 4 notes per letter page, cut on the dotted lines. Donor-note approval moved out of Gifts (Gifts just links to Notes).
 
 ## v0.18 (3 Nov 2026): the note gets written ON Skivvies — Mike's flow
 skivvies.org > "I want to write a note" > sign in (or sign up) with Recovery Misfits > BACK on skivvies.org/write-a-note to write and send it > "Got it" thank-you on Skivvies, with "Write another one", "Back home" and a small "Come hang out with the Skivvies crew" link to the Porch group.

@@ -93,6 +93,36 @@ input[type=file]{padding:10px;font-size:14px}
 .out:disabled{background:#c1c9c3}.out.sure{background:var(--ink)}
 .dot.hidden,.cta.hidden,.out.hidden{display:none}
 .gmsg{font-size:13px;font-weight:800;margin:6px 0 0}.gmsg.err{color:#c03a22}.gmsg.ok{color:#2f7d55}
+/* NOTES tab (17 Nov 2026, Mike: "make it obvious for a guy like me") */
+.nt-h{font:400 26px/1 Anton,Inter,sans-serif;text-transform:uppercase;letter-spacing:.02em;margin:4px 0 4px}
+.nt-sub{font-size:14px;color:var(--muted);margin:0 0 14px;line-height:1.4}
+.nt{list-style:none;margin:0;padding:0}
+.nt li{background:#fff;border:2px solid var(--ink);border-radius:16px;padding:16px;margin:0 0 12px}
+.nt .src{display:inline-block;font-size:12px;font-weight:900;border-radius:20px;padding:3px 10px;background:#eef1ee;color:var(--ink);margin:0 0 10px}
+.nt .src.donor{background:var(--gold)}
+.nt .txt{font-size:19px;line-height:1.4;font-weight:700;white-space:pre-wrap;overflow-wrap:anywhere;margin:0 0 8px}
+.nt .sig{font-size:15px;font-weight:800;color:var(--muted);margin:0 0 4px}
+.nt .when{font-size:12px;color:var(--muted)}
+.nt .yes{display:block;width:100%;margin:14px 0 8px;border:0;border-radius:12px;background:#2f7d55;color:#fff;padding:15px;font-weight:900;font-size:17px;cursor:pointer}
+.nt .no{display:block;width:100%;border:2px solid var(--ink);border-radius:12px;background:#fff;color:var(--ink);padding:11px;font-weight:800;font-size:15px;cursor:pointer}
+.nt .what{font-size:12px;color:var(--muted);text-align:center;margin:0 0 4px}
+.nt li.ready{border-width:1px;border-color:#e6d9d0}
+.nt .pick{display:flex;align-items:center;gap:10px;font-weight:900;font-size:15px;margin:10px 0 0;cursor:pointer}
+.nt .pick input{width:26px;height:26px;flex:none;accent-color:var(--ink)}
+.nt-print{margin:0 0 14px}
+.nt-none{background:#fff;border:1px dashed #bdcbc2;border-radius:16px;padding:18px;text-align:center;font-weight:800;color:var(--muted);margin:0 0 16px}
+.waitn{background:var(--coral);color:#fff;border-radius:20px;padding:2px 10px;font:900 14px Inter,sans-serif;vertical-align:4px;margin-left:6px}
+#notesprint{position:fixed;inset:0;z-index:20;background:#f2f3f0;overflow:auto;-webkit-overflow-scrolling:touch}
+.np-sheet{width:8.5in;height:11in;margin:0 auto 20px;background:#fff;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;box-shadow:0 2px 10px rgba(0,0,0,.12);transform-origin:top center}
+.np-card{border:1px dashed #999;padding:.45in .4in .35in;display:flex;flex-direction:column;color:#000;font-family:Inter,sans-serif;overflow:hidden}
+.np-top{text-align:center;font-weight:900;font-size:26pt;letter-spacing:-.05em;line-height:1}
+.np-line{text-align:center;font-size:8.5pt;font-weight:700;margin:4px 0 0;letter-spacing:.02em}
+.np-txt{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere;padding:10px 0}
+.np-sig{text-align:center;font-weight:800;font-size:11pt;margin:0 0 10px}
+.np-foot{text-align:center;font-size:8pt;border-top:1.5px solid #000;padding-top:6px;font-weight:700}
+@media screen and (max-width:860px){.np-sheet{zoom:.42}}
+@media print{@page{size:letter;margin:0}body.np-on .shell,body.np-on #report,body.np-on .rp-bar{display:none!important}
+ body.np-on #notesprint{position:static;overflow:visible;background:#fff}body.np-on .np-sheet{zoom:1;margin:0;box-shadow:none;page-break-after:always;break-after:page}}
 </style>
 </head>
 <body>
@@ -107,8 +137,12 @@ input[type=file]{padding:10px;font-size:14px}
     <p class="rp-foot" id="rp_foot"></p>
   </div>
 </div>
+<div id="notesprint" class="hidden" role="dialog" aria-modal="true" aria-label="Print notes">
+  <div class="rp-bar"><button class="rp-x" id="np_close" aria-label="Close">✕</button><button class="btn rp-print" id="np_go">Print</button></div>
+  <div id="np_sheets"></div>
+</div>
 <div class="shell">
-<header><a class="brand" href="/">skivvies</a><span><span class="tag">Admin</span> <span class="ver">v2.2</span></span></header>
+<header><a class="brand" href="/">skivvies</a><span><span class="tag">Admin</span> <span class="ver">v2.3</span></span></header>
 
 <!-- signed out -->
 <section id="signin" class="hidden">
@@ -131,7 +165,18 @@ input[type=file]{padding:10px;font-size:14px}
 
 <!-- the admin: tabs (15 Nov 2026, Mike). Phone wins. Gifts is the landing tab. -->
 <section id="panel" class="hidden">
-  <nav class="tabs" id="tabs" aria-label="Admin sections"><button type="button" data-tab="gifts">Gifts<span class="dot hidden" id="dot_gifts"></span></button><button type="button" data-tab="receipts">Receipts<span class="dot hidden" id="dot_receipts"></span></button><button type="button" data-tab="donated">Donated underwear<span class="dot hidden" id="dot_donated"></span></button><button type="button" data-tab="count">Skivvies count<span class="dot hidden" id="dot_count"></span></button><button type="button" data-tab="cash">Cash & checks<span class="dot hidden" id="dot_cash"></span></button><button type="button" data-tab="sunday">Undie Sunday<span class="dot hidden" id="dot_sunday"></span></button><button type="button" data-tab="more">More<span class="dot hidden" id="dot_more"></span></button></nav>
+  <nav class="tabs" id="tabs" aria-label="Admin sections"><button type="button" data-tab="gifts">Gifts<span class="dot hidden" id="dot_gifts"></span></button><button type="button" data-tab="notes">Notes<span class="dot hidden" id="dot_notes"></span></button><button type="button" data-tab="receipts">Receipts<span class="dot hidden" id="dot_receipts"></span></button><button type="button" data-tab="donated">Donated underwear<span class="dot hidden" id="dot_donated"></span></button><button type="button" data-tab="count">Skivvies count<span class="dot hidden" id="dot_count"></span></button><button type="button" data-tab="cash">Cash & checks<span class="dot hidden" id="dot_cash"></span></button><button type="button" data-tab="sunday">Undie Sunday<span class="dot hidden" id="dot_sunday"></span></button><button type="button" data-tab="more">More<span class="dot hidden" id="dot_more"></span></button></nav>
+  <!-- NOTES (17 Nov 2026, Mike): every note in ONE place, both kinds — notes from donors (left with a gift)
+       and notes from the crew (written through Recovery Misfits). Approve at the top, print the approved ones below. -->
+  <div class="pane hidden" id="pane_notes">
+    <h2 class="nt-h">Waiting for you <span class="waitn hidden" id="nt_wn"></span></h2>
+    <p class="nt-sub">Read it. If it's good, tap Yes. Then it's ready to print.</p>
+    <ul class="nt" id="nt_wait"><li>Loading…</li></ul>
+    <h2 class="nt-h" style="margin-top:22px">Ready to print</h2>
+    <p class="nt-sub">Every note you said yes to. Untick any you don't want, then print. 4 notes to a page, cut on the dotted lines.</p>
+    <button class="btn nt-print" type="button" id="nt_print">🖨️ Print notes</button>
+    <ul class="nt" id="nt_ready"><li>Loading…</li></ul>
+  </div>
   <div class="pane hidden" id="pane_gifts">
   <!-- GIFTS (15 Nov 2026, Mike): the landing tab. One button per gift, "Handed out": we used their money,
        they get the email (pack + note went out, tax letter again, the card to share, thank you).
@@ -253,14 +298,7 @@ input[type=file]{padding:10px;font-size:14px}
     <label>Underwear requests <span class="badge hidden" id="reqbadge"></span></label>
     <ul class="reqs" id="reqs"><li>Loading…</li></ul>
   </div>
-  <!-- NOTES FROM THE CREW (2 Nov 2026, Mike). Written in the Skivvies group on Recovery Misfits.
-       Approve = it goes up in the group from the skivvies account and the writer gets a message.
-       Print the approved ones for the packs. -->
-  <div class="card" id="notecard">
-    <label>Notes for the packs <span class="badge hidden" id="notebadge"></span></label>
-    <ul class="reqs" id="notes"><li>Loading…</li></ul>
-    <button class="link" id="notemore" type="button">Show approved notes (to print and use)</button>
-  </div>
+  <!-- Notes moved to their own Notes tab (17 Nov 2026). -->
   <!-- Recent count changes: hidden 15 Nov 2026 (Mike). Take "hidden" off this card to bring it back. -->
   <div class="card hidden">
     <label>Recent count changes</label>
@@ -280,7 +318,7 @@ const $=s=>document.querySelector(s);
 const show=id=>['signin','notadmin','panel'].forEach(x=>$('#'+x).classList.toggle('hidden',x!==id));
 let creating=false,rows=[];
 // ---- tabs (15 Nov 2026). Gifts is where you land. The tab is kept in the address (#receipts) so a refresh stays put.
-const TABS=['gifts','receipts','donated','count','cash','sunday','more'];
+const TABS=['gifts','notes','receipts','donated','count','cash','sunday','more'];
 function go(t,keep){if(!TABS.includes(t))t='gifts';TABS.forEach(k=>{$('#pane_'+k).classList.toggle('hidden',k!==t)});
  document.querySelectorAll('#tabs button').forEach(b=>{const on=b.dataset.tab===t;b.classList.toggle('on',on);if(on)b.scrollIntoView({block:'nearest',inline:'center'})});
  if(!keep)history.replaceState(history.state,'','#'+t);window.scrollTo(0,0)}
@@ -294,6 +332,7 @@ function go(t,keep){if(!TABS.includes(t))t='gifts';TABS.forEach(k=>{$('#pane_'+k
  el.addEventListener('dragstart',e=>e.preventDefault())})();
 $('#tabs').onclick=e=>{const b=e.target.closest('[data-tab]');if(b)go(b.dataset.tab)};
 $('#drvcta').onclick=()=>go('sunday');
+document.addEventListener('click',e=>{const b=e.target.closest('button[data-go]');if(b&&b.id!=='drvcta')go(b.dataset.go)});
 const dot=(k,n)=>{const d=$('#dot_'+k);d.textContent=n;d.classList.toggle('hidden',!n)};
 
 
@@ -329,7 +368,7 @@ async function loadHistory(){
  const fmt=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
  $('#hist').innerHTML=(data&&data.length)?data.map(h=>`<li><span>${fmt(h.changed_at)} · ${h.year}</span><span>${h.old_people??'—'} → <b>${h.new_people}</b></span></li>`).join(''):'<li>No changes yet.</li>'}
 
-const MORE={req:0,note:0};const moreDot=()=>dot('more',MORE.req+MORE.note);
+const MORE={req:0};const moreDot=()=>dot('more',MORE.req);
 const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 async function loadRequests(){
  const {data,error}=await sb.from('skivvies_requests').select('*').order('status',{ascending:false}).order('created_at',{ascending:false}).limit(50);
@@ -372,30 +411,62 @@ $('#countform').onsubmit=async e=>{e.preventDefault();const m=$('#savemsg');cons
  const did=next-now;m.className='msg ok';m.textContent=did>=0?`Added ${did.toLocaleString()}.`:`Took ${(-did).toLocaleString()} off.`;$('#people').value='';load()};
 
 let showDone=false;
-async function loadNotes(){
- let q=sb.from('skivvies_notes').select('id,created_at,rm_handle,body,sign_as,status,handled_at,used_count').order('created_at',{ascending:false}).limit(60);
- q=showDone?q.eq('status','approved'):q.eq('status','pending');
- const {data,error}=await q;const ul=$('#notes');
- if(error){ul.innerHTML=`<li>${esc(error.message)}</li>`;return}
- if(!showDone){const bd=$('#notebadge');bd.textContent=(data||[]).length+' waiting';bd.classList.toggle('hidden',!(data||[]).length);MORE.note=(data||[]).length;moreDot()}
- $('#notemore').textContent=showDone?'Back to notes waiting':'Show approved notes (to print and use)';
- if(!data||!data.length){ul.innerHTML=`<li>${showDone?'No approved notes yet.':'No notes waiting.'}</li>`;return}
- const fmt=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
- ul.innerHTML=data.map(n=>`<li><div class="top"><span class="place">${esc(n.sign_as||'somebody in recovery')}</span><span class="when">${fmt(n.created_at)}</span></div>
-  <div class="notes">${esc(n.body)}</div><div class="meta">from ${esc(n.rm_handle)} on Recovery Misfits</div>
-  ${n.status==='pending'?`<button class="mini" data-note="${n.id}" data-act="approve">Approve</button> <button class="mini" data-note="${n.id}" data-act="decline">Decline</button>`:''}
-  ${n.status==='approved'?`<button class="mini use" data-note="${n.id}" data-act="use">Use this note 🍑</button> <span class="used">${usedTxt(n.used_count)}</span>`:''}</li>`).join('')}
+// ---- NOTES tab (17 Nov 2026): donor notes + crew notes together ----
+let NT=[],NOPRINT=new Set();
+const fmtN=d=>new Date(d).toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
 const usedTxt=c=>!c?'':c===1?'In 1 pack':'In '+c+' packs';
-$('#notemore').onclick=()=>{showDone=!showDone;loadNotes()};
-$('#notes').onclick=async e=>{const b=e.target.closest('[data-note]');if(!b)return;
- if(b.dataset.act==='decline'&&!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again to decline';return}
- b.parentNode.querySelectorAll('button').forEach(x=>x.disabled=true);
+async function loadNotes(){
+ const [cr,gf]=await Promise.all([
+  sb.from('skivvies_notes').select('id,created_at,rm_handle,body,sign_as,status,used_count').in('status',['pending','approved']).order('created_at',{ascending:true}).limit(300),
+  sb.from('skivvies_gifts').select('id,paid_at,donor_name,anonymous,message,message_status,qty,kind,mode').eq('paid',true).not('message','is',null).in('message_status',['pending','approved']).order('paid_at',{ascending:true}).limit(300)]);
+ if(cr.error||gf.error){$('#nt_wait').innerHTML=`<li>${esc((cr.error||gf.error).message)}</li>`;return}
+ NT=[...(cr.data||[]).map(n=>({k:'crew',id:n.id,when:n.created_at,txt:n.body,sig:n.sign_as||'someone rooting for you',from:'Recovery Misfits · '+(n.rm_handle||''),ok:n.status==='approved',used:n.used_count})),
+     ...(gf.data||[]).filter(g=>String(g.message).trim()).map(g=>({k:'donor',id:g.id,when:g.paid_at,txt:g.message,sig:g.anonymous||!g.donor_name?'someone rooting for you':g.donor_name,from:(g.mode==='test'?'TEST · ':'')+'Donor · '+gWho(g),ok:g.message_status==='approved'}))]
+   .sort((a,b)=>new Date(a.when)-new Date(b.when));
+ drawNotes()}
+function drawNotes(){
+ const wait=NT.filter(n=>!n.ok),ready=NT.filter(n=>n.ok).reverse();
+ dot('notes',wait.length);const wn=$('#nt_wn');wn.textContent=wait.length;wn.classList.toggle('hidden',!wait.length);
+ const head=n=>`<span class="src ${n.k}">${esc(n.from)}</span><div class="txt">${esc(n.txt)}</div><div class="sig">— ${esc(n.sig)}</div><div class="when">${fmtN(n.when)}</div>`;
+ $('#nt_wait').innerHTML=wait.length?wait.map(n=>`<li>${head(n)}
+   <button class="yes" type="button" data-nt="${n.k}:${n.id}" data-act="yes">✓ Yes, print this one</button>
+   <p class="what">${n.k==='donor'?'It also goes on the donor wall on skivvies.org.':'It also posts in the Skivvies group and they get a "your note was approved" message.'}</p>
+   <button class="no" type="button" data-nt="${n.k}:${n.id}" data-act="no">No thanks</button></li>`).join(''):'<li class="nt-none">Nothing waiting. You\'re all caught up. 🍑</li>';
+ const key=n=>n.k+':'+n.id,pick=ready.filter(n=>!NOPRINT.has(key(n))).length;
+ $('#nt_print').textContent=pick?`🖨️ Print ${pick} note${pick===1?'':'s'} (${Math.ceil(pick/4)} page${Math.ceil(pick/4)===1?'':'s'})`:'🖨️ Print notes';
+ $('#nt_print').disabled=!pick;
+ $('#nt_ready').innerHTML=ready.length?ready.map(n=>`<li class="ready">${head(n)}
+   <label class="pick"><input type="checkbox" data-pick="${key(n)}" ${NOPRINT.has(key(n))?'':'checked'}> Print this one</label>
+   ${n.k==='crew'?`<button class="mini use" type="button" data-nt="crew:${n.id}" data-act="use">Use this note 🍑</button> <span class="used">${usedTxt(n.used)}</span>`:''}</li>`).join(''):'<li class="ready">Nothing here yet. Say yes to a note up top and it lands here.</li>'}
+$('#pane_notes').addEventListener('change',e=>{const c=e.target.closest('[data-pick]');if(!c)return;c.checked?NOPRINT.delete(c.dataset.pick):NOPRINT.add(c.dataset.pick);drawNotes()});
+$('#pane_notes').addEventListener('click',async e=>{const b=e.target.closest('[data-nt]');if(!b)return;
+ const [k,id]=b.dataset.nt.split(':'),act=b.dataset.act;
+ if(act==='no'&&!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again to say no';return}
+ b.disabled=true;
+ if(k==='donor'){const {error}=await sb.from('skivvies_gifts').update({message_status:act==='yes'?'approved':'hidden'}).eq('id',+id);
+  if(error){alert('That didn\'t go through. Try again.');b.disabled=false;return}
+  await Promise.all([loadNotes(),loadGifts()]);return}
  const {data:{session}}=await sb.auth.getSession();
- const {data,error}=await sb.functions.invoke('skivvies-note',{body:{action:b.dataset.act,id:+b.dataset.note},headers:{Authorization:'Bearer '+(session&&session.access_token)}});
- if(error||!data||!data.ok){let m=(data&&data.error)||'';try{if(!m&&error&&error.context)m=(await error.context.json()).error}catch(_){}alert(m||'That didn\'t go through. Try again.');loadNotes();return}
- if(b.dataset.act==='use'){b.textContent=data.told?'Sent to them ✓':'Counted ✓ (they weren\'t told)';b.nextElementSibling.textContent=usedTxt(data.used);
-  setTimeout(()=>{b.textContent='Use this note 🍑';b.disabled=false},2500);return}
- loadNotes()};
+ const {data,error}=await sb.functions.invoke('skivvies-note',{body:{action:act==='yes'?'approve':act==='no'?'decline':'use',id:+id},headers:{Authorization:'Bearer '+(session&&session.access_token)}});
+ if(error||!data||!data.ok){let m=(data&&data.error)||'';try{if(!m&&error&&error.context)m=(await error.context.json()).error}catch(_){}alert(m||'That didn\'t go through. Try again.');b.disabled=false;return}
+ if(act==='use'){b.textContent=data.told?'Sent to them ✓':'Counted ✓ (they weren\'t told)';b.nextElementSibling.textContent=usedTxt(data.used);
+  const n=NT.find(x=>x.k==='crew'&&x.id===+id);if(n)n.used=data.used;setTimeout(()=>{b.textContent='Use this note 🍑';b.disabled=false},2500);return}
+ loadNotes()});
+// print sheet: 4 notes to a letter page, black and white, cut on the dotted lines
+function npSize(t){const L=t.length;return L<=60?'22pt':L<=120?'18pt':L<=220?'15pt':L<=380?'12.5pt':'10.5pt'}
+function openNotesPrint(fromHistory){
+ const list=NT.filter(n=>n.ok).reverse().filter(n=>!NOPRINT.has(n.k+':'+n.id));if(!list.length)return;
+ let h='';for(let i=0;i<list.length;i+=4){h+='<div class="np-sheet">'+[0,1,2,3].map(j=>{const n=list[i+j];if(!n)return'<div class="np-card" style="border-color:transparent"></div>';
+  return `<div class="np-card"><div class="np-top">skivvies</div><div class="np-line">A note just for you</div>
+   <div class="np-txt" style="font-size:${npSize(n.txt)}">${esc(n.txt)}</div><div class="np-sig">— ${esc(n.sig)}</div>
+   <div class="np-foot">Rock bottom shouldn't be bare bottom. · skivvies.org</div></div>`}).join('')+'</div>'}
+ $('#np_sheets').innerHTML=h;$('#notesprint').classList.remove('hidden');document.body.classList.add('np-on');document.body.style.overflow='hidden';
+ if(!fromHistory)history.pushState({np:1},'')}
+function closeNotesPrint(){$('#notesprint').classList.add('hidden');document.body.classList.remove('np-on');document.body.style.overflow=''}
+$('#nt_print').onclick=()=>openNotesPrint(false);
+$('#np_go').onclick=()=>window.print();
+$('#np_close').onclick=()=>{if(history.state&&history.state.np)history.back();else closeNotesPrint()};
+window.addEventListener('popstate',()=>{if(!$('#notesprint').classList.contains('hidden'))closeNotesPrint()});
 
 // ---- gifts: one "Handed out" button per gift (15 Nov 2026, Mike). No more line. ----
 let GIFTS=[],gView='wait',gKind='all';
@@ -424,7 +495,7 @@ function drawGifts(){
  const day=d=>new Date(d).toLocaleDateString([], {month:'short',day:'numeric'});
  ul.innerHTML=list.map(g=>`<li><div class="top"><span class="place">${g.mode==='test'?'<span class="badge">TEST</span> ':''}$${(g.amount_cents/100).toLocaleString()}${g.monthly?' / month':''} · ${gWho(g)}</span><span class="when">${fmt(g.paid_at)}</span></div>
   <div class="meta">${g.anonymous||!g.donor_name?'Anonymous':esc(g.donor_name)}${g.donor_email?' · <a href="mailto:'+esc(g.donor_email)+'">'+esc(g.donor_email)+'</a>':''}</div>
-  ${g.message?`<div class="notes">${esc(g.message)}</div>${g.message_status==='pending'?`<button class="mini" data-gift="${g.id}" data-to="approved">Put it on the wall</button> <button class="mini" data-gift="${g.id}" data-to="hidden">Keep it off</button>`:`<div class="meta">${g.message_status==='approved'?'On the wall ✓':'Kept off the wall'} · <button class="link" data-gift="${g.id}" data-to="${g.message_status==='approved'?'hidden':'approved'}">${g.message_status==='approved'?'Take it down':'Put it up'}</button></div>`}`:''}
+  ${g.message?`<div class="notes">${esc(g.message)}</div><div class="meta">${g.message_status==='pending'?'<button class="link" type="button" data-go="notes">Note waiting — read it in Notes →</button>':g.message_status==='approved'?'Note approved ✓ (on the wall, ready to print)':'Note: you said no'}</div>`:''}
   ${g.notified_at?`<div class="meta"><span class="badge went" style="margin:0">Handed out ✓</span> ${day(g.notified_at)}${g.donor_email?' · they got the email':''}</div>`:`<button class="out" type="button" data-out="${g.id}">Handed out 🍑</button><div class="gmsg" id="gm_${g.id}"></div>`}</li>`).join('')}
 $('#g_view').onclick=e=>{const b=e.target.closest('[data-view]');if(!b)return;gView=b.dataset.view;drawGifts()};
 $('#g_kind').onclick=e=>{const b=e.target.closest('[data-kind]');if(!b)return;gKind=b.dataset.kind;drawGifts()};
