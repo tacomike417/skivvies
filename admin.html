@@ -113,14 +113,16 @@ input[type=file]{padding:10px;font-size:14px}
 .nt-none{background:#fff;border:1px dashed #bdcbc2;border-radius:16px;padding:18px;text-align:center;font-weight:800;color:var(--muted);margin:0 0 16px}
 .waitn{background:var(--coral);color:#fff;border-radius:20px;padding:2px 10px;font:900 14px Inter,sans-serif;vertical-align:4px;margin-left:6px}
 #notesprint{position:fixed;inset:0;z-index:20;background:#f2f3f0;overflow:auto;-webkit-overflow-scrolling:touch}
-.np-sheet{width:8.5in;height:11in;margin:0 auto 20px;background:#fff;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;box-shadow:0 2px 10px rgba(0,0,0,.12);transform-origin:top center}
-.np-card{border:1px dashed #999;padding:.45in .4in .35in;display:flex;flex-direction:column;color:#000;font-family:Inter,sans-serif;overflow:hidden}
-.np-top{text-align:center;font-weight:900;font-size:26pt;letter-spacing:-.05em;line-height:1}
-.np-line{text-align:center;font-size:8.5pt;font-weight:700;margin:4px 0 0;letter-spacing:.02em}
-.np-txt{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere;padding:10px 0}
-.np-sig{text-align:center;font-weight:800;font-size:11pt;margin:0 0 10px}
-.np-foot{text-align:center;font-size:8pt;border-top:1.5px solid #000;padding-top:6px;font-weight:700}
-@media screen and (max-width:860px){.np-sheet{zoom:.42}}
+.np-sheet{width:8.5in;height:11in;margin:0 auto 20px;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.12);padding:.55in .7in .5in;box-sizing:border-box;display:flex;flex-direction:column;color:#000;font-family:Inter,sans-serif}
+.np-art{display:block;width:100%;height:2.0in;object-fit:contain;margin:0 0 .12in}
+.np-h{font:400 30pt/1.05 Anton,Inter,sans-serif;text-transform:uppercase;letter-spacing:.01em;text-align:center;margin:0 0 .14in}
+.np-body p{font-size:12.5pt;line-height:1.42;margin:0 0 .09in}
+.np-lead{font-weight:800}
+.np-box{flex:1;border:3px solid #000;border-radius:18px;margin:.06in 0 .16in;padding:.3in .35in;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.np-txt{font-weight:800;line-height:1.3;white-space:pre-wrap;overflow-wrap:anywhere}
+.np-sig{font-weight:800;font-size:14pt;margin:.18in 0 0}
+.np-foot{text-align:center;font-size:9pt;font-weight:700;border-top:1.5px solid #000;padding-top:7px}
+@media screen and (max-width:860px){.np-sheet{zoom:.44}}
 @media print{@page{size:letter;margin:0}body.np-on .shell,body.np-on #report,body.np-on .rp-bar{display:none!important}
  body.np-on #notesprint{position:static;overflow:visible;background:#fff}body.np-on .np-sheet{zoom:1;margin:0;box-shadow:none;page-break-after:always;break-after:page}}
 </style>
@@ -173,7 +175,7 @@ input[type=file]{padding:10px;font-size:14px}
     <p class="nt-sub">Read it. If it's good, tap Yes. Then it's ready to print.</p>
     <ul class="nt" id="nt_wait"><li>Loading…</li></ul>
     <h2 class="nt-h" style="margin-top:22px">Ready to print</h2>
-    <p class="nt-sub">Every note you said yes to. Untick any you don't want, then print. 4 notes to a page, cut on the dotted lines.</p>
+    <p class="nt-sub">Every note you said yes to. Untick any you don't want, then print. One note per page, one page per bag.</p>
     <button class="btn nt-print" type="button" id="nt_print">🖨️ Print notes</button>
     <ul class="nt" id="nt_ready"><li>Loading…</li></ul>
   </div>
@@ -433,7 +435,7 @@ function drawNotes(){
    <p class="what">${n.k==='donor'?'It also goes on the donor wall on skivvies.org.':'It also posts in the Skivvies group and they get a "your note was approved" message.'}</p>
    <button class="no" type="button" data-nt="${n.k}:${n.id}" data-act="no">No thanks</button></li>`).join(''):'<li class="nt-none">Nothing waiting. You\'re all caught up. 🍑</li>';
  const key=n=>n.k+':'+n.id,pick=ready.filter(n=>!NOPRINT.has(key(n))).length;
- $('#nt_print').textContent=pick?`🖨️ Print ${pick} note${pick===1?'':'s'} (${Math.ceil(pick/4)} page${Math.ceil(pick/4)===1?'':'s'})`:'🖨️ Print notes';
+ $('#nt_print').textContent=pick?`🖨️ Print ${pick} note${pick===1?'':'s'} (${pick} page${pick===1?'':'s'})`:'🖨️ Print notes';
  $('#nt_print').disabled=!pick;
  $('#nt_ready').innerHTML=ready.length?ready.map(n=>`<li class="ready">${head(n)}
    <label class="pick"><input type="checkbox" data-pick="${key(n)}" ${NOPRINT.has(key(n))?'':'checked'}> Print this one</label>
@@ -453,14 +455,22 @@ $('#pane_notes').addEventListener('click',async e=>{const b=e.target.closest('[d
   const n=NT.find(x=>x.k==='crew'&&x.id===+id);if(n)n.used=data.used;setTimeout(()=>{b.textContent='Use this note 🍑';b.disabled=false},2500);return}
  loadNotes()});
 // print sheet: 4 notes to a letter page, black and white, cut on the dotted lines
-function npSize(t){const L=t.length;return L<=60?'22pt':L<=120?'18pt':L<=220?'15pt':L<=380?'12.5pt':'10.5pt'}
+// One full letter page per note, one page per bag (17 Nov 2026, Mike). Story text written with ChatGPT, art by ChatGPT.
+function npSize(t){const L=t.length;return L<=60?'30pt':L<=140?'23pt':L<=260?'18pt':L<=420?'15pt':'12.5pt'}
+const NP_STORY=`<h1 class="np-h">Rock bottom shouldn't be a bare bottom.</h1><div class="np-body">
+ <p>Each of us hit rock bottom in our own way. We lost our kids. Our money. Our families. Our self-respect. And we felt very, very alone.</p>
+ <p>Each of us got sober on our own, the old-fashioned way: a sponsor, the Big Book, and a whole lot of meetings. Time takes time.</p>
+ <p>Then a few years back, God brought the three of us together. We started a nonprofit to help people in recovery, and that's where Skivvies came from.</p>
+ <p>We heard it in a meeting once: people in recovery deserve the very best. God likes to show off with people like us. So we're just trying to get some new drawers to our folks. Why not? You deserve it. Recovery is an adjustment all by itself, and so is daily living.</p>
+ <p>Slowly but surely, the lives we have today are well worth the journey. Yours can be too. This is just our little give back.</p>
+ `;
+const npLead=n=>`<p class="np-lead">And here's a note from ${n.k==='donor'?'the person who bought these for you':'somebody in recovery who\'s rooting for you'}:</p></div>`;
 function openNotesPrint(fromHistory){
  const list=NT.filter(n=>n.ok).reverse().filter(n=>!NOPRINT.has(n.k+':'+n.id));if(!list.length)return;
- let h='';for(let i=0;i<list.length;i+=4){h+='<div class="np-sheet">'+[0,1,2,3].map(j=>{const n=list[i+j];if(!n)return'<div class="np-card" style="border-color:transparent"></div>';
-  return `<div class="np-card"><div class="np-top">skivvies</div><div class="np-line">A note just for you</div>
-   <div class="np-txt" style="font-size:${npSize(n.txt)}">${esc(n.txt)}</div><div class="np-sig">— ${esc(n.sig)}</div>
-   <div class="np-foot">Rock bottom shouldn't be bare bottom. · skivvies.org</div></div>`}).join('')+'</div>'}
- $('#np_sheets').innerHTML=h;$('#notesprint').classList.remove('hidden');document.body.classList.add('np-on');document.body.style.overflow='hidden';
+ $('#np_sheets').innerHTML=list.map(n=>`<div class="np-sheet"><img class="np-art" src="/img/note-header.png" alt="">${NP_STORY}${npLead(n)}
+  <div class="np-box"><div class="np-txt" style="font-size:${npSize(n.txt)}">${esc(n.txt)}</div><div class="np-sig">— ${esc(n.sig)}</div></div>
+  <div class="np-foot">skivvies.org · A program of Cornerstones Recovery, Inc.</div></div>`).join('');
+ $('#notesprint').classList.remove('hidden');document.body.classList.add('np-on');document.body.style.overflow='hidden';
  if(!fromHistory)history.pushState({np:1},'')}
 function closeNotesPrint(){$('#notesprint').classList.add('hidden');document.body.classList.remove('np-on');document.body.style.overflow=''}
 $('#nt_print').onclick=()=>openNotesPrint(false);
