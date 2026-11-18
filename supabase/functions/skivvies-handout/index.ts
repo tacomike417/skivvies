@@ -9,6 +9,7 @@
  *   undo { id }  -> takes back a stock entry.
  *   fees         -> asks Stripe what it kept on each paid live gift that doesn't have fee_cents yet.
  *   test_email { to } -> sends a sample of the donor email.
+ *   inkind_letter { id } -> emails the thank-you letter for donated underwear (in-kind) and stamps letter_sent_at. (18 Nov 2026)
  *
  * Secrets: RESEND_API_KEY, SKIVVIES_FROM (default "Skivvies <skivvies@recoverymisfits.org>"), STRIPE_SECRET_KEY.
  * Deployed with verify_jwt off; it checks the admin's token itself (same as skivvies-note).
@@ -87,6 +88,36 @@ async function send(to: string, m: { subject: string; text: string; html: string
   if (!r.ok) throw new Error("Resend said no: " + (await r.text()).slice(0, 200));
 }
 
+// ---- in-kind thank-you letter (same words as the printable letter in the admin) ----
+function inkindEmail(k: { gift_date: string; donor_name: string; description: string; pairs: number }) {
+  const day = new Date(k.gift_date + "T12:00:00Z").toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
+  const what = `${k.description}${k.pairs ? ` (${k.pairs} pair${k.pairs === 1 ? "" : "s"})` : ""}`;
+  const subject = "Thank you for your donation to Skivvies 🍑";
+  const lines = [
+    day, ``, `Dear ${k.donor_name},`, ``,
+    `Thank you for your donation to Skivvies, a program of ${ORG}:`, ``, what, ``,
+    `Every pair goes to somebody walking into day one of recovery in Stark County, Ohio. Because rock bottom shouldn't be bare bottom.`, ``,
+    `No goods or services were provided in exchange for this donation. ${ORG} is a 501(c)(3) tax-exempt organization, EIN ${EIN}. This letter describes the items you donated; the value of a non-cash gift is determined by the donor.`, ``,
+    `With thanks,`, `Michael Nasvadi, Treasurer`, ORG, `820 S. Linden Ave, Alliance, OH 44601`, REPLY_TO,
+  ];
+  const p = (t: string) => `<p style="font-size:16px;line-height:1.55;margin:0 0 14px">${t}</p>`;
+  const html = `<!doctype html><html><body style="margin:0;background:#fff6f0;font-family:Inter,Helvetica,Arial,sans-serif;color:#102520">
+  <div style="max-width:560px;margin:0 auto;padding:28px 20px">
+    <div style="font-size:30px;font-weight:900;letter-spacing:-.05em">skivvies</div>
+    <div style="height:4px;width:92px;background:#f35d40;border-radius:4px;margin:4px 0 22px"></div>
+    <div style="background:#ffffff;border-radius:16px;padding:22px 20px">
+      ${p(esc(day))}${p(`Dear ${esc(k.donor_name)},`)}
+      ${p(`Thank you for your donation to Skivvies, a program of ${esc(ORG)}:`)}
+      <p style="font-size:16px;line-height:1.5;margin:0 0 14px;padding:10px 14px;border:1px solid #e6d9d0;border-radius:10px"><b>${esc(what)}</b></p>
+      ${p(`Every pair goes to somebody walking into day one of recovery in Stark County, Ohio. Because rock bottom shouldn't be bare bottom.`)}
+      <p style="font-size:13px;line-height:1.55;color:#52635c;margin:0 0 18px">No goods or services were provided in exchange for this donation. ${esc(ORG)} is a 501(c)(3) tax-exempt organization, EIN ${EIN}. This letter describes the items you donated; the value of a non-cash gift is determined by the donor.</p>
+      <p style="font-size:16px;line-height:1.55;margin:0">With thanks,<br><br>Michael Nasvadi, Treasurer<br>${esc(ORG)}<br>820 S. Linden Ave, Alliance, OH 44601<br>${REPLY_TO}</p>
+    </div>
+    <p style="font-size:12px;line-height:1.5;color:#52635c;margin:22px 0 0">Keep this email for your records.</p>
+  </div></body></html>`;
+  return { subject, text: lines.join("\n"), html };
+}
+
 // ---- who's asking ----
 async function isAdmin(req: Request) {
   const jwt = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
@@ -132,6 +163,19 @@ Deno.serve(async (req) => {
         return json({ error: "The email didn't send, so nothing was marked. " + ((e as Error).message || "") }, 502);
       }
       return json({ ok: true, emailed: true });
+    }
+
+    if (b.action === "inkind_letter") {
+      const id = Number(b.id);
+      if (!Number.isInteger(id) || id < 1) return json({ error: "Which donation?" }, 400);
+      const { data: k } = await admin.from("skivvies_inkind").select("id,gift_date,donor_name,description,pairs,donor_email").eq("id", id).maybeSingle();
+      if (!k) return json({ error: "Couldn't find that donation." }, 404);
+      const to = clean(k.donor_email, 200);
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) return json({ error: "Add their email first." }, 400);
+      try { await send(to, inkindEmail(k)); }
+      catch (e) { return json({ error: "The email didn't send. " + ((e as Error).message || "") }, 502); }
+      await admin.from("skivvies_inkind").update({ letter_sent_at: new Date().toISOString() }).eq("id", id);
+      return json({ ok: true });
     }
 
     if (b.action === "handout") {

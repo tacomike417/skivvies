@@ -144,7 +144,7 @@ input[type=file]{padding:10px;font-size:14px}
   <div id="np_sheets"></div>
 </div>
 <div class="shell">
-<header><a class="brand" href="/">skivvies</a><span><span class="tag">Admin</span> <span class="ver">v2.5</span></span></header>
+<header><a class="brand" href="/">skivvies</a><span><span class="tag">Admin</span> <span class="ver">v2.6</span></span></header>
 
 <!-- signed out -->
 <section id="signin" class="hidden">
@@ -213,6 +213,7 @@ input[type=file]{padding:10px;font-size:14px}
     <label style="margin:0">Donated underwear <span style="font-weight:400;color:var(--muted)">(somebody gave actual pairs)</span></label>
     <div class="two"><div><label for="k_name">Who gave it</label><input id="k_name" maxlength="80" placeholder="Name or group" required></div>
     <div><label for="k_date">Date</label><input id="k_date" type="date" required></div></div>
+    <div><label for="k_email">Their email <span style="font-weight:400;color:var(--muted)">(optional, for the thank-you letter)</span></label><input id="k_email" type="email" inputmode="email" maxlength="200" placeholder="name@email.com"></div>
     <div><label for="k_desc">What it was</label><input id="k_desc" maxlength="300" placeholder="12 pairs new men's boxer briefs, M–XL" required></div>
     <div class="two"><div><label for="k_pairs">Pairs</label><input id="k_pairs" type="number" inputmode="numeric" min="0" max="100000" step="1" placeholder="0" required></div>
     <div><label for="k_val">Worth about <span style="font-weight:400;color:var(--muted)">(your guess)</span></label><input id="k_val" type="number" inputmode="decimal" min="0" step="0.01" placeholder="$"></div></div>
@@ -648,20 +649,32 @@ $('#buylist').onclick=async e=>{const b=e.target.closest('[data-buy]');if(!b)ret
 $('#k_date').value=today();
 $('#kindform').onsubmit=async e=>{e.preventDefault();const m=$('#k_msg');
  const donor_name=$('#k_name').value.trim(),description=$('#k_desc').value.trim(),pairs=parseInt($('#k_pairs').value,10),date=$('#k_date').value;
- const v=$('#k_val').value;const est=v===''?null:Math.round(parseFloat(v)*100);
+ const donor_email=$('#k_email').value.trim()||null;const v=$('#k_val').value;const est=v===''?null:Math.round(parseFloat(v)*100);
  if(!donor_name||!description||!(pairs>=0)||!date){m.className='msg err';m.textContent='Fill in who, what it was, how many pairs and the date.';return}
  $('#k_save').disabled=true;m.className='msg';m.textContent='Saving…';
  try{const photo_path=await putFile($('#k_file'),'inkind');
-  const {error}=await sb.from('skivvies_inkind').insert({donor_name,description,pairs,gift_date:date,est_value_cents:est,photo_path});if(error)throw error;
+  const {error}=await sb.from('skivvies_inkind').insert({donor_name,donor_email,description,pairs,gift_date:date,est_value_cents:est,photo_path});if(error)throw error;
   m.className='msg ok';m.textContent=`Logged. ${pairs} pair${pairs===1?'':'s'} added to the donated pile and the homepage counter.`;
-  $('#k_name').value='';$('#k_desc').value='';$('#k_pairs').value='';$('#k_val').value='';$('#k_file').value='';$('#k_date').value=today();loadBooks();load();loadKind()}
+  $('#k_name').value='';$('#k_email').value='';$('#k_desc').value='';$('#k_pairs').value='';$('#k_val').value='';$('#k_file').value='';$('#k_date').value=today();loadBooks();load();loadKind()}
  catch(err){m.className='msg err';m.textContent=err.message}
  $('#k_save').disabled=false};
 async function loadKind(){
- const {data}=await sb.from('skivvies_inkind').select('id,gift_date,donor_name,description,pairs,est_value_cents,photo_path').order('gift_date',{ascending:false}).order('id',{ascending:false}).limit(10);
- const rows=await Promise.all((data||[]).map(async k=>`<li><div class="top"><span class="place">${esc(k.donor_name)}</span><span class="when">${dayTxt(k.gift_date)}</span></div><div class="meta">${esc(k.description)} · ${k.pairs} pair${k.pairs===1?'':'s'}${k.est_value_cents!=null?' · about '+money(k.est_value_cents):''}</div>${await fileLink(k.photo_path)} <button class="mini" type="button" data-photo="kind:${k.id}">📷 ${k.photo_path?'Change photo':'Add photo'}</button> <button class="mini" type="button" data-letter="${k.id}">Thank-you letter</button> <button class="mini" type="button" data-kind="${k.id}">Delete</button></li>`));
+ const {data}=await sb.from('skivvies_inkind').select('id,gift_date,donor_name,description,pairs,est_value_cents,photo_path,donor_email,letter_sent_at').order('gift_date',{ascending:false}).order('id',{ascending:false}).limit(10);
+ const rows=await Promise.all((data||[]).map(async k=>`<li><div class="top"><span class="place">${esc(k.donor_name)}</span><span class="when">${dayTxt(k.gift_date)}</span></div><div class="meta">${esc(k.description)} · ${k.pairs} pair${k.pairs===1?'':'s'}${k.est_value_cents!=null?' · about '+money(k.est_value_cents):''}</div>
+  <div class="meta">${k.donor_email?esc(k.donor_email)+' · <button class="link" type="button" data-kemail="'+k.id+'">change</button>':'No email yet'}${k.letter_sent_at?' · <b>Letter emailed ✓ '+dayTxt(k.letter_sent_at.slice(0,10))+'</b>':''}</div>
+  ${k.donor_email?`<button class="out" type="button" data-ksend="${k.id}" data-who="${esc(k.donor_name)}">✉️ ${k.letter_sent_at?'Email the thank-you letter again':'Email the thank-you letter'}</button>`:`<button class="out" type="button" data-kemail="${k.id}">✉️ Add their email</button>`}
+  ${await fileLink(k.photo_path)} <button class="mini" type="button" data-photo="kind:${k.id}">📷 ${k.photo_path?'Change photo':'Add photo'}</button> <button class="mini" type="button" data-letter="${k.id}">Thank-you letter</button> <button class="mini" type="button" data-kind="${k.id}">Delete</button></li>`));
  $('#kindlist').innerHTML=rows.join('')}
 $('#kindlist').onclick=async e=>{const l=e.target.closest('[data-letter]');if(l){openLetter(+l.dataset.letter);return}
+ const em=e.target.closest('[data-kemail]');
+ if(em){const v=(prompt('Their email for the thank-you letter:')||'').trim();if(!v)return;
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){alert('That email doesn\'t look right.');return}
+  const {error}=await sb.from('skivvies_inkind').update({donor_email:v}).eq('id',+em.dataset.kemail);if(error){alert(error.message);return}loadKind();return}
+ const sd=e.target.closest('[data-ksend]');
+ if(sd){if(!sd.dataset.sure){sd.dataset.sure=1;sd.classList.add('sure');sd.textContent='Tap again: this emails '+sd.dataset.who+' now';return}
+  sd.disabled=true;sd.textContent='Sending…';const r=await callHandout({action:'inkind_letter',id:+sd.dataset.ksend});
+  if(!r.ok){alert(r.error||'That didn\'t send. Try again.');loadKind();return}
+  sd.textContent='Sent ✓';setTimeout(loadKind,1200);return}
  const b=e.target.closest('[data-kind]');if(!b)return;
  if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again to delete';return}
  b.disabled=true;await sb.from('skivvies_inkind').delete().eq('id',+b.dataset.kind);loadBooks();load();loadKind()};
