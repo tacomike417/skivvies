@@ -144,7 +144,7 @@ input[type=file]{padding:10px;font-size:14px}
   <div id="np_sheets"></div>
 </div>
 <div class="shell">
-<header><a class="brand" href="/">skivvies</a><span><span class="tag">Admin</span> <span class="ver">v2.4</span></span></header>
+<header><a class="brand" href="/">skivvies</a><span><span class="tag">Admin</span> <span class="ver">v2.5</span></span></header>
 
 <!-- signed out -->
 <section id="signin" class="hidden">
@@ -615,6 +615,15 @@ async function putFile(input,folder){const f=input.files&&input.files[0];if(!f)r
  if(error)throw new Error('The file didn\'t upload: '+error.message);return path}
 async function fileLink(path){if(!path)return '';const {data}=await sb.storage.from('skivvies-private').createSignedUrl(path,600);return data&&data.signedUrl?`<a class="thumb" href="${data.signedUrl}" target="_blank" rel="noopener">See the file ↗</a>`:''}
 
+// ---- add or change a photo on an entry that's already saved (18 Nov 2026, Mike) ----
+const PH=document.createElement('input');PH.type='file';PH.accept='image/*';PH.style.display='none';document.body.appendChild(PH);let phFor=null;
+document.addEventListener('click',e=>{const b=e.target.closest('[data-photo]');if(!b)return;phFor=b;PH.value='';PH.click()},true);
+PH.onchange=async()=>{if(!phFor||!PH.files.length)return;const b=phFor,[kind,id]=b.dataset.photo.split(':');b.disabled=true;b.textContent='Uploading…';
+ try{const path=await putFile(PH,kind==='buy'?'receipts':'inkind');
+  const {error}=kind==='buy'?await sb.from('skivvies_purchases').update({receipt_path:path}).eq('id',+id):await sb.from('skivvies_inkind').update({photo_path:path}).eq('id',+id);
+  if(error)throw error;kind==='buy'?loadBuys():loadKind()}
+ catch(err){alert(err.message||'That didn\'t upload. Try again.');b.disabled=false;b.textContent='📷 Add photo'}};
+
 // ---- receipts ----
 $('#b_date').value=today();
 $('#buyform').onsubmit=async e=>{e.preventDefault();const m=$('#b_msg');
@@ -629,7 +638,7 @@ $('#buyform').onsubmit=async e=>{e.preventDefault();const m=$('#b_msg');
  $('#b_save').disabled=false};
 async function loadBuys(){
  const {data}=await sb.from('skivvies_purchases').select('id,bought_on,store,amount_cents,pairs,receipt_path').order('bought_on',{ascending:false}).order('id',{ascending:false}).limit(10);
- const rows=await Promise.all((data||[]).map(async p=>`<li><div class="top"><span class="place">${esc(p.store)} · <span class="cash-amt">${money(p.amount_cents)}</span></span><span class="when">${dayTxt(p.bought_on)}</span></div><div class="meta">${p.pairs} pair${p.pairs===1?'':'s'}</div>${await fileLink(p.receipt_path)} <button class="mini" type="button" data-buy="${p.id}">Delete</button></li>`));
+ const rows=await Promise.all((data||[]).map(async p=>`<li><div class="top"><span class="place">${esc(p.store)} · <span class="cash-amt">${money(p.amount_cents)}</span></span><span class="when">${dayTxt(p.bought_on)}</span></div><div class="meta">${p.pairs} pair${p.pairs===1?'':'s'}</div>${await fileLink(p.receipt_path)} <button class="mini" type="button" data-photo="buy:${p.id}">📷 ${p.receipt_path?'Change photo':'Add receipt photo'}</button> <button class="mini" type="button" data-buy="${p.id}">Delete</button></li>`));
  $('#buylist').innerHTML=rows.join('')}
 $('#buylist').onclick=async e=>{const b=e.target.closest('[data-buy]');if(!b)return;
  if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Tap again to delete';return}
@@ -650,7 +659,7 @@ $('#kindform').onsubmit=async e=>{e.preventDefault();const m=$('#k_msg');
  $('#k_save').disabled=false};
 async function loadKind(){
  const {data}=await sb.from('skivvies_inkind').select('id,gift_date,donor_name,description,pairs,est_value_cents,photo_path').order('gift_date',{ascending:false}).order('id',{ascending:false}).limit(10);
- const rows=await Promise.all((data||[]).map(async k=>`<li><div class="top"><span class="place">${esc(k.donor_name)}</span><span class="when">${dayTxt(k.gift_date)}</span></div><div class="meta">${esc(k.description)} · ${k.pairs} pair${k.pairs===1?'':'s'}${k.est_value_cents!=null?' · about '+money(k.est_value_cents):''}</div>${await fileLink(k.photo_path)} <button class="mini" type="button" data-letter="${k.id}">Thank-you letter</button> <button class="mini" type="button" data-kind="${k.id}">Delete</button></li>`));
+ const rows=await Promise.all((data||[]).map(async k=>`<li><div class="top"><span class="place">${esc(k.donor_name)}</span><span class="when">${dayTxt(k.gift_date)}</span></div><div class="meta">${esc(k.description)} · ${k.pairs} pair${k.pairs===1?'':'s'}${k.est_value_cents!=null?' · about '+money(k.est_value_cents):''}</div>${await fileLink(k.photo_path)} <button class="mini" type="button" data-photo="kind:${k.id}">📷 ${k.photo_path?'Change photo':'Add photo'}</button> <button class="mini" type="button" data-letter="${k.id}">Thank-you letter</button> <button class="mini" type="button" data-kind="${k.id}">Delete</button></li>`));
  $('#kindlist').innerHTML=rows.join('')}
 $('#kindlist').onclick=async e=>{const l=e.target.closest('[data-letter]');if(l){openLetter(+l.dataset.letter);return}
  const b=e.target.closest('[data-kind]');if(!b)return;
